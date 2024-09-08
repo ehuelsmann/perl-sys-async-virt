@@ -146,7 +146,7 @@ sub client {
                 my $mapped_retvals = _retval_mapper($ast, $msgstruct);
                 if (%{ $mapped_retvals }) {
                     my $mapstr = _retval_map( $mapped_retvals );
-                    $module_returns[$proc_value] = qq|sub { my \$client = shift; _translated(\$client, $mapstr, \@_) }|;
+                    $module_returns[$proc_value] = qq|sub { $proc_value; my \$client = shift; _translated(\$client, $mapstr, \@_) }|;
                 }
                 else {
                     $module_returns[$proc_value] = '\&_no_translation';
@@ -253,7 +253,7 @@ sub client {
 
     my $translators = join(",\n    ", map { $_ // 'undef'} @module_returns);
     my $main_content;
-    for my $mod ($main_module, values %module){
+    for my $mod ($main_module, values %module) {
         my $tmpl = contents( $template . $mod . '.pm.tmpl' );
         my $calls = join("\n",
                          map { $_->{code} }
