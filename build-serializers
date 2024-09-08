@@ -305,11 +305,6 @@ sub client {
     return $main_content;
 }
 
-sub main_virt {
-    my ($ast, $template, $h_syms) = @_;
-    return contents( $template );
-}
-
 if (-d 'libvirt') {
     say "Deleting libvirt/...";
     system 'rm -rf libvirt/';
