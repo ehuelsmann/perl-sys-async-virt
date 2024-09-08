@@ -1,6 +1,8 @@
 #!perl
 
 requires 'perl' => '5.20.0';
+requires 'Future::AsyncAwait';
+requires 'IO::Async::Loop';
 requires 'Log::Any';
 requires 'Protocol::Sys::Virt' => '10.3.3';
 
@@ -16,8 +18,4 @@ on devel => sub {
 
 feature 'examples', 'Dependencies for examples' => sub {
     requires 'Feature::Compat::Try';
-    requires 'Future::AsyncAwait';
-    requires 'Future::IO';
-    requires 'Future::IO::Impl::IOAsync';
-    requires 'IO::Async::Loop';
 };

@@ -6,8 +6,6 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Feature::Compat::Try;
 
-use Future::IO;
-use Future::IO::Impl::IOAsync;
 use IO::Async::Loop;
 use IO::Async::Stream;
 use Log::Any qw($log);
