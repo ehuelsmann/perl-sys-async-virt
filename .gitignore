@@ -3,4 +3,7 @@ devel/
 **~
 pm_to_blib
 blib/
-
+MYMETA\.*
+Makefile
+devel/
+MANIFEST.bak
