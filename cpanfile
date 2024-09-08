@@ -11,7 +11,7 @@ on test => sub {
     requires 'Test2::V0';
 };
 
-on devel => sub {
+on develop => sub {
     requires 'Carp::Always';
     requires 'Protocol::Sys::Virt::Devel' => '0.0.4';
 };
