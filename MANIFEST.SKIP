@@ -1,0 +1,10 @@
+^.git
+^.plx
+.*~$
+^MYMETA.*
+^MANIFEST.SKIP
+^MANIFEST.bak
+^Makefile$
+^devel/
+^templates/
+^Sys-Async-Virt-

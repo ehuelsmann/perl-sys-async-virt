@@ -1,0 +1,78 @@
+####################################################################
+#
+#     This file was generated using XDR::Parse version __XDR_PARSE_VERSION__,
+#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version __VERSION__
+#
+#      Don't edit this file, use the source template instead
+#
+#                 ANY CHANGES HERE WILL BE LOST !
+#
+####################################################################
+
+
+use v5.14;
+use warnings;
+use Future::AsyncAwait;
+
+package Sys::Async::Virt::NodeDevice __VERSION__;
+
+use Carp qw(croak);
+use Log::Any qw($log);
+
+use Protocol::Sys::Virt::Remote::XDR __VERSION__;
+my $remote = 'Protocol::Sys::Virt::Remote::XDR';
+
+__CONSTANTS__
+
+sub new {
+    my ($class, %args) = @_;
+    return bless {
+        id => $args{id},
+        client => $args{client},
+    }, $class;
+}
+
+__CALLS__
+
+
+1;
+
+
+__END__
+
+=head1 NAME
+
+Sys::Async::Virt::NodeDevice - Client side proxy to remote LibVirt host device
+
+=head1 VERSION
+
+__VERSION__
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 EVENTS
+
+=head1 CONSTRUCTOR
+
+=head2 new
+
+=head1 METHODS
+
+__ENTRYPOINTS__
+
+=head1 CONSTANTS
+
+=over 8
+
+__CONSTANTS_POD__
+
+=back
+
+=head1 SEE ALSO
+
+L<LibVirt|https://libvirt.org>, L<Sys::Virt>
+
+=head1 LICENSE AND COPYRIGHT
+

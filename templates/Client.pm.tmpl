@@ -1,0 +1,626 @@
+####################################################################
+#
+#     This file was generated using XDR::Parse version __XDR_PARSE_VERSION__,
+#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version __VERSION__
+#
+#      Don't edit this file, use the source template instead
+#
+#                 ANY CHANGES HERE WILL BE LOST !
+#
+####################################################################
+
+
+use v5.14;
+use warnings;
+use Future::AsyncAwait;
+
+package Sys::Async::Virt __VERSION__;
+
+use parent qw(IO::Async::Notifier);
+
+use Carp qw(croak);
+use Log::Any qw($log);
+use Scalar::Util qw(reftype weaken);
+
+use Protocol::Sys::Virt::Remote::XDR __P::S::V::VERSION__;
+my $remote = 'Protocol::Sys::Virt::Remote::XDR';
+
+use Sys::Async::Virt::Domain __VERSION__;
+use Sys::Async::Virt::DomainCheckpoint __VERSION__;
+use Sys::Async::Virt::DomainSnapshot __VERSION__;
+use Sys::Async::Virt::Network __VERSION__;
+use Sys::Async::Virt::NetworkPort __VERSION__;
+use Sys::Async::Virt::NwFilter __VERSION__;
+use Sys::Async::Virt::NwFilterBinding __VERSION__;
+use Sys::Async::Virt::Interface __VERSION__;
+use Sys::Async::Virt::StoragePool __VERSION__;
+use Sys::Async::Virt::StorageVol __VERSION__;
+use Sys::Async::Virt::NodeDevice __VERSION__;
+use Sys::Async::Virt::Secret __VERSION__;
+
+__CONSTANTS__
+
+
+sub _no_translation {
+    shift;
+    return @_;
+}
+
+sub _translate_remote_nonnull_domain {
+    $_[0]->domain_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_domain_checkpoint {
+    $_[0]->domain_checkpoint_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_domain_snapshot {
+    $_[0]->domain_snapshot_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_network {
+    $_[0]->network_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_network_port {
+    $_[0]->network_port_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_nwfilter {
+    $_[0]->network_nwfilter_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_nwfilter_binding {
+    $_[0]->network_nwfilter_binding_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_interface {
+    $_[0]->network_interface_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_storage_pool {
+    $_[0]->storage_pool_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_storage_vol {
+    $_[0]->storage_vol_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_node_device {
+    $_[0]->node_device_instance( $_[1] );
+}
+
+sub _translate_remote_nonnull_secret {
+    $_[0]->secret_instance( $_[1] );
+}
+
+my @reply_translators = (
+    __REPLY_TRANSLATORS__
+);
+
+
+sub _translated {
+    my $client = shift;
+    my $argmap = shift;
+    my %args = @_;
+
+    return @_ unless $args{data};
+    my $data = $args{data};
+    for my $key (keys %{ $argmap }) {
+        my $val = $data->{$key};
+
+        if (ref $argmap->{$key} and reftype $argmap->{$key} eq 'HASH') {
+            $data->{$key} = { _translated( $client, $argmap->{$key}, %{ $val } ) };
+        }
+        elsif (ref $val and reftype $val eq 'ARRAY') {
+            $data->{$key} = [ map { $argmap->{$key}->( $client, $_ ) } @{ $val } ];
+        }
+        else {
+            $data->{$key} = $argmap->{$key}->( $client, $val );
+        }
+    }
+
+    return (%args, );
+}
+
+sub _domain_factory {
+    return Sys::Async::Virt::Domain->new( @_ );
+}
+
+sub _domain_checkpoint_factory {
+    return Sys::Async::Virt::DomainCheckpoint->new( @_ );
+}
+
+sub _domain_snapshot_factory {
+    return Sys::Async::Virt::DomainSnapshot->new( @_ );
+}
+
+sub _network_factory {
+    return Sys::Async::Virt::Network->new( @_ );
+}
+
+sub _network_port_factory {
+    return Sys::Async::Virt::NetworkPort->new( @_ );
+}
+
+sub _nwfilter_factory {
+    return Sys::Async::Virt::NwFilter->new( @_ );
+}
+
+sub _nwfilter_binding_factory {
+    return Sys::Async::Virt::NwFilterBinding->new( @_ );
+}
+
+sub _interface_factory {
+    return Sys::Async::Virt::Interface->new( @_ );
+}
+
+sub _storage_pool_factory {
+    return Sys::Async::Virt::StoragePool->new( @_ );
+}
+
+sub _storage_vol_factory {
+    return Sys::Async::Virt::StorageVol->new( @_ );
+}
+
+sub _node_device_factory {
+    return Sys::Async::Virt::NodeDevice->new( @_ );
+}
+
+sub _secret_factory {
+    return Sys::Async::Virt::Secret->new( @_ );
+}
+
+sub new {
+    my ($class, %args) = @_;
+    my $self = bless {
+        _domains => {},
+        _domain_checkpoints => {},
+        _domain_snapshots   => {},
+        _networks => {},
+        _network_ports => {},
+        _nwfilters => {},
+        _nwfilter_bindings => {},
+        _interfaces => {},
+        _storage_pools => {},
+        _storage_vols => {},
+        _node_devices => {},
+        _secrets => {},
+        _callbacks => {},
+
+        _replies => {},
+        _streams => {},
+
+        domain_factory            => \&_domain_factory,
+        domain_checkpoint_factory => \&_domain_checkpoint_factory,
+        domain_snapshot_factory   => \&_domain_snapshot_factory,
+        network_factory           => \&_network_factory,
+        network_port_factory      => \&_network_port_factory,
+        nwfilter_factory          => \&_nwfilter_factory,
+        nwfilter_binding_factory  => \&_nwfilter_binding_factory,
+        interface_factory         => \&_interface_factory,
+        storage_pool_factory      => \&_storage_pool_factory,
+        storage_vol_factory       => \&_storage_vol_factory,
+        node_device_factory       => \&_node_device_factory,
+        secret_factory            => \&_secret_factory,
+    }, $class;
+
+    $self->register( $args{remote} ) if $args{remote};
+    return $self;
+}
+
+sub domain_instance {
+    my ($self, $id) = @_;
+    my $c = $self->{_domains}->{$id->{uuid}}
+       //= $self->{domain_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_domains}->{$id->{uuid}};
+    return $c;
+}
+
+sub domain_checkpoint_instance {
+    my ($self, $id) = @_;
+    my $key = "$id->{dom}->{uuid}/$id->{name}";
+    my $c = $self->{_domain_checkpoints}->{$key}
+       //= $self->{domain_checkpoint_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_domain_checkpoints}->{$key};
+    return $c;
+}
+
+sub domain_snapshot_instance {
+    my ($self, $id) = @_;
+    my $key = "$id->{dom}->{uuid}/$id->{name}";
+    my $c = $self->{_domain_snapshots}->{$id->{uuid}}
+       //= $self->{domain_snapshot_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_domain_snapshots}->{$id->{uuid}};
+    return $c;
+}
+
+sub network_instance {
+    my ($self, $id) = @_;
+    my $c = $self->{_networks}->{$id->{uuid}}
+       //= $self->{network_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_networks}->{$id->{uuid}};
+    return $c;
+}
+
+sub network_port_instance {
+    my ($self, $id) = @_;
+    my $c = $self->{_network_ports}->{$id->{uuid}}
+       //= $self->{network_port_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_network_ports}->{$id->{uuid}};
+    return $c;
+}
+
+sub nwfilter_instance {
+    my ($self, $id) = @_;
+    my $c = $self->{_nwfilters}->{$id->{uuid}}
+       //= $self->{nwfilter_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_nwfilters}->{$id->{uuid}};
+    return $c;
+}
+
+sub nwfilter_binding_instance {
+    my ($self, $id) = @_;
+    my $key = "$id->{portdev}/$id->{filtername}";
+    my $c = $self->{_nwfilter_bindings}->{$key}
+       //= $self->{nwfilter_binding_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_nwfilter_bindings}->{$key};
+    return $c;
+}
+
+sub interface_instance {
+    my ($self, $id) = @_;
+    my $key = "$id->{mac}/$id->{name}";
+    my $c = $self->{_interfaces}->{$key}
+       //= $self->{interface_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_interfaces}->{$key};
+    return $c;
+}
+
+sub storage_pool_instance {
+    my ($self, $id) = @_;
+    my $c = $self->{_storage_pools}->{$id->{uuid}}
+       //= $self->{storage_pool_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_storage_pools}->{$id->{uuid}};
+    return $c;
+}
+
+sub storage_vol_instance {
+    my ($self, $id) = @_;
+    my $c = $self->{_storage_vols}->{$id->{key}}
+       //= $self->{storage_vol_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_storage_vols}->{$id->{key}};
+    return $c;
+}
+
+sub node_device_instance {
+    my ($self, $id) = @_;
+    my $c = $self->{_node_devices}->{$id->{name}}
+       //= $self->{node_device_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_node_devices}->{$id->{name}};
+    return $c;
+}
+
+sub secret_instance {
+    my ($self, $id) = @_;
+    my $c = $self->{_secrets}->{$id->{uuid}}
+       //= $self->{secret_factory}->( client => $self, remote => $self->{remote}, id => $id );
+    weaken $self->{_secrets}->{$id->{uuid}};
+    return $c;
+}
+
+async sub _call {
+    my $self = shift;
+    my $serial = await $self->{remote}->call( @_ );
+    my $f = $self->loop->new_future;
+    $log->trace( "Setting serial $serial future" );
+    $self->{_replies}->{$serial} = $f;
+    return await $f;
+}
+
+sub _dispatch_closed {
+    my $self = shift;
+
+    $self->{on_closed}->( @_ );
+}
+
+sub _dispatch_message {
+    my $self = shift;
+    my %args = @_;
+
+    if ($args{data}
+        and defined $args{data}->{callbackID}
+        and my $cb = $self->{_callbacks}->{$args{data}->{callbackID}}) {
+        my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
+        $cb->( %{ $cbargs{data}->{msg} } );
+    }
+    else {
+        $self->{on_message}->( $reply_translators[$args{header}->{proc}]->( @_ ) );
+    }
+}
+
+sub _dispatch_reply {
+    my ($self, %args) = @_;
+    my $f = delete $self->{_replies}->{$args{header}->{serial}};
+
+    if (exists $args{data}) {
+        my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
+        $f->done( $cbargs{data} );
+    }
+    elsif (exists $args{error}) {
+        $f->fail( $args{error}->{message}, undef, $args{error} );
+    }
+    else {
+        die 'Unhandled reply';
+    }
+
+    return;
+}
+
+sub _dispatch_stream {
+    my $self = shift;
+    my %args = @_;
+
+    if (my $stream = $self->{_streams}->{$args{header}->{serial}}) {
+       $stream->process_protocol_message( @_ );
+    }
+    else {
+        $self->{on_stream}->( @_ );
+    }
+}
+
+sub configure {
+    my $self = shift;
+    my %args = @_;
+    for my $key (keys %args) {
+        $self->{$key} = $args{$key} // sub {};
+    }
+}
+
+sub register {
+    my $self = shift;
+    my $r = shift;
+
+    $r->configure(
+        on_closed  => sub { $self->_dispatch_closed( @_ ) },
+        on_message => sub { $self->_dispatch_message( @_ ) },
+        on_reply   => sub { $self->_dispatch_reply( @_ ) },
+        on_stream  => sub { $self->_dispatch_stream( @_ ) }
+        );
+    $self->{remote} = $r;
+}
+
+sub register_callback {
+    my ($self, $callbackID, $callback) = @_;
+    $self->{_callbacks}->{$callbackID} = $callback;
+}
+
+sub unregister_callback {
+    my ($self, $callbackID) = @_;
+    delete $self->{_callbacks}->{$callbackID};
+}
+
+sub register_stream {
+    my ($self, $serial, $stream) = @_;
+    $self->{_streams}->{$serial} = $stream;
+    weaken $self->{_streams}->{$serial};
+    $stream->configure( parent => $self );
+}
+
+sub unregister_stream {
+    my ($self, $serial) = @_;
+    delete $self->{_streams}->{$serial};
+}
+
+async sub auth {
+    my ($self, $auth_type) = @_;
+
+    my $rv = await $self->_call( $remote->PROC_AUTH_LIST );
+    my $auth_types = $rv->{types};
+    my $selected = $remote->AUTH_NONE;
+    for my $type ( @{ $auth_types } ) {
+        if ($auth_type == $type) {
+            $selected = $type;
+            last;
+        }
+    }
+    return if $selected == $remote->AUTH_NONE;
+
+    if ($selected == $remote->AUTH_POLKIT) {
+        await $self->_call( $remote->PROC_AUTH_POLKIT );
+        return;
+    }
+    if ($selected == $remote->AUTH_SASL) {
+        $rv = await $self->_call( $remote->PROC_AUTH_SASL_INIT );
+        my $mechs = $rv->{mechlist};
+        ...
+    }
+    return;
+}
+
+
+sub open {
+    my ($self, $url, $flags) = @_;
+    $self->_call( $remote->PROC_CONNECT_OPEN,
+                  { name => $url, flags => $flags // 0 } );
+}
+
+sub close {
+    my ($self) = @_;
+    $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
+}
+
+
+__CALLS__
+
+1;
+
+__END__
+
+=head1 NAME
+
+Sys::Async::Virt - LibVirt protocol implementation for clients
+
+=head1 VERSION
+
+__VERSION__
+
+=head1 SYNOPSIS
+
+  use Sys::Async::Virt;
+  use Protocol::Sys::Virt::Remote;
+  use Protocol::Sys::Virt::Transport;
+
+  open my $fh, 'rw', '/run/libvirt/libvirt.sock';
+  my $transport = Protocol::Sys::Virt::Transport->new(
+       role => 'client',
+       on_send => sub { syswrite( $fh, $_ ) for @_ }
+  );
+
+  my $remote = Protocol::Sys::Virt::Remote->new(
+       role => 'client',
+       on_reply => sub { say 'Reply handled!'; },
+  );
+  $remote->register( $transport );
+
+  my $client = Sys::Async::Virt->new();
+  $client->register( $remote );
+
+  $client->auth( $remote->AUTH_NONE, sub {
+      $client->open( 'qemu:///system', on_opened => sub { say "Opened!"; } );
+  });
+
+=head1 DESCRIPTION
+
+This module manages access to a LibVirt service through its remote protocol.
+
+The API documentation of this module and the related modules C<Sys::Async::Virt::*>
+is meant to be used in conjunction with the documentation found at L<LibVirt's API
+reference|https://libvirt.org/html/index.html>.  Since the C API is procedural
+whereas the Perl API is object oriented; to look up a function from e.g.
+C<Sys::Async::Virt::Domain>, translate the function to CamelCase and
+add the prefix C<virDomain>.  The functions in this module may need to be prefixed
+with either C<virConnect> or C<virNode>.  An important difference with the C API
+is that this API only lists the C<INPUT> and C<INPUT|OUTPUT (as input)> arguments for its
+functions.  The C<OUTPUT> and C<INPUT|OUTPUT (as output)> arguments will be returned in the
+C<on_reply> event.
+
+
+=head1 EVENTS
+
+=head2 on_reply
+
+  $on_reply->( @@@TODO );
+
+=head2 on_message
+
+  $on_message->( @@@TODO );
+
+Receives all messages which either don't classify as a callback invocation
+(i.e. the return value structure doesn't have a C<callbackID> member), or
+for which no callback has been registered through L</register_callback>
+
+=head2 on_stream
+
+  $on_stream->( @@@TODO );
+
+Receives all messages for which no stream has been registered through
+L</register_stream>.
+
+=head2 on_open
+
+  $on_open->();
+
+=head2 on_close
+
+  $on_close->();
+
+=head1 CONSTRUCTOR
+
+=head2 new
+
+  $client = Sys::Async::Virt->new( remote => $remote, ... );
+
+Creates a new client instance.  The constructor supports the following arguments:
+
+=over 8
+
+=item * C<remote> (optional)
+
+=item * C<keepalive> (optional)
+
+=back
+
+=head1 METHODS
+
+=head2 register
+
+  $client->register( $remote );
+
+=head2 register_callback
+
+  $client->register_callback( $callbackID, sub { say 'Called back!' });
+
+=head2 register_stream
+
+  $client->register_stream( $serial, $stream );
+
+=head2 unregister_callback
+
+  $client->unregister_callback( $callbackID );
+
+=head2 unregister_stream
+
+  $client->unregister_stream( $serial );
+
+=head2 auth
+
+  $client->auth( $auth_type, $on_completed );
+
+Authenticates the client with the server.
+
+=head2 open
+
+  $serial = $client->open( $url, $flags = 0 );
+
+This function opens the connection to the remote driver C<$url> as documented in
+L<LibVirt's Connection URIs|https://libvirt.org/uri.html>.  Note that the value
+is to be the B<local> hypervisor URI as applicable to the remote end of the
+connection.
+
+=head2 close
+
+  $serial = $client->close;
+
+Announces to the remote the intent to close the connection. The client will receive
+a confirmation message from the server after which the server will close the connection.
+
+__ENTRYPOINTS__
+
+=head1 CONSTANTS
+
+=over 8
+
+__CONSTANTS_POD__
+
+=back
+
+=head1 INTERNAL METHODS
+
+=head2 _call
+
+This method forwards protocol "calls" to the C<remote> instance.  Using this
+wrapper allows for tracking all calls allowing to set up handling of the replies.
+
+=head2 _dispatch_message
+
+=head2 _dispatch_reply
+
+=head2 _dispatch_stream
+
+=head1 SEE ALSO
+
+L<LibVirt|https://libvirt.org>, L<Sys::Virt>
+
+=head1 LICENSE AND COPYRIGHT
+
