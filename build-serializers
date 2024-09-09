@@ -84,11 +84,17 @@ sub _named_type_name {
     return undef;
 }
 
+sub _retvals {
+    my ($struct) = @_;
+    return (
+        map { +{ name => $_->{name}->{content},
+                 type => _named_type_name( $_->{declaration}->{type} ) } }
+        @{ $struct ? $struct->{definition}->{type}->{declaration}->{members} : [] }
+        );
+}
+
 sub _retval_mapper {
-    my ($ast, $struct) = @_;
-    my @retvals =
-        map { +{ name => $_->{name}->{content}, type => _named_type_name( $_->{declaration}->{type} ) } }
-        @{ $struct ? $struct->{definition}->{type}->{declaration}->{members} : [] };
+    my ($ast, @retvals) = @_;
 
     my %mapped_retvals;
     for my $retval (@retvals) {
@@ -99,12 +105,12 @@ sub _retval_mapper {
         elsif ($retval->{type}
                and $retval->{type} =~ m/_msg$/
                and my $nested_msgstruct = find_toplevel_definition($ast, $retval->{type})) {
-            my $submap = _retval_mapper($ast, $nested_msgstruct);
-            $mapped_retvals{$retval->{name}} = $submap if %{ $submap };
+            my %submap = _retval_mapper($ast, $nested_msgstruct);
+            $mapped_retvals{$retval->{name}} = \%submap if %submap;
         }
     }
 
-    return \%mapped_retvals;
+    return %mapped_retvals;
 }
 
 sub _retval_map {
@@ -156,7 +162,7 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
                                    my $argstr = $_->{argstr} ? "( $_->{argstr} )" : '';
                                    $argstr =~ s/\$flags \)/\$flags = 0 \)/;
                                    my $retstr = ($_->{retstr} =~ s/{\s*}/(* no data *)/r);
-                                   ($_->{ret_unwrap} eq 'undef') ? <<~POD1 : <<~POD2;
+                                   (not $_->{ret_unwrap}) ? <<~POD1 : <<~POD2;
                                    =head2 $_->{name}
 
                                      await \$$varname{$mod}->$_->{name}$argstr;
@@ -164,7 +170,7 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
                                    POD1
                                    =head2 $_->{name}
 
-                                     $_->{ret_unwrap} = await \$$varname{$mod}->$_->{name}$argstr;
+                                     \$$_->{ret_unwrap} = await \$$varname{$mod}->$_->{name}$argstr;
                                    POD2
                                }
                                sort { $a->{name} cmp $b->{name} }
@@ -200,11 +206,14 @@ sub proc_msg($proc_annotation, $module_returns, $msgstruct, $ast, $proc_value) {
     if ($proc_annotation !~ m/\@generate: (both|client)/) {
         return;
     }
-    my $mapped_retvals = _retval_mapper($ast, $msgstruct);
-    if (%{ $mapped_retvals }) {
-        my $mapstr = _retval_map( $mapped_retvals );
+    my @retvals = _retvals( $msgstruct );
+    my %mapped_retvals = _retval_mapper($ast, @retvals);
+    my $ret_unwrap = (@retvals == 1 ? $retvals[0]->{name} : '');
+    if (%mapped_retvals or $ret_unwrap) {
+        my $mapstr = _retval_map( \%mapped_retvals );
+        $ret_unwrap ||= 'undef';
         $module_returns->[$proc_value] =
-            qq|sub { $proc_value; my \$client = shift; _translated(\$client, $mapstr, \@_) }|;
+            qq|sub { $proc_value; my \$client = shift; _translated(\$client, $ret_unwrap, $mapstr, \@_) }|;
     }
     else {
         $module_returns->[$proc_value] = '\&_no_translation';
@@ -219,15 +228,8 @@ sub proc_call($ast, $module_functions, $module_returns, $proc_value, $proc_const
     my $retstruct = find_toplevel_definition($ast, $retstruct_name);
     my $into_module = $main_module;
 
-    my @callargs = (
-        map { +{ name => $_->{name}->{content},
-                 type => _named_type_name( $_->{declaration}->{type} ) }
-        }
-        @{ $callstruct ? $callstruct->{definition}->{type}->{declaration}->{members} : [] });
-    my @retvals = (
-        map { +{ name => $_->{name}->{content},
-                 type => _named_type_name( $_->{declaration}->{type} ) } }
-        @{ $retstruct ? $retstruct->{definition}->{type}->{declaration}->{members} : [] });
+    my @callargs = _retvals( $callstruct );
+    my @retvals  = _retvals( $retstruct );
 
     my $first_call_arg = @callargs ? $callargs[0] : undef;
     if ($first_call_arg) {
@@ -242,17 +244,17 @@ sub proc_call($ast, $module_functions, $module_returns, $proc_value, $proc_const
     }
 
     my $entrypoint = ($func =~ s/$prefix_strip_xdr{$into_module}//r);
-    my $ret_unwrap = (@retvals == 1 ? "\$$retvals[0]->{name}" : 'undef');
+    my $ret_unwrap = (@retvals == 1 ? $retvals[0]->{name} : '');
     push @{ $module_functions->{$into_module} //= [] }, {
         name => $entrypoint,
         const => $proc_const,
         args => \@callargs,
         ret  => \@retvals,
-        retstr => ($ret_unwrap eq 'undef'
+        retstr => (not $ret_unwrap
                    ? '{ ' . join(', ',
                                  map { $_ . ' => $' . $_ }
                                  sort map { $_->{name} }  @retvals) . ' }'
-                   : $ret_unwrap),
+                   : '$' . $ret_unwrap),
         ret_unwrap => $ret_unwrap,
     };
     my %mapped_retvals;
@@ -262,10 +264,11 @@ sub proc_call($ast, $module_functions, $module_returns, $proc_value, $proc_const
             $mapped_retvals{$retval->{name}} = $retval->{type};
         }
     }
-    if (%mapped_retvals) {
+    if (%mapped_retvals or $ret_unwrap) {
         my $mapstr = join(', ',
                           map { "$_ => \\&_translate_$mapped_retvals{$_}" }
                           sort keys %mapped_retvals);
+        $ret_unwrap = $ret_unwrap ? "'$ret_unwrap'" : 'undef';
         $module_returns->[$proc_value] =
             qq|sub { $proc_value; my \$client = shift; _translated(\$client, $ret_unwrap, { $mapstr }, \@_) }|;
     }
