@@ -10,8 +10,10 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+no warnings qw(void);
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt __VERSION__;
@@ -99,12 +101,8 @@ my @reply_translators = (
 );
 
 
-sub _translated {
-    my $client = shift;
-    my $argmap = shift;
-    my %args = @_;
-
-    return @_ unless $args{data};
+sub _translated($client, $unwrap, $argmap, %args) {
+    return (%args, ) unless $args{data};
     my $data = $args{data};
     for my $key (keys %{ $argmap }) {
         my $val = $data->{$key};
@@ -120,6 +118,9 @@ sub _translated {
         }
     }
 
+    if ($unwrap) {
+        $args{data} = $args{data}->{$unwrap};
+    }
     return (%args, );
 }
 
