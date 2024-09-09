@@ -244,6 +244,18 @@ sub proc_call($ast, $module_functions, $module_returns, $proc_value, $proc_const
     }
 
     my $entrypoint = ($func =~ s/$prefix_strip_xdr{$into_module}//r);
+    my $pod_remarks = '';
+    if ($entrypoint =~ /^list_/) {
+        # list functions have a 'ret' and an array; simply return the array,
+        # Perl *knows* how long the array is...
+        @retvals = grep { $_->{name} ne 'ret' } @retvals;
+        $pod_remarks .= <<~'POD';
+
+          B<Remark:> This function differs from the LibVirt API in that it
+          discards the C<ret> parameter in the return structure; the value
+          of it is embedded in the length of the returned array.
+          POD
+    }
     my $ret_unwrap = (@retvals == 1 ? $retvals[0]->{name} : '');
     push @{ $module_functions->{$into_module} //= [] }, {
         name => $entrypoint,
