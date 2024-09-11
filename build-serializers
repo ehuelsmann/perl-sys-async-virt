@@ -162,6 +162,9 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
                                    my $argstr = $_->{argstr} ? "( $_->{argstr} )" : '';
                                    $argstr =~ s/\$flags \)/\$flags = 0 \)/;
                                    my $retstr = ($_->{retstr} =~ s/{\s*}/(* no data *)/r);
+                                   if (length $retstr > 50) {
+                                       $retstr =~ s/, /,\n  #      /g;
+                                   }
                                    (not $_->{ret_unwrap}) ? <<~POD1 : <<~POD2;
                                    =head2 $_->{name}
 

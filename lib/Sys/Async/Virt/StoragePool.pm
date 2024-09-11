@@ -233,7 +233,10 @@ v10.3.0
 =head2 get_info
 
   await $pool->get_info;
-  # -> { allocation => $allocation, available => $available, capacity => $capacity, state => $state }
+  # -> { allocation => $allocation,
+  #      available => $available,
+  #      capacity => $capacity,
+  #      state => $state }
 
 =head2 get_xml_desc
 

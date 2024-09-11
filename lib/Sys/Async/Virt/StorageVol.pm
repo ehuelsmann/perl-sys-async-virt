@@ -170,7 +170,9 @@ v10.3.0
 =head2 get_info
 
   await $vol->get_info;
-  # -> { allocation => $allocation, capacity => $capacity, type => $type }
+  # -> { allocation => $allocation,
+  #      capacity => $capacity,
+  #      type => $type }
 
 =head2 get_path
 

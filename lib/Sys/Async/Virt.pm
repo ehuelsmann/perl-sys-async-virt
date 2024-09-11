@@ -2153,7 +2153,14 @@ a confirmation message from the server after which the server will close the con
 =head2 node_get_info
 
   await $client->node_get_info;
-  # -> { cores => $cores, cpus => $cpus, memory => $memory, mhz => $mhz, model => $model, nodes => $nodes, sockets => $sockets, threads => $threads }
+  # -> { cores => $cores,
+  #      cpus => $cpus,
+  #      memory => $memory,
+  #      mhz => $mhz,
+  #      model => $model,
+  #      nodes => $nodes,
+  #      sockets => $sockets,
+  #      threads => $threads }
 
 =head2 node_list_devices
 

@@ -1598,7 +1598,11 @@ v10.3.0
 =head2 block_stats
 
   await $dom->block_stats( $path );
-  # -> { errs => $errs, rd_bytes => $rd_bytes, rd_req => $rd_req, wr_bytes => $wr_bytes, wr_req => $wr_req }
+  # -> { errs => $errs,
+  #      rd_bytes => $rd_bytes,
+  #      rd_req => $rd_req,
+  #      wr_bytes => $wr_bytes,
+  #      wr_req => $wr_req }
 
 =head2 checkpoint_create_xml
 
@@ -1667,12 +1671,16 @@ v10.3.0
 =head2 get_block_info
 
   await $dom->get_block_info( $path, $flags = 0 );
-  # -> { allocation => $allocation, capacity => $capacity, physical => $physical }
+  # -> { allocation => $allocation,
+  #      capacity => $capacity,
+  #      physical => $physical }
 
 =head2 get_control_info
 
   await $dom->get_control_info( $flags = 0 );
-  # -> { details => $details, state => $state, stateTime => $stateTime }
+  # -> { details => $details,
+  #      state => $state,
+  #      stateTime => $stateTime }
 
 =head2 get_guest_vcpus
 
@@ -1685,12 +1693,27 @@ v10.3.0
 =head2 get_info
 
   await $dom->get_info;
-  # -> { cpuTime => $cpuTime, maxMem => $maxMem, memory => $memory, nrVirtCpu => $nrVirtCpu, state => $state }
+  # -> { cpuTime => $cpuTime,
+  #      maxMem => $maxMem,
+  #      memory => $memory,
+  #      nrVirtCpu => $nrVirtCpu,
+  #      state => $state }
 
 =head2 get_job_info
 
   await $dom->get_job_info;
-  # -> { dataProcessed => $dataProcessed, dataRemaining => $dataRemaining, dataTotal => $dataTotal, fileProcessed => $fileProcessed, fileRemaining => $fileRemaining, fileTotal => $fileTotal, memProcessed => $memProcessed, memRemaining => $memRemaining, memTotal => $memTotal, timeElapsed => $timeElapsed, timeRemaining => $timeRemaining, type => $type }
+  # -> { dataProcessed => $dataProcessed,
+  #      dataRemaining => $dataRemaining,
+  #      dataTotal => $dataTotal,
+  #      fileProcessed => $fileProcessed,
+  #      fileRemaining => $fileRemaining,
+  #      fileTotal => $fileTotal,
+  #      memProcessed => $memProcessed,
+  #      memRemaining => $memRemaining,
+  #      memTotal => $memTotal,
+  #      timeElapsed => $timeElapsed,
+  #      timeRemaining => $timeRemaining,
+  #      type => $type }
 
 =head2 get_max_memory
 
@@ -1745,7 +1768,14 @@ v10.3.0
 =head2 interface_stats
 
   await $dom->interface_stats( $device );
-  # -> { rx_bytes => $rx_bytes, rx_drop => $rx_drop, rx_errs => $rx_errs, rx_packets => $rx_packets, tx_bytes => $tx_bytes, tx_drop => $tx_drop, tx_errs => $tx_errs, tx_packets => $tx_packets }
+  # -> { rx_bytes => $rx_bytes,
+  #      rx_drop => $rx_drop,
+  #      rx_errs => $rx_errs,
+  #      rx_packets => $rx_packets,
+  #      tx_bytes => $tx_bytes,
+  #      tx_drop => $tx_drop,
+  #      tx_errs => $tx_errs,
+  #      tx_packets => $tx_packets }
 
 =head2 is_active
 
