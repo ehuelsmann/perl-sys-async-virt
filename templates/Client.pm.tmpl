@@ -15,6 +15,7 @@ use warnings;
 no warnings qw(void);
 use experimental 'signatures';
 use Future::AsyncAwait;
+use Future::Queue;
 
 package Sys::Async::Virt __VERSION__;
 
@@ -331,12 +332,13 @@ sub _dispatch_message {
 
     if ($args{data}
         and defined $args{data}->{callbackID}
-        and my $cb = $self->{_callbacks}->{$args{data}->{callbackID}}) {
+        and my $q = $self->{_callbacks}->{$args{data}->{callbackID}}) {
         my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
-        $cb->( %{ $cbargs{data}->{msg} } );
+        $q->push( $cbargs{data} );
     }
     else {
-        $self->{on_message}->( $reply_translators[$args{header}->{proc}]->( @_ ) );
+        my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
+        $self->{on_message}->( $cbargs{data} );
     }
 }
 
