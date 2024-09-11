@@ -1,7 +1,7 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version ,
-#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version v10.3.0
+#     This file was generated using XDR::Parse version v0.3.1
+#                   and LibVirt version v10.3.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -146,47 +146,40 @@ v10.3.0
 
 =head2 delete
 
-  $serial = $client->delete( $flags = 0 );
+  await $snapshot->delete( $flags = 0 );
   # -> (* no data *)
 
 =head2 get_parent
 
-  $serial = $client->get_parent( $flags = 0 );
-  # -> { snap => $snap }
+  $snap = await $snapshot->get_parent( $flags = 0 );
 
 =head2 get_xml_desc
 
-  $serial = $client->get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $snapshot->get_xml_desc( $flags = 0 );
 
 =head2 has_metadata
 
-  $serial = $client->has_metadata( $flags = 0 );
-  # -> { metadata => $metadata }
+  $metadata = await $snapshot->has_metadata( $flags = 0 );
 
 =head2 is_current
 
-  $serial = $client->is_current( $flags = 0 );
-  # -> { current => $current }
+  $current = await $snapshot->is_current( $flags = 0 );
 
 =head2 list_all_children
 
-  $serial = $client->list_all_children( $need_results, $flags = 0 );
-  # -> { ret => $ret, snapshots => $snapshots }
+  $snapshots = await $snapshot->list_all_children( $need_results, $flags = 0 );
 
 =head2 list_children_names
 
-  $serial = $client->list_children_names( $maxnames, $flags = 0 );
-  # -> { names => $names }
+  $names = await $snapshot->list_children_names( $maxnames, $flags = 0 );
 
 =head2 num_children
 
-  $serial = $client->num_children( $flags = 0 );
-  # -> { num => $num }
+  $num = await $snapshot->num_children( $flags = 0 );
 
 =head2 revert_to_snapshot
 
-  $serial = $client->revert_to_snapshot( $flags = 0 );
+  await $snapshot->revert_to_snapshot( $flags = 0 );
   # -> (* no data *)
 
 

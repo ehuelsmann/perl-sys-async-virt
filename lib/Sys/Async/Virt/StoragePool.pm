@@ -1,7 +1,7 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version ,
-#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version v10.3.0
+#     This file was generated using XDR::Parse version v0.3.1
+#                   and LibVirt version v10.3.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -208,93 +208,83 @@ v10.3.0
 
 =head2 build
 
-  $serial = $client->build( $flags = 0 );
+  await $pool->build( $flags = 0 );
   # -> (* no data *)
 
 =head2 create
 
-  $serial = $client->create( $flags = 0 );
+  await $pool->create( $flags = 0 );
   # -> (* no data *)
 
 =head2 delete
 
-  $serial = $client->delete( $flags = 0 );
+  await $pool->delete( $flags = 0 );
   # -> (* no data *)
 
 =head2 destroy
 
-  $serial = $client->destroy;
+  await $pool->destroy;
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $serial = $client->get_autostart;
-  # -> { autostart => $autostart }
+  $autostart = await $pool->get_autostart;
 
 =head2 get_info
 
-  $serial = $client->get_info;
+  await $pool->get_info;
   # -> { allocation => $allocation, available => $available, capacity => $capacity, state => $state }
 
 =head2 get_xml_desc
 
-  $serial = $client->get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $pool->get_xml_desc( $flags = 0 );
 
 =head2 is_active
 
-  $serial = $client->is_active;
-  # -> { active => $active }
+  $active = await $pool->is_active;
 
 =head2 is_persistent
 
-  $serial = $client->is_persistent;
-  # -> { persistent => $persistent }
+  $persistent = await $pool->is_persistent;
 
 =head2 list_all_volumes
 
-  $serial = $client->list_all_volumes( $need_results, $flags = 0 );
-  # -> { ret => $ret, vols => $vols }
+  $vols = await $pool->list_all_volumes( $need_results, $flags = 0 );
 
 =head2 list_volumes
 
-  $serial = $client->list_volumes( $maxnames );
-  # -> { names => $names }
+  $names = await $pool->list_volumes( $maxnames );
 
 =head2 num_of_volumes
 
-  $serial = $client->num_of_volumes;
-  # -> { num => $num }
+  $num = await $pool->num_of_volumes;
 
 =head2 refresh
 
-  $serial = $client->refresh( $flags = 0 );
+  await $pool->refresh( $flags = 0 );
   # -> (* no data *)
 
 =head2 set_autostart
 
-  $serial = $client->set_autostart( $autostart );
+  await $pool->set_autostart( $autostart );
   # -> (* no data *)
 
 =head2 undefine
 
-  $serial = $client->undefine;
+  await $pool->undefine;
   # -> (* no data *)
 
 =head2 vol_create_xml
 
-  $serial = $client->vol_create_xml( $xml, $flags = 0 );
-  # -> { vol => $vol }
+  $vol = await $pool->vol_create_xml( $xml, $flags = 0 );
 
 =head2 vol_create_xml_from
 
-  $serial = $client->vol_create_xml_from( $xml, $clonevol, $flags = 0 );
-  # -> { vol => $vol }
+  $vol = await $pool->vol_create_xml_from( $xml, $clonevol, $flags = 0 );
 
 =head2 vol_lookup_by_name
 
-  $serial = $client->vol_lookup_by_name( $name );
-  # -> { vol => $vol }
+  $vol = await $pool->vol_lookup_by_name( $name );
 
 
 =head1 CONSTANTS

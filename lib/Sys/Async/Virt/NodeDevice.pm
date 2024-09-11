@@ -1,7 +1,7 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version ,
-#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version v10.3.0
+#     This file was generated using XDR::Parse version v0.3.1
+#                   and LibVirt version v10.3.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -183,82 +183,71 @@ v10.3.0
 
 =head2 create
 
-  $serial = $client->create( $flags = 0 );
+  await $dev->create( $flags = 0 );
   # -> (* no data *)
 
 =head2 create_xml
 
-  $serial = $client->create_xml( $flags = 0 );
-  # -> { dev => $dev }
+  $dev = await $dev->create_xml( $flags = 0 );
 
 =head2 define_xml
 
-  $serial = $client->define_xml( $flags = 0 );
-  # -> { dev => $dev }
+  $dev = await $dev->define_xml( $flags = 0 );
 
 =head2 destroy
 
-  $serial = $client->destroy;
+  await $dev->destroy;
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $serial = $client->get_autostart;
-  # -> { autostart => $autostart }
+  $autostart = await $dev->get_autostart;
 
 =head2 get_parent
 
-  $serial = $client->get_parent;
-  # -> { parentName => $parentName }
+  $parentName = await $dev->get_parent;
 
 =head2 get_xml_desc
 
-  $serial = $client->get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $dev->get_xml_desc( $flags = 0 );
 
 =head2 is_active
 
-  $serial = $client->is_active;
-  # -> { active => $active }
+  $active = await $dev->is_active;
 
 =head2 is_persistent
 
-  $serial = $client->is_persistent;
-  # -> { persistent => $persistent }
+  $persistent = await $dev->is_persistent;
 
 =head2 list_caps
 
-  $serial = $client->list_caps( $maxnames );
-  # -> { names => $names }
+  $names = await $dev->list_caps( $maxnames );
 
 =head2 lookup_by_name
 
-  $serial = $client->lookup_by_name;
-  # -> { dev => $dev }
+  $dev = await $dev->lookup_by_name;
 
 =head2 lookup_scsi_host_by_wwn
 
-  $serial = $client->lookup_scsi_host_by_wwn( $wwpn, $flags = 0 );
-  # -> { dev => $dev }
+  $dev = await $dev->lookup_scsi_host_by_wwn( $wwpn, $flags = 0 );
 
 =head2 num_of_caps
 
-  $serial = $client->num_of_caps;
-  # -> { num => $num }
+  $num = await $dev->num_of_caps;
 
 =head2 set_autostart
 
-  $serial = $client->set_autostart( $autostart );
+  await $dev->set_autostart( $autostart );
   # -> (* no data *)
 
 =head2 undefine
 
-  $serial = $client->undefine( $flags = 0 );
+  await $dev->undefine( $flags = 0 );
   # -> (* no data *)
 
 =head2 update
 
-  $serial = $client->update( $xml_desc, $flags = 0 );
+  await $dev->update( $xml_desc, $flags = 0 );
   # -> (* no data *)
 
 

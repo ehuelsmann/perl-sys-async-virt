@@ -1,7 +1,7 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version ,
-#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version v10.3.0
+#     This file was generated using XDR::Parse version v0.3.1
+#                   and LibVirt version v10.3.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -159,52 +159,49 @@ v10.3.0
 
 =head2 delete
 
-  $serial = $client->delete( $flags = 0 );
+  await $vol->delete( $flags = 0 );
   # -> (* no data *)
 
 =head2 download
 
-  $serial = $client->download( $offset, $length, $flags = 0 );
+  await $vol->download( $offset, $length, $flags = 0 );
   # -> (* no data *)
 
 =head2 get_info
 
-  $serial = $client->get_info;
+  await $vol->get_info;
   # -> { allocation => $allocation, capacity => $capacity, type => $type }
 
 =head2 get_path
 
-  $serial = $client->get_path;
-  # -> { name => $name }
+  $name = await $vol->get_path;
 
 =head2 get_xml_desc
 
-  $serial = $client->get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $vol->get_xml_desc( $flags = 0 );
 
 =head2 pool_lookup_by_volume
 
-  $serial = $client->pool_lookup_by_volume;
-  # -> { pool => $pool }
+  $pool = await $vol->pool_lookup_by_volume;
 
 =head2 resize
 
-  $serial = $client->resize( $capacity, $flags = 0 );
+  await $vol->resize( $capacity, $flags = 0 );
   # -> (* no data *)
 
 =head2 upload
 
-  $serial = $client->upload( $offset, $length, $flags = 0 );
+  await $vol->upload( $offset, $length, $flags = 0 );
   # -> (* no data *)
 
 =head2 wipe
 
-  $serial = $client->wipe( $flags = 0 );
+  await $vol->wipe( $flags = 0 );
   # -> (* no data *)
 
 =head2 wipe_pattern
 
-  $serial = $client->wipe_pattern( $algorithm, $flags = 0 );
+  await $vol->wipe_pattern( $algorithm, $flags = 0 );
   # -> (* no data *)
 
 

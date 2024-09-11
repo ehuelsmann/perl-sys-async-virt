@@ -1,7 +1,7 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version ,
-#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version v10.3.0
+#     This file was generated using XDR::Parse version v0.3.1
+#                   and LibVirt version v10.3.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -86,17 +86,16 @@ v10.3.0
 
 =head2 get_xml_desc
 
-  $serial = $client->get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $secret->get_xml_desc( $flags = 0 );
 
 =head2 set_value
 
-  $serial = $client->set_value( $value, $flags = 0 );
+  await $secret->set_value( $value, $flags = 0 );
   # -> (* no data *)
 
 =head2 undefine
 
-  $serial = $client->undefine;
+  await $secret->undefine;
   # -> (* no data *)
 
 

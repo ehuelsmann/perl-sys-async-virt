@@ -1,7 +1,7 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version ,
-#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version v10.3.0
+#     This file was generated using XDR::Parse version v0.3.1
+#                   and LibVirt version v10.3.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -102,23 +102,20 @@ v10.3.0
 
 =head2 delete
 
-  $serial = $client->delete( $flags = 0 );
+  await $checkpoint->delete( $flags = 0 );
   # -> (* no data *)
 
 =head2 get_parent
 
-  $serial = $client->get_parent( $flags = 0 );
-  # -> { parent => $parent }
+  $parent = await $checkpoint->get_parent( $flags = 0 );
 
 =head2 get_xml_desc
 
-  $serial = $client->get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $checkpoint->get_xml_desc( $flags = 0 );
 
 =head2 list_all_children
 
-  $serial = $client->list_all_children( $need_results, $flags = 0 );
-  # -> { checkpoints => $checkpoints, ret => $ret }
+  $checkpoints = await $checkpoint->list_all_children( $need_results, $flags = 0 );
 
 
 =head1 CONSTANTS

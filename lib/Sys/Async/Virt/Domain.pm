@@ -1,7 +1,7 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version ,
-#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version v10.3.0
+#     This file was generated using XDR::Parse version v0.3.1
+#                   and LibVirt version v10.3.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -1529,582 +1529,547 @@ v10.3.0
 
 =head2 abort_job
 
-  $serial = $client->abort_job;
+  await $dom->abort_job;
   # -> (* no data *)
 
 =head2 abort_job_flags
 
-  $serial = $client->abort_job_flags( $flags = 0 );
+  await $dom->abort_job_flags( $flags = 0 );
   # -> (* no data *)
 
 =head2 agent_set_response_timeout
 
-  $serial = $client->agent_set_response_timeout( $timeout, $flags = 0 );
-  # -> { result => $result }
+  $result = await $dom->agent_set_response_timeout( $timeout, $flags = 0 );
 
 =head2 attach_device
 
-  $serial = $client->attach_device( $xml );
+  await $dom->attach_device( $xml );
   # -> (* no data *)
 
 =head2 attach_device_flags
 
-  $serial = $client->attach_device_flags( $xml, $flags = 0 );
+  await $dom->attach_device_flags( $xml, $flags = 0 );
   # -> (* no data *)
 
 =head2 backup_begin
 
-  $serial = $client->backup_begin( $backup_xml, $checkpoint_xml, $flags = 0 );
+  await $dom->backup_begin( $backup_xml, $checkpoint_xml, $flags = 0 );
   # -> (* no data *)
 
 =head2 backup_get_xml_desc
 
-  $serial = $client->backup_get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $dom->backup_get_xml_desc( $flags = 0 );
 
 =head2 block_commit
 
-  $serial = $client->block_commit( $disk, $base, $top, $bandwidth, $flags = 0 );
+  await $dom->block_commit( $disk, $base, $top, $bandwidth, $flags = 0 );
   # -> (* no data *)
 
 =head2 block_copy
 
-  $serial = $client->block_copy( $path, $destxml, $params, $flags = 0 );
+  await $dom->block_copy( $path, $destxml, $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 block_job_abort
 
-  $serial = $client->block_job_abort( $path, $flags = 0 );
+  await $dom->block_job_abort( $path, $flags = 0 );
   # -> (* no data *)
 
 =head2 block_job_set_speed
 
-  $serial = $client->block_job_set_speed( $path, $bandwidth, $flags = 0 );
+  await $dom->block_job_set_speed( $path, $bandwidth, $flags = 0 );
   # -> (* no data *)
 
 =head2 block_pull
 
-  $serial = $client->block_pull( $path, $bandwidth, $flags = 0 );
+  await $dom->block_pull( $path, $bandwidth, $flags = 0 );
   # -> (* no data *)
 
 =head2 block_rebase
 
-  $serial = $client->block_rebase( $path, $base, $bandwidth, $flags = 0 );
+  await $dom->block_rebase( $path, $base, $bandwidth, $flags = 0 );
   # -> (* no data *)
 
 =head2 block_resize
 
-  $serial = $client->block_resize( $disk, $size, $flags = 0 );
+  await $dom->block_resize( $disk, $size, $flags = 0 );
   # -> (* no data *)
 
 =head2 block_stats
 
-  $serial = $client->block_stats( $path );
+  await $dom->block_stats( $path );
   # -> { errs => $errs, rd_bytes => $rd_bytes, rd_req => $rd_req, wr_bytes => $wr_bytes, wr_req => $wr_req }
 
 =head2 checkpoint_create_xml
 
-  $serial = $client->checkpoint_create_xml( $xml_desc, $flags = 0 );
-  # -> { checkpoint => $checkpoint }
+  $checkpoint = await $dom->checkpoint_create_xml( $xml_desc, $flags = 0 );
 
 =head2 checkpoint_lookup_by_name
 
-  $serial = $client->checkpoint_lookup_by_name( $name, $flags = 0 );
-  # -> { checkpoint => $checkpoint }
+  $checkpoint = await $dom->checkpoint_lookup_by_name( $name, $flags = 0 );
 
 =head2 core_dump
 
-  $serial = $client->core_dump( $to, $flags = 0 );
+  await $dom->core_dump( $to, $flags = 0 );
   # -> (* no data *)
 
 =head2 core_dump_with_format
 
-  $serial = $client->core_dump_with_format( $to, $dumpformat, $flags = 0 );
+  await $dom->core_dump_with_format( $to, $dumpformat, $flags = 0 );
   # -> (* no data *)
 
 =head2 create_with_flags
 
-  $serial = $client->create_with_flags( $flags = 0 );
-  # -> { dom => $dom }
+  $dom = await $dom->create_with_flags( $flags = 0 );
 
 =head2 destroy
 
-  $serial = $client->destroy;
+  await $dom->destroy;
   # -> (* no data *)
 
 =head2 destroy_flags
 
-  $serial = $client->destroy_flags( $flags = 0 );
+  await $dom->destroy_flags( $flags = 0 );
   # -> (* no data *)
 
 =head2 detach_device
 
-  $serial = $client->detach_device( $xml );
+  await $dom->detach_device( $xml );
   # -> (* no data *)
 
 =head2 detach_device_alias
 
-  $serial = $client->detach_device_alias( $alias, $flags = 0 );
+  await $dom->detach_device_alias( $alias, $flags = 0 );
   # -> (* no data *)
 
 =head2 detach_device_flags
 
-  $serial = $client->detach_device_flags( $xml, $flags = 0 );
+  await $dom->detach_device_flags( $xml, $flags = 0 );
   # -> (* no data *)
 
 =head2 fsfreeze
 
-  $serial = $client->fsfreeze( $mountpoints, $flags = 0 );
-  # -> { filesystems => $filesystems }
+  $filesystems = await $dom->fsfreeze( $mountpoints, $flags = 0 );
 
 =head2 fsthaw
 
-  $serial = $client->fsthaw( $mountpoints, $flags = 0 );
-  # -> { filesystems => $filesystems }
+  $filesystems = await $dom->fsthaw( $mountpoints, $flags = 0 );
 
 =head2 fstrim
 
-  $serial = $client->fstrim( $mountPoint, $minimum, $flags = 0 );
+  await $dom->fstrim( $mountPoint, $minimum, $flags = 0 );
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $serial = $client->get_autostart;
-  # -> { autostart => $autostart }
+  $autostart = await $dom->get_autostart;
 
 =head2 get_block_info
 
-  $serial = $client->get_block_info( $path, $flags = 0 );
+  await $dom->get_block_info( $path, $flags = 0 );
   # -> { allocation => $allocation, capacity => $capacity, physical => $physical }
 
 =head2 get_control_info
 
-  $serial = $client->get_control_info( $flags = 0 );
+  await $dom->get_control_info( $flags = 0 );
   # -> { details => $details, state => $state, stateTime => $stateTime }
 
 =head2 get_guest_vcpus
 
-  $serial = $client->get_guest_vcpus( $flags = 0 );
-  # -> { params => $params }
+  $params = await $dom->get_guest_vcpus( $flags = 0 );
 
 =head2 get_hostname
 
-  $serial = $client->get_hostname( $flags = 0 );
-  # -> { hostname => $hostname }
+  $hostname = await $dom->get_hostname( $flags = 0 );
 
 =head2 get_info
 
-  $serial = $client->get_info;
+  await $dom->get_info;
   # -> { cpuTime => $cpuTime, maxMem => $maxMem, memory => $memory, nrVirtCpu => $nrVirtCpu, state => $state }
 
 =head2 get_job_info
 
-  $serial = $client->get_job_info;
+  await $dom->get_job_info;
   # -> { dataProcessed => $dataProcessed, dataRemaining => $dataRemaining, dataTotal => $dataTotal, fileProcessed => $fileProcessed, fileRemaining => $fileRemaining, fileTotal => $fileTotal, memProcessed => $memProcessed, memRemaining => $memRemaining, memTotal => $memTotal, timeElapsed => $timeElapsed, timeRemaining => $timeRemaining, type => $type }
 
 =head2 get_max_memory
 
-  $serial = $client->get_max_memory;
-  # -> { memory => $memory }
+  $memory = await $dom->get_max_memory;
 
 =head2 get_max_vcpus
 
-  $serial = $client->get_max_vcpus;
-  # -> { num => $num }
+  $num = await $dom->get_max_vcpus;
 
 =head2 get_metadata
 
-  $serial = $client->get_metadata( $type, $uri, $flags = 0 );
-  # -> { metadata => $metadata }
+  $metadata = await $dom->get_metadata( $type, $uri, $flags = 0 );
 
 =head2 get_os_type
 
-  $serial = $client->get_os_type;
-  # -> { type => $type }
+  $type = await $dom->get_os_type;
 
 =head2 get_scheduler_parameters
 
-  $serial = $client->get_scheduler_parameters( $nparams );
-  # -> { params => $params }
+  $params = await $dom->get_scheduler_parameters( $nparams );
 
 =head2 get_scheduler_parameters_flags
 
-  $serial = $client->get_scheduler_parameters_flags( $nparams, $flags = 0 );
-  # -> { params => $params }
+  $params = await $dom->get_scheduler_parameters_flags( $nparams, $flags = 0 );
 
 =head2 get_vcpus_flags
 
-  $serial = $client->get_vcpus_flags( $flags = 0 );
-  # -> { num => $num }
+  $num = await $dom->get_vcpus_flags( $flags = 0 );
 
 =head2 get_xml_desc
 
-  $serial = $client->get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $dom->get_xml_desc( $flags = 0 );
 
 =head2 graphics_reload
 
-  $serial = $client->graphics_reload( $type, $flags = 0 );
+  await $dom->graphics_reload( $type, $flags = 0 );
   # -> (* no data *)
 
 =head2 has_current_snapshot
 
-  $serial = $client->has_current_snapshot( $flags = 0 );
-  # -> { result => $result }
+  $result = await $dom->has_current_snapshot( $flags = 0 );
 
 =head2 has_managed_save_image
 
-  $serial = $client->has_managed_save_image( $flags = 0 );
-  # -> { result => $result }
+  $result = await $dom->has_managed_save_image( $flags = 0 );
 
 =head2 inject_nmi
 
-  $serial = $client->inject_nmi( $flags = 0 );
+  await $dom->inject_nmi( $flags = 0 );
   # -> (* no data *)
 
 =head2 interface_stats
 
-  $serial = $client->interface_stats( $device );
+  await $dom->interface_stats( $device );
   # -> { rx_bytes => $rx_bytes, rx_drop => $rx_drop, rx_errs => $rx_errs, rx_packets => $rx_packets, tx_bytes => $tx_bytes, tx_drop => $tx_drop, tx_errs => $tx_errs, tx_packets => $tx_packets }
 
 =head2 is_active
 
-  $serial = $client->is_active;
-  # -> { active => $active }
+  $active = await $dom->is_active;
 
 =head2 is_persistent
 
-  $serial = $client->is_persistent;
-  # -> { persistent => $persistent }
+  $persistent = await $dom->is_persistent;
 
 =head2 is_updated
 
-  $serial = $client->is_updated;
-  # -> { updated => $updated }
+  $updated = await $dom->is_updated;
 
 =head2 list_all_checkpoints
 
-  $serial = $client->list_all_checkpoints( $need_results, $flags = 0 );
-  # -> { checkpoints => $checkpoints, ret => $ret }
+  $checkpoints = await $dom->list_all_checkpoints( $need_results, $flags = 0 );
 
 =head2 list_all_snapshots
 
-  $serial = $client->list_all_snapshots( $need_results, $flags = 0 );
-  # -> { ret => $ret, snapshots => $snapshots }
+  $snapshots = await $dom->list_all_snapshots( $need_results, $flags = 0 );
 
 =head2 managed_save
 
-  $serial = $client->managed_save( $flags = 0 );
+  await $dom->managed_save( $flags = 0 );
   # -> (* no data *)
 
 =head2 managed_save_define_xml
 
-  $serial = $client->managed_save_define_xml( $dxml, $flags = 0 );
+  await $dom->managed_save_define_xml( $dxml, $flags = 0 );
   # -> (* no data *)
 
 =head2 managed_save_get_xml_desc
 
-  $serial = $client->managed_save_get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $dom->managed_save_get_xml_desc( $flags = 0 );
 
 =head2 managed_save_remove
 
-  $serial = $client->managed_save_remove( $flags = 0 );
+  await $dom->managed_save_remove( $flags = 0 );
   # -> (* no data *)
 
 =head2 migrate_get_compression_cache
 
-  $serial = $client->migrate_get_compression_cache( $flags = 0 );
-  # -> { cacheSize => $cacheSize }
+  $cacheSize = await $dom->migrate_get_compression_cache( $flags = 0 );
 
 =head2 migrate_get_max_downtime
 
-  $serial = $client->migrate_get_max_downtime( $flags = 0 );
-  # -> { downtime => $downtime }
+  $downtime = await $dom->migrate_get_max_downtime( $flags = 0 );
 
 =head2 migrate_get_max_speed
 
-  $serial = $client->migrate_get_max_speed( $flags = 0 );
-  # -> { bandwidth => $bandwidth }
+  $bandwidth = await $dom->migrate_get_max_speed( $flags = 0 );
 
 =head2 migrate_perform
 
-  $serial = $client->migrate_perform( $cookie, $uri, $flags, $dname, $resource );
+  await $dom->migrate_perform( $cookie, $uri, $flags, $dname, $resource );
   # -> (* no data *)
 
 =head2 migrate_set_compression_cache
 
-  $serial = $client->migrate_set_compression_cache( $cacheSize, $flags = 0 );
+  await $dom->migrate_set_compression_cache( $cacheSize, $flags = 0 );
   # -> (* no data *)
 
 =head2 migrate_set_max_downtime
 
-  $serial = $client->migrate_set_max_downtime( $downtime, $flags = 0 );
+  await $dom->migrate_set_max_downtime( $downtime, $flags = 0 );
   # -> (* no data *)
 
 =head2 migrate_set_max_speed
 
-  $serial = $client->migrate_set_max_speed( $bandwidth, $flags = 0 );
+  await $dom->migrate_set_max_speed( $bandwidth, $flags = 0 );
   # -> (* no data *)
 
 =head2 migrate_start_post_copy
 
-  $serial = $client->migrate_start_post_copy( $flags = 0 );
+  await $dom->migrate_start_post_copy( $flags = 0 );
   # -> (* no data *)
 
 =head2 open_channel
 
-  $serial = $client->open_channel( $name, $flags = 0 );
+  await $dom->open_channel( $name, $flags = 0 );
   # -> (* no data *)
 
 =head2 open_console
 
-  $serial = $client->open_console( $dev_name, $flags = 0 );
+  await $dom->open_console( $dev_name, $flags = 0 );
   # -> (* no data *)
 
 =head2 pin_iothread
 
-  $serial = $client->pin_iothread( $iothreads_id, $cpumap, $flags = 0 );
+  await $dom->pin_iothread( $iothreads_id, $cpumap, $flags = 0 );
   # -> (* no data *)
 
 =head2 pin_vcpu
 
-  $serial = $client->pin_vcpu( $vcpu, $cpumap );
+  await $dom->pin_vcpu( $vcpu, $cpumap );
   # -> (* no data *)
 
 =head2 pin_vcpu_flags
 
-  $serial = $client->pin_vcpu_flags( $vcpu, $cpumap, $flags = 0 );
+  await $dom->pin_vcpu_flags( $vcpu, $cpumap, $flags = 0 );
   # -> (* no data *)
 
 =head2 pm_suspend_for_duration
 
-  $serial = $client->pm_suspend_for_duration( $target, $duration, $flags = 0 );
+  await $dom->pm_suspend_for_duration( $target, $duration, $flags = 0 );
   # -> (* no data *)
 
 =head2 pm_wakeup
 
-  $serial = $client->pm_wakeup( $flags = 0 );
+  await $dom->pm_wakeup( $flags = 0 );
   # -> (* no data *)
 
 =head2 reboot
 
-  $serial = $client->reboot( $flags = 0 );
+  await $dom->reboot( $flags = 0 );
   # -> (* no data *)
 
 =head2 reset
 
-  $serial = $client->reset( $flags = 0 );
+  await $dom->reset( $flags = 0 );
   # -> (* no data *)
 
 =head2 resume
 
-  $serial = $client->resume;
+  await $dom->resume;
   # -> (* no data *)
 
 =head2 save
 
-  $serial = $client->save( $to );
+  await $dom->save( $to );
   # -> (* no data *)
 
 =head2 save_flags
 
-  $serial = $client->save_flags( $to, $dxml, $flags = 0 );
+  await $dom->save_flags( $to, $dxml, $flags = 0 );
   # -> (* no data *)
 
 =head2 save_params
 
-  $serial = $client->save_params( $params, $flags = 0 );
+  await $dom->save_params( $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 screenshot
 
-  $serial = $client->screenshot( $screen, $flags = 0 );
-  # -> { mime => $mime }
+  $mime = await $dom->screenshot( $screen, $flags = 0 );
 
 =head2 send_key
 
-  $serial = $client->send_key( $codeset, $holdtime, $keycodes, $flags = 0 );
+  await $dom->send_key( $codeset, $holdtime, $keycodes, $flags = 0 );
   # -> (* no data *)
 
 =head2 send_process_signal
 
-  $serial = $client->send_process_signal( $pid_value, $signum, $flags = 0 );
+  await $dom->send_process_signal( $pid_value, $signum, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_autostart
 
-  $serial = $client->set_autostart( $autostart );
+  await $dom->set_autostart( $autostart );
   # -> (* no data *)
 
 =head2 set_blkio_parameters
 
-  $serial = $client->set_blkio_parameters( $params, $flags = 0 );
+  await $dom->set_blkio_parameters( $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_block_io_tune
 
-  $serial = $client->set_block_io_tune( $disk, $params, $flags = 0 );
+  await $dom->set_block_io_tune( $disk, $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_block_threshold
 
-  $serial = $client->set_block_threshold( $dev, $threshold, $flags = 0 );
+  await $dom->set_block_threshold( $dev, $threshold, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_guest_vcpus
 
-  $serial = $client->set_guest_vcpus( $cpumap, $state, $flags = 0 );
+  await $dom->set_guest_vcpus( $cpumap, $state, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_interface_parameters
 
-  $serial = $client->set_interface_parameters( $device, $params, $flags = 0 );
+  await $dom->set_interface_parameters( $device, $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_iothread_params
 
-  $serial = $client->set_iothread_params( $iothread_id, $params, $flags = 0 );
+  await $dom->set_iothread_params( $iothread_id, $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_launch_security_state
 
-  $serial = $client->set_launch_security_state( $params, $flags = 0 );
+  await $dom->set_launch_security_state( $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_lifecycle_action
 
-  $serial = $client->set_lifecycle_action( $type, $action, $flags = 0 );
+  await $dom->set_lifecycle_action( $type, $action, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_max_memory
 
-  $serial = $client->set_max_memory( $memory );
+  await $dom->set_max_memory( $memory );
   # -> (* no data *)
 
 =head2 set_memory
 
-  $serial = $client->set_memory( $memory );
+  await $dom->set_memory( $memory );
   # -> (* no data *)
 
 =head2 set_memory_flags
 
-  $serial = $client->set_memory_flags( $memory, $flags = 0 );
+  await $dom->set_memory_flags( $memory, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_memory_parameters
 
-  $serial = $client->set_memory_parameters( $params, $flags = 0 );
+  await $dom->set_memory_parameters( $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_memory_stats_period
 
-  $serial = $client->set_memory_stats_period( $period, $flags = 0 );
+  await $dom->set_memory_stats_period( $period, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_metadata
 
-  $serial = $client->set_metadata( $type, $metadata, $key, $uri, $flags = 0 );
+  await $dom->set_metadata( $type, $metadata, $key, $uri, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_numa_parameters
 
-  $serial = $client->set_numa_parameters( $params, $flags = 0 );
+  await $dom->set_numa_parameters( $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_perf_events
 
-  $serial = $client->set_perf_events( $params, $flags = 0 );
+  await $dom->set_perf_events( $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_scheduler_parameters
 
-  $serial = $client->set_scheduler_parameters( $params );
+  await $dom->set_scheduler_parameters( $params );
   # -> (* no data *)
 
 =head2 set_scheduler_parameters_flags
 
-  $serial = $client->set_scheduler_parameters_flags( $params, $flags = 0 );
+  await $dom->set_scheduler_parameters_flags( $params, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_time
 
-  $serial = $client->set_time( $seconds, $nseconds, $flags = 0 );
+  await $dom->set_time( $seconds, $nseconds, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_vcpu
 
-  $serial = $client->set_vcpu( $cpumap, $state, $flags = 0 );
+  await $dom->set_vcpu( $cpumap, $state, $flags = 0 );
   # -> (* no data *)
 
 =head2 set_vcpus
 
-  $serial = $client->set_vcpus( $nvcpus );
+  await $dom->set_vcpus( $nvcpus );
   # -> (* no data *)
 
 =head2 set_vcpus_flags
 
-  $serial = $client->set_vcpus_flags( $nvcpus, $flags = 0 );
+  await $dom->set_vcpus_flags( $nvcpus, $flags = 0 );
   # -> (* no data *)
 
 =head2 shutdown
 
-  $serial = $client->shutdown;
+  await $dom->shutdown;
   # -> (* no data *)
 
 =head2 shutdown_flags
 
-  $serial = $client->shutdown_flags( $flags = 0 );
+  await $dom->shutdown_flags( $flags = 0 );
   # -> (* no data *)
 
 =head2 snapshot_create_xml
 
-  $serial = $client->snapshot_create_xml( $xml_desc, $flags = 0 );
-  # -> { snap => $snap }
+  $snap = await $dom->snapshot_create_xml( $xml_desc, $flags = 0 );
 
 =head2 snapshot_current
 
-  $serial = $client->snapshot_current( $flags = 0 );
-  # -> { snap => $snap }
+  $snap = await $dom->snapshot_current( $flags = 0 );
 
 =head2 snapshot_list_names
 
-  $serial = $client->snapshot_list_names( $maxnames, $flags = 0 );
-  # -> { names => $names }
+  $names = await $dom->snapshot_list_names( $maxnames, $flags = 0 );
 
 =head2 snapshot_lookup_by_name
 
-  $serial = $client->snapshot_lookup_by_name( $name, $flags = 0 );
-  # -> { snap => $snap }
+  $snap = await $dom->snapshot_lookup_by_name( $name, $flags = 0 );
 
 =head2 snapshot_num
 
-  $serial = $client->snapshot_num( $flags = 0 );
-  # -> { num => $num }
+  $num = await $dom->snapshot_num( $flags = 0 );
 
 =head2 start_dirty_rate_calc
 
-  $serial = $client->start_dirty_rate_calc( $seconds, $flags = 0 );
+  await $dom->start_dirty_rate_calc( $seconds, $flags = 0 );
   # -> (* no data *)
 
 =head2 suspend
 
-  $serial = $client->suspend;
+  await $dom->suspend;
   # -> (* no data *)
 
 =head2 undefine
 
-  $serial = $client->undefine;
+  await $dom->undefine;
   # -> (* no data *)
 
 =head2 undefine_flags
 
-  $serial = $client->undefine_flags( $flags = 0 );
+  await $dom->undefine_flags( $flags = 0 );
   # -> (* no data *)
 
 =head2 update_device_flags
 
-  $serial = $client->update_device_flags( $xml, $flags = 0 );
+  await $dom->update_device_flags( $xml, $flags = 0 );
   # -> (* no data *)
 
 

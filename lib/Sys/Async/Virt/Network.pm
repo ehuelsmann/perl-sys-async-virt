@@ -1,7 +1,7 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version ,
-#        XDR::Gen version __XDR_GEN_VERSION__ and LibVirt version v10.3.0
+#     This file was generated using XDR::Parse version v0.3.1
+#                   and LibVirt version v10.3.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -200,77 +200,68 @@ v10.3.0
 
 =head2 create
 
-  $serial = $client->create;
+  await $net->create;
   # -> (* no data *)
 
 =head2 destroy
 
-  $serial = $client->destroy;
+  await $net->destroy;
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $serial = $client->get_autostart;
-  # -> { autostart => $autostart }
+  $autostart = await $net->get_autostart;
 
 =head2 get_bridge_name
 
-  $serial = $client->get_bridge_name;
-  # -> { name => $name }
+  $name = await $net->get_bridge_name;
 
 =head2 get_metadata
 
-  $serial = $client->get_metadata( $type, $uri, $flags = 0 );
-  # -> { metadata => $metadata }
+  $metadata = await $net->get_metadata( $type, $uri, $flags = 0 );
 
 =head2 get_xml_desc
 
-  $serial = $client->get_xml_desc( $flags = 0 );
-  # -> { xml => $xml }
+  $xml = await $net->get_xml_desc( $flags = 0 );
 
 =head2 is_active
 
-  $serial = $client->is_active;
-  # -> { active => $active }
+  $active = await $net->is_active;
 
 =head2 is_persistent
 
-  $serial = $client->is_persistent;
-  # -> { persistent => $persistent }
+  $persistent = await $net->is_persistent;
 
 =head2 list_all_ports
 
-  $serial = $client->list_all_ports( $need_results, $flags = 0 );
-  # -> { ports => $ports, ret => $ret }
+  $ports = await $net->list_all_ports( $need_results, $flags = 0 );
 
 =head2 port_create_xml
 
-  $serial = $client->port_create_xml( $xml, $flags = 0 );
-  # -> { port => $port }
+  $port = await $net->port_create_xml( $xml, $flags = 0 );
 
 =head2 port_lookup_by_uuid
 
-  $serial = $client->port_lookup_by_uuid( $uuid );
-  # -> { port => $port }
+  $port = await $net->port_lookup_by_uuid( $uuid );
 
 =head2 set_autostart
 
-  $serial = $client->set_autostart( $autostart );
+  await $net->set_autostart( $autostart );
   # -> (* no data *)
 
 =head2 set_metadata
 
-  $serial = $client->set_metadata( $type, $metadata, $key, $uri, $flags = 0 );
+  await $net->set_metadata( $type, $metadata, $key, $uri, $flags = 0 );
   # -> (* no data *)
 
 =head2 undefine
 
-  $serial = $client->undefine;
+  await $net->undefine;
   # -> (* no data *)
 
 =head2 update
 
-  $serial = $client->update( $command, $section, $parentIndex, $xml, $flags = 0 );
+  await $net->update( $command, $section, $parentIndex, $xml, $flags = 0 );
   # -> (* no data *)
 
 
