@@ -52,6 +52,7 @@ my $transport = Protocol::Sys::Virt::Transport->new(
         $log->trace( 'on_send called with ' . scalar(@data) . ' arguments');
         while (@data) {
             my $data = shift @data;
+            next unless length($data) > 0;
             $log->trace("Writing data... " . length($data));
             $log->trace(unpack("H*", $data));
             await $stream->write($data);
@@ -94,3 +95,5 @@ try {
 catch ($e) {
     say Dumper($e);
 }
+
+await $virt->close;
