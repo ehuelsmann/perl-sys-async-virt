@@ -320,6 +320,21 @@ async sub _call {
     return await $f;
 }
 
+async sub _typed_param_string_okay($self) {
+    return $self->{_typed_param_string_okay} //=
+        ((await $self->supports_feature(
+              $self->{remote}->DRV_FEATURE_TYPED_PARAM_STRING ))
+         ? $self->TYPED_PARAM_STRING_OKAY : 0);
+}
+
+async sub _filter_typed_param_string($self, $params) {
+    return await $self->_typed_param_string_okay
+        ? $params
+        : [ grep {
+               $params->{value}->{type} != $remote->VIR_TYPED_PARAM_STRING
+            } @$params ];
+}
+
 sub _dispatch_closed {
     my $self = shift;
 

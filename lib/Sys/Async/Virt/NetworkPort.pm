@@ -54,8 +54,9 @@ sub get_xml_desc($self, $flags = 0) {
         { port => $self->{id}, flags => $flags // 0 } );
 }
 
-sub set_parameters($self, $params, $flags = 0) {
-    return $self->{client}->_call(
+async sub set_parameters($self, $params, $flags = 0) {
+    $params = await $self->_filter_typed_param_string( $params );
+    return await $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_SET_PARAMETERS,
         { port => $self->{id}, params => $params, flags => $flags // 0 } );
 }

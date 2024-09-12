@@ -5,7 +5,7 @@ use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
 use JSON::PP;
-use List::Util qw(max pairfirst);
+use List::Util qw(any max);
 use Scalar::Util qw(reftype);
 
 use Protocol::Sys::Virt::Devel qw(extract_all);
@@ -376,18 +376,55 @@ sub proc_ep_argsmap($ep_name, @argnames) {
                     }
                 }
                 @argnames);
- }
+}
+
+sub proc_ep_flag_typed_param_string_okay($is_main, $entrypoint) {
+    if (any { $_->{name} eq 'flags' } @{ $entrypoint->{args} }
+        and any { $_->{type} and $_->{type} eq 'remote_typed_param' } @{ $entrypoint->{ret} }) {
+        if ($is_main) {
+            return '$flags |= await $self->_typed_param_string_okay();';
+        }
+        else {
+            return '$flags |= await $self->{client}->_typed_param_string_okay();';
+        }
+    }
+    else {
+        return '';
+    }
+}
+
+sub proc_ep_filter_typed_param_string($is_main, $entrypoint) {
+    return join(
+        "\n    ",
+        map {
+            if ($is_main) {
+                "\$$_->{name} = await \$self->_filter_typed_param_string( \$$_->{name} );";
+            }
+            else {
+                "\$$_->{name} = await \$self->{client}->_filter_typed_param_string( \$$_->{name} );";
+            }
+        }
+        grep { $_->{type} and $_->{type} eq 'remote_typed_param' }
+        @{ $entrypoint->{args} }
+        );
+}
 
 sub proc_entrypoint($module, $entrypoint) {
     if ($module eq $main_module) {
         my (@argnames) = map { $_->{name} } @{ $entrypoint->{args} };
-        my $maybe_optional = 1;
         my $argstr = proc_ep_argstring($entrypoint->{name}, 'self', @argnames);
         my $argsmap = proc_ep_argsmap($entrypoint->{name}, @argnames);
         $entrypoint->{argstr} = $argstr;
-        $entrypoint->{code} = <<~PROC;
-        sub $entrypoint->{name}($argstr) {
-            return \$self->_call(
+        my $modify_flags = proc_ep_flag_typed_param_string_okay(1, $entrypoint);
+        my $filter_params = proc_ep_filter_typed_param_string(1, $entrypoint);
+        my ($async, $await) = ($modify_flags or $filter_params)
+            ? ('async ', 'await ')
+            : ('', '');
+        $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
+        ${async}sub $entrypoint->{name}($argstr) {
+            $modify_flags
+            $filter_params
+            return ${await}\$self->_call(
                 \$remote->$entrypoint->{const},
                 { $argsmap } );
         }
@@ -395,13 +432,19 @@ sub proc_entrypoint($module, $entrypoint) {
     }
     else {
         my ($first_arg_name, @argnames) = map { $_->{name} } @{ $entrypoint->{args} };
-        my $maybe_optional = 1;
         my $argstr = proc_ep_argstring($entrypoint->{name}, 'self', @argnames);
         my $argsmap = proc_ep_argsmap($entrypoint->{name}, @argnames);
+        my $modify_flags = proc_ep_flag_typed_param_string_okay(0, $entrypoint);
+        my $filter_params = proc_ep_filter_typed_param_string(1, $entrypoint);
+        my ($async, $await) = ($modify_flags or $filter_params)
+            ? ('async ', 'await ')
+            : ('', '');
         $entrypoint->{argstr} = $argstr;
-        $entrypoint->{code} = <<~PROC;
-        sub $entrypoint->{name}($argstr) {
-            return \$self->{client}->_call(
+        $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
+        ${async}sub $entrypoint->{name}($argstr) {
+            $modify_flags
+            $filter_params
+            return ${await}\$self->{client}->_call(
                 \$remote->$entrypoint->{const},
                 { $first_arg_name => \$self->{id}, $argsmap } );
         }

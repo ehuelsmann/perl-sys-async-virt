@@ -998,6 +998,21 @@ async sub _call {
     return await $f;
 }
 
+async sub _typed_param_string_okay($self) {
+    return $self->{_typed_param_string_okay} //=
+        ((await $self->supports_feature(
+              $self->{remote}->DRV_FEATURE_TYPED_PARAM_STRING ))
+         ? $self->TYPED_PARAM_STRING_OKAY : 0);
+}
+
+async sub _filter_typed_param_string($self, $params) {
+    return await $self->_typed_param_string_okay
+        ? $params
+        : [ grep {
+               $params->{value}->{type} != $remote->VIR_TYPED_PARAM_STRING
+            } @$params ];
+}
+
 sub _dispatch_closed {
     my $self = shift;
 
@@ -1222,8 +1237,9 @@ sub domain_restore_flags($self, $from, $dxml, $flags = 0) {
         { from => $from, dxml => $dxml, flags => $flags // 0 } );
 }
 
-sub domain_restore_params($self, $params, $flags = 0) {
-    return $self->_call(
+async sub domain_restore_params($self, $params, $flags = 0) {
+    $params = await $self->_filter_typed_param_string( $params );
+    return await $self->_call(
         $remote->PROC_DOMAIN_RESTORE_PARAMS,
         { params => $params, flags => $flags // 0 } );
 }
@@ -1498,8 +1514,9 @@ sub node_num_of_devices($self, $cap, $flags = 0) {
         { cap => $cap, flags => $flags // 0 } );
 }
 
-sub node_set_memory_parameters($self, $params, $flags = 0) {
-    return $self->_call(
+async sub node_set_memory_parameters($self, $params, $flags = 0) {
+    $params = await $self->_filter_typed_param_string( $params );
+    return await $self->_call(
         $remote->PROC_NODE_SET_MEMORY_PARAMETERS,
         { params => $params, flags => $flags // 0 } );
 }
@@ -1624,8 +1641,9 @@ sub secret_lookup_by_uuid($self, $uuid) {
         { uuid => $uuid } );
 }
 
-sub set_identity($self, $params, $flags = 0) {
-    return $self->_call(
+async sub set_identity($self, $params, $flags = 0) {
+    $params = await $self->_filter_typed_param_string( $params );
+    return await $self->_call(
         $remote->PROC_CONNECT_SET_IDENTITY,
         { params => $params, flags => $flags // 0 } );
 }
