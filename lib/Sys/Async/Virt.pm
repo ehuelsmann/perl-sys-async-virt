@@ -989,9 +989,9 @@ sub secret_instance {
     return $c;
 }
 
-async sub _call {
+async sub _call($self, $proc, $args = {}) {
     my $self = shift;
-    my $serial = await $self->{remote}->call( @_ );
+    my $serial = await $self->{remote}->call( $proc, $args );
     my $f = $self->loop->new_future;
     $log->trace( "Setting serial $serial future" );
     $self->{_replies}->{$serial} = $f;
@@ -1135,10 +1135,18 @@ async sub auth {
 }
 
 
-sub open {
+async sub open {
     my ($self, $url, $flags) = @_;
-    $self->_call( $remote->PROC_CONNECT_OPEN,
-                  { name => $url, flags => $flags // 0 } );
+    await $self->_call( $remote->PROC_CONNECT_OPEN,
+                        { name => $url, flags => $flags // 0 } );
+    if (await $self->supports_feature(
+            $self->{remote}->DRV_FEATURE_REMOTE_CLOSE_CALLBACK )) {
+        await $self->_call( $remote->PROC_CONNECT_REGISTER_CLOSE_CALLBACK );
+    }
+    if (not await $self->supports_feature(
+            $self->{remote}->DRV_FEATURE_REMOTE_EVENT_CALLBACK )) {
+        die "Remote not supported: REMOTE_EVENT_CALLBACK feature not available";
+    }
 }
 
 sub close {
@@ -2697,6 +2705,15 @@ wrapper allows for tracking all calls allowing to set up handling of the replies
 =head2 _dispatch_reply
 
 =head2 _dispatch_stream
+
+=head1 BUGS AND LIMITATIONS
+
+=over 8
+
+=item * Talking to servers without the REMOTE_EVENT_CALLBACK (since v1.3.3) feature
+  is not - currently - supported
+
+=back
 
 =head1 SEE ALSO
 
