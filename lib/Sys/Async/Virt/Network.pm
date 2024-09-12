@@ -186,21 +186,21 @@ v10.3.0
 
 =head2 create
 
-  await $net->create( $self );
+  await $net->create;
   # -> (* no data *)
 
 =head2 destroy
 
-  await $net->destroy( $self );
+  await $net->destroy;
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $autostart = await $net->get_autostart( $self );
+  $autostart = await $net->get_autostart;
 
 =head2 get_bridge_name
 
-  $name = await $net->get_bridge_name( $self );
+  $name = await $net->get_bridge_name;
 
 =head2 get_metadata
 
@@ -212,11 +212,11 @@ v10.3.0
 
 =head2 is_active
 
-  $active = await $net->is_active( $self );
+  $active = await $net->is_active;
 
 =head2 is_persistent
 
-  $persistent = await $net->is_persistent( $self );
+  $persistent = await $net->is_persistent;
 
 =head2 list_all_ports
 
@@ -242,7 +242,7 @@ v10.3.0
 
 =head2 undefine
 
-  await $net->undefine( $self );
+  await $net->undefine;
   # -> (* no data *)
 
 =head2 update

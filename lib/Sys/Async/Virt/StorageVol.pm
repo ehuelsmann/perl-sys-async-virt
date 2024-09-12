@@ -160,14 +160,14 @@ v10.3.0
 
 =head2 get_info
 
-  await $vol->get_info( $self );
+  await $vol->get_info;
   # -> { allocation => $allocation,
   #      capacity => $capacity,
   #      type => $type }
 
 =head2 get_path
 
-  $name = await $vol->get_path( $self );
+  $name = await $vol->get_path;
 
 =head2 get_xml_desc
 
@@ -175,7 +175,7 @@ v10.3.0
 
 =head2 pool_lookup_by_volume
 
-  $pool = await $vol->pool_lookup_by_volume( $self );
+  $pool = await $vol->pool_lookup_by_volume;
 
 =head2 resize
 

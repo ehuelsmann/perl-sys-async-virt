@@ -73,7 +73,7 @@ v10.3.0
 
 =head2 delete
 
-  await $binding->delete( $self );
+  await $binding->delete;
   # -> (* no data *)
 
 =head2 get_xml_desc

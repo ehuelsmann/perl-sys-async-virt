@@ -77,7 +77,7 @@ v10.3.0
 
 =head2 undefine
 
-  await $filter->undefine( $self );
+  await $filter->undefine;
   # -> (* no data *)
 
 

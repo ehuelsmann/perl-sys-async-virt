@@ -109,11 +109,11 @@ v10.3.0
 
 =head2 is_active
 
-  $active = await $iface->is_active( $self );
+  $active = await $iface->is_active;
 
 =head2 undefine
 
-  await $iface->undefine( $self );
+  await $iface->undefine;
   # -> (* no data *)
 
 

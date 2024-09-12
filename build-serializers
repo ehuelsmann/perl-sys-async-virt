@@ -157,27 +157,28 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
                      map { $_->{code} }
                      sort { $a->{name} cmp $b->{name} }
                      @{ $module_functions->{$mod} });
-    my $entrypoints_pod = join("\n",
-                               map {
-                                   my $argstr = $_->{argstr} ? "( $_->{argstr} )" : '';
-                                   $argstr =~ s/\$self, //;
-                                   my $retstr = ($_->{retstr} =~ s/{\s*}/(* no data *)/r);
-                                   if (length $retstr > 50) {
-                                       $retstr =~ s/, /,\n  #      /g;
-                                   }
-                                   (not $_->{ret_unwrap}) ? <<~POD1 : <<~POD2;
-                                   =head2 $_->{name}
+    my $entrypoints_pod =
+        join("\n",
+             map {
+                 my $argstr = ($_->{argstr} =~ s/^\$self$|\$self, //r);
+                 $argstr = $argstr ? "( $argstr )" : '';
+                 my $retstr = ($_->{retstr} =~ s/{\s*}/(* no data *)/r);
+                 if (length $retstr > 50) {
+                     $retstr =~ s/, /,\n  #      /g;
+                 }
+                 (not $_->{ret_unwrap}) ? <<~POD1 : <<~POD2;
+                 =head2 $_->{name}
 
-                                     await \$$varname{$mod}->$_->{name}$argstr;
-                                     # -> $retstr
-                                   POD1
-                                   =head2 $_->{name}
+                   await \$$varname{$mod}->$_->{name}$argstr;
+                   # -> $retstr
+                 POD1
+                 =head2 $_->{name}
 
-                                     \$$_->{ret_unwrap} = await \$$varname{$mod}->$_->{name}$argstr;
-                                   POD2
-                               }
-                               sort { $a->{name} cmp $b->{name} }
-                               @{ $module_functions->{$mod} });
+                   \$$_->{ret_unwrap} = await \$$varname{$mod}->$_->{name}$argstr;
+                 POD2
+             }
+             sort { $a->{name} cmp $b->{name} }
+             @{ $module_functions->{$mod} });
     my @constants = grep { $_->{mod} eq $mod } @{ $h_syms };
     my $max = max map { length $_->{sym} } @constants;
     my $constants = join("\n    ",
@@ -297,6 +298,30 @@ my %args_defaults = (
     );
 
 my %fixed_args = (
+    'maxcells' => {
+        node_get_cells_free_memory => '$remote->NODE_MAX_CELLS',
+    },
+    'maxids' => {
+        list_domains => '$remote->DOMAIN_LIST_MAX',
+    },
+    'maxnames' => {
+        domain_snapshot_list_children_names => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
+        domain_snapshot_list_max => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
+        list_defined_domains => '$remote->DOMAIN_LIST_MAX',
+        list_defined_interfaces => '$remote->INTERFACE_LIST_MAX',
+        list_defined_networks => '$remote->NETWORK_LIST_MAX',
+        list_defined_storage_pools => '$remote->STORAGE_POOL_LIST_MAX',
+        list_interfaces => '$remote->INTERFACE_LIST_MAX',
+        list_networks => '$remote->NETWORK_LIST_MAX',
+        list_nwfilters => '$remote->NWFILTER_LIST_MAX',
+        list_storage_pools => '$remote->STORAGE_POOL_LIST_MAX',
+        node_device_list_caps => '$remote->NODE_DEVICE_CAPS_LIST_MAX',
+        node_list_devices => '$remote->NODE_DEVICE_LIST_MAX',
+        storage_pool_list_volumes => '$remote->STORAGE_VOL_LIST_MAX',
+    },
+    'maxuuids' => {
+        list_secrets => '$remote->SECRET_LIST_MAX',
+    },
     'need_results' => {
         domain_checkpoint_list_all_children => '$remote->DOMAIN_CHECKPOINT_LIST_MAX',
         domain_list_all_checkpoints => '$remote->DOMAIN_CHECKPOINT_LIST_MAX',

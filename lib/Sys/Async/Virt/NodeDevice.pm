@@ -181,16 +181,16 @@ v10.3.0
 
 =head2 destroy
 
-  await $dev->destroy( $self );
+  await $dev->destroy;
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $autostart = await $dev->get_autostart( $self );
+  $autostart = await $dev->get_autostart;
 
 =head2 get_parent
 
-  $parentName = await $dev->get_parent( $self );
+  $parentName = await $dev->get_parent;
 
 =head2 get_xml_desc
 
@@ -198,11 +198,11 @@ v10.3.0
 
 =head2 is_active
 
-  $active = await $dev->is_active( $self );
+  $active = await $dev->is_active;
 
 =head2 is_persistent
 
-  $persistent = await $dev->is_persistent( $self );
+  $persistent = await $dev->is_persistent;
 
 =head2 list_caps
 
@@ -210,7 +210,7 @@ v10.3.0
 
 =head2 lookup_by_name
 
-  $dev = await $dev->lookup_by_name( $self );
+  $dev = await $dev->lookup_by_name;
 
 =head2 lookup_scsi_host_by_wwn
 
@@ -218,7 +218,7 @@ v10.3.0
 
 =head2 num_of_caps
 
-  $num = await $dev->num_of_caps( $self );
+  $num = await $dev->num_of_caps;
 
 =head2 set_autostart
 

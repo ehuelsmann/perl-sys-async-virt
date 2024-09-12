@@ -1414,7 +1414,7 @@ v10.3.0
 
 =head2 abort_job
 
-  await $dom->abort_job( $self );
+  await $dom->abort_job;
   # -> (* no data *)
 
 =head2 abort_job_flags
@@ -1513,7 +1513,7 @@ v10.3.0
 
 =head2 destroy
 
-  await $dom->destroy( $self );
+  await $dom->destroy;
   # -> (* no data *)
 
 =head2 destroy_flags
@@ -1551,7 +1551,7 @@ v10.3.0
 
 =head2 get_autostart
 
-  $autostart = await $dom->get_autostart( $self );
+  $autostart = await $dom->get_autostart;
 
 =head2 get_block_info
 
@@ -1577,7 +1577,7 @@ v10.3.0
 
 =head2 get_info
 
-  await $dom->get_info( $self );
+  await $dom->get_info;
   # -> { cpuTime => $cpuTime,
   #      maxMem => $maxMem,
   #      memory => $memory,
@@ -1586,7 +1586,7 @@ v10.3.0
 
 =head2 get_job_info
 
-  await $dom->get_job_info( $self );
+  await $dom->get_job_info;
   # -> { dataProcessed => $dataProcessed,
   #      dataRemaining => $dataRemaining,
   #      dataTotal => $dataTotal,
@@ -1602,11 +1602,11 @@ v10.3.0
 
 =head2 get_max_memory
 
-  $memory = await $dom->get_max_memory( $self );
+  $memory = await $dom->get_max_memory;
 
 =head2 get_max_vcpus
 
-  $num = await $dom->get_max_vcpus( $self );
+  $num = await $dom->get_max_vcpus;
 
 =head2 get_metadata
 
@@ -1614,7 +1614,7 @@ v10.3.0
 
 =head2 get_os_type
 
-  $type = await $dom->get_os_type( $self );
+  $type = await $dom->get_os_type;
 
 =head2 get_scheduler_parameters
 
@@ -1664,15 +1664,15 @@ v10.3.0
 
 =head2 is_active
 
-  $active = await $dom->is_active( $self );
+  $active = await $dom->is_active;
 
 =head2 is_persistent
 
-  $persistent = await $dom->is_persistent( $self );
+  $persistent = await $dom->is_persistent;
 
 =head2 is_updated
 
-  $updated = await $dom->is_updated( $self );
+  $updated = await $dom->is_updated;
 
 =head2 list_all_checkpoints
 
@@ -1785,7 +1785,7 @@ v10.3.0
 
 =head2 resume
 
-  await $dom->resume( $self );
+  await $dom->resume;
   # -> (* no data *)
 
 =head2 save
@@ -1934,7 +1934,7 @@ v10.3.0
 
 =head2 shutdown
 
-  await $dom->shutdown( $self );
+  await $dom->shutdown;
   # -> (* no data *)
 
 =head2 shutdown_flags
@@ -1969,12 +1969,12 @@ v10.3.0
 
 =head2 suspend
 
-  await $dom->suspend( $self );
+  await $dom->suspend;
   # -> (* no data *)
 
 =head2 undefine
 
-  await $dom->undefine( $self );
+  await $dom->undefine;
   # -> (* no data *)
 
 =head2 undefine_flags

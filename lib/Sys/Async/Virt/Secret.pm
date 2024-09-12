@@ -93,7 +93,7 @@ v10.3.0
 
 =head2 undefine
 
-  await $secret->undefine( $self );
+  await $secret->undefine;
   # -> (* no data *)
 
 

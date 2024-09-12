@@ -206,16 +206,16 @@ v10.3.0
 
 =head2 destroy
 
-  await $pool->destroy( $self );
+  await $pool->destroy;
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $autostart = await $pool->get_autostart( $self );
+  $autostart = await $pool->get_autostart;
 
 =head2 get_info
 
-  await $pool->get_info( $self );
+  await $pool->get_info;
   # -> { allocation => $allocation,
   #      available => $available,
   #      capacity => $capacity,
@@ -227,11 +227,11 @@ v10.3.0
 
 =head2 is_active
 
-  $active = await $pool->is_active( $self );
+  $active = await $pool->is_active;
 
 =head2 is_persistent
 
-  $persistent = await $pool->is_persistent( $self );
+  $persistent = await $pool->is_persistent;
 
 =head2 list_all_volumes
 
@@ -243,7 +243,7 @@ v10.3.0
 
 =head2 num_of_volumes
 
-  $num = await $pool->num_of_volumes( $self );
+  $num = await $pool->num_of_volumes;
 
 =head2 refresh
 
@@ -257,7 +257,7 @@ v10.3.0
 
 =head2 undefine
 
-  await $pool->undefine( $self );
+  await $pool->undefine;
   # -> (* no data *)
 
 =head2 vol_create_xml

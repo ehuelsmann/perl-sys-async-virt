@@ -1384,58 +1384,58 @@ sub list_all_storage_pools($self, $flags = 0) {
         { need_results => $remote->STORAGE_POOL_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_defined_domains($self, $maxnames) {
+sub list_defined_domains($self) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_DEFINED_DOMAINS,
-        { maxnames => $maxnames } );
+        { maxnames => $remote->DOMAIN_LIST_MAX } );
 }
 
-sub list_defined_interfaces($self, $maxnames) {
+sub list_defined_interfaces($self) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_DEFINED_INTERFACES,
-        { maxnames => $maxnames } );
+        { maxnames => $remote->INTERFACE_LIST_MAX } );
 }
 
-sub list_defined_networks($self, $maxnames) {
+sub list_defined_networks($self) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_DEFINED_NETWORKS,
-        { maxnames => $maxnames } );
+        { maxnames => $remote->NETWORK_LIST_MAX } );
 }
 
-sub list_defined_storage_pools($self, $maxnames) {
+sub list_defined_storage_pools($self) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_DEFINED_STORAGE_POOLS,
-        { maxnames => $maxnames } );
+        { maxnames => $remote->STORAGE_POOL_LIST_MAX } );
 }
 
-sub list_interfaces($self, $maxnames) {
+sub list_interfaces($self) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_INTERFACES,
-        { maxnames => $maxnames } );
+        { maxnames => $remote->INTERFACE_LIST_MAX } );
 }
 
-sub list_networks($self, $maxnames) {
+sub list_networks($self) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_NETWORKS,
-        { maxnames => $maxnames } );
+        { maxnames => $remote->NETWORK_LIST_MAX } );
 }
 
-sub list_nwfilters($self, $maxnames) {
+sub list_nwfilters($self) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_NWFILTERS,
-        { maxnames => $maxnames } );
+        { maxnames => $remote->NWFILTER_LIST_MAX } );
 }
 
-sub list_secrets($self, $maxuuids) {
+sub list_secrets($self) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_SECRETS,
-        { maxuuids => $maxuuids } );
+        { maxuuids => $remote->SECRET_LIST_MAX } );
 }
 
-sub list_storage_pools($self, $maxnames) {
+sub list_storage_pools($self) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_STORAGE_POOLS,
-        { maxnames => $maxnames } );
+        { maxnames => $remote->STORAGE_POOL_LIST_MAX } );
 }
 
 sub network_create_xml($self, $xml) {
@@ -1486,10 +1486,10 @@ sub node_get_info($self) {
         {  } );
 }
 
-sub node_list_devices($self, $cap, $maxnames, $flags = 0) {
+sub node_list_devices($self, $cap, $flags = 0) {
     return $self->_call(
         $remote->PROC_NODE_LIST_DEVICES,
-        { cap => $cap, maxnames => $maxnames, flags => $flags // 0 } );
+        { cap => $cap, maxnames => $remote->NODE_DEVICE_LIST_MAX, flags => $flags // 0 } );
 }
 
 sub node_num_of_devices($self, $cap, $flags = 0) {
@@ -1908,7 +1908,7 @@ a confirmation message from the server after which the server will close the con
 
 =head2 get_capabilities
 
-  $capabilities = await $client->get_capabilities( $self );
+  $capabilities = await $client->get_capabilities;
 
 =head2 get_domain_capabilities
 
@@ -1916,11 +1916,11 @@ a confirmation message from the server after which the server will close the con
 
 =head2 get_hostname
 
-  $hostname = await $client->get_hostname( $self );
+  $hostname = await $client->get_hostname;
 
 =head2 get_lib_version
 
-  $lib_ver = await $client->get_lib_version( $self );
+  $lib_ver = await $client->get_lib_version;
 
 =head2 get_max_vcpus
 
@@ -1936,7 +1936,7 @@ a confirmation message from the server after which the server will close the con
 
 =head2 get_version
 
-  $hv_ver = await $client->get_version( $self );
+  $hv_ver = await $client->get_version;
 
 =head2 interface_change_begin
 
@@ -1999,39 +1999,39 @@ a confirmation message from the server after which the server will close the con
 
 =head2 list_defined_domains
 
-  $names = await $client->list_defined_domains( $maxnames );
+  $names = await $client->list_defined_domains;
 
 =head2 list_defined_interfaces
 
-  $names = await $client->list_defined_interfaces( $maxnames );
+  $names = await $client->list_defined_interfaces;
 
 =head2 list_defined_networks
 
-  $names = await $client->list_defined_networks( $maxnames );
+  $names = await $client->list_defined_networks;
 
 =head2 list_defined_storage_pools
 
-  $names = await $client->list_defined_storage_pools( $maxnames );
+  $names = await $client->list_defined_storage_pools;
 
 =head2 list_interfaces
 
-  $names = await $client->list_interfaces( $maxnames );
+  $names = await $client->list_interfaces;
 
 =head2 list_networks
 
-  $names = await $client->list_networks( $maxnames );
+  $names = await $client->list_networks;
 
 =head2 list_nwfilters
 
-  $names = await $client->list_nwfilters( $maxnames );
+  $names = await $client->list_nwfilters;
 
 =head2 list_secrets
 
-  $uuids = await $client->list_secrets( $maxuuids );
+  $uuids = await $client->list_secrets;
 
 =head2 list_storage_pools
 
-  $names = await $client->list_storage_pools( $maxnames );
+  $names = await $client->list_storage_pools;
 
 =head2 network_create_xml
 
@@ -2059,11 +2059,11 @@ a confirmation message from the server after which the server will close the con
 
 =head2 node_get_free_memory
 
-  $freeMem = await $client->node_get_free_memory( $self );
+  $freeMem = await $client->node_get_free_memory;
 
 =head2 node_get_info
 
-  await $client->node_get_info( $self );
+  await $client->node_get_info;
   # -> { cores => $cores,
   #      cpus => $cpus,
   #      memory => $memory,
@@ -2075,7 +2075,7 @@ a confirmation message from the server after which the server will close the con
 
 =head2 node_list_devices
 
-  $names = await $client->node_list_devices( $cap, $maxnames, $flags = 0 );
+  $names = await $client->node_list_devices( $cap, $flags = 0 );
 
 =head2 node_num_of_devices
 
@@ -2093,43 +2093,43 @@ a confirmation message from the server after which the server will close the con
 
 =head2 num_of_defined_domains
 
-  $num = await $client->num_of_defined_domains( $self );
+  $num = await $client->num_of_defined_domains;
 
 =head2 num_of_defined_interfaces
 
-  $num = await $client->num_of_defined_interfaces( $self );
+  $num = await $client->num_of_defined_interfaces;
 
 =head2 num_of_defined_networks
 
-  $num = await $client->num_of_defined_networks( $self );
+  $num = await $client->num_of_defined_networks;
 
 =head2 num_of_defined_storage_pools
 
-  $num = await $client->num_of_defined_storage_pools( $self );
+  $num = await $client->num_of_defined_storage_pools;
 
 =head2 num_of_domains
 
-  $num = await $client->num_of_domains( $self );
+  $num = await $client->num_of_domains;
 
 =head2 num_of_interfaces
 
-  $num = await $client->num_of_interfaces( $self );
+  $num = await $client->num_of_interfaces;
 
 =head2 num_of_networks
 
-  $num = await $client->num_of_networks( $self );
+  $num = await $client->num_of_networks;
 
 =head2 num_of_nwfilters
 
-  $num = await $client->num_of_nwfilters( $self );
+  $num = await $client->num_of_nwfilters;
 
 =head2 num_of_secrets
 
-  $num = await $client->num_of_secrets( $self );
+  $num = await $client->num_of_secrets;
 
 =head2 num_of_storage_pools
 
-  $num = await $client->num_of_storage_pools( $self );
+  $num = await $client->num_of_storage_pools;
 
 =head2 nwfilter_binding_create_xml
 
