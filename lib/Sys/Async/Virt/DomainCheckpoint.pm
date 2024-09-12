@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::DomainCheckpoint v10.3.0;
@@ -45,29 +46,25 @@ sub new {
     }, $class;
 }
 
-sub delete {
-    my ($self, $flags) = @_;
+sub delete($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_DELETE,
         { checkpoint => $self->{id}, flags => $flags // 0 } );
 }
 
-sub get_parent {
-    my ($self, $flags) = @_;
+sub get_parent($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_GET_PARENT,
         { checkpoint => $self->{id}, flags => $flags // 0 } );
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_GET_XML_DESC,
         { checkpoint => $self->{id}, flags => $flags // 0 } );
 }
 
-sub list_all_children {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_children($self, $need_results, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_LIST_ALL_CHILDREN,
         { checkpoint => $self->{id}, need_results => $need_results, flags => $flags // 0 } );

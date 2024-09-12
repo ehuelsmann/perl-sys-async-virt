@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::Network v10.3.0;
@@ -65,106 +66,91 @@ sub new {
     }, $class;
 }
 
-sub create {
-    my ($self, ) = @_;
+sub create($self) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_CREATE,
         { net => $self->{id},  } );
 }
 
-sub destroy {
-    my ($self, ) = @_;
+sub destroy($self) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_DESTROY,
         { net => $self->{id},  } );
 }
 
-sub get_autostart {
-    my ($self, ) = @_;
+sub get_autostart($self) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_GET_AUTOSTART,
         { net => $self->{id},  } );
 }
 
-sub get_bridge_name {
-    my ($self, ) = @_;
+sub get_bridge_name($self) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_GET_BRIDGE_NAME,
         { net => $self->{id},  } );
 }
 
-sub get_metadata {
-    my ($self, $type, $uri, $flags) = @_;
+sub get_metadata($self, $type, $uri, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_GET_METADATA,
         { network => $self->{id}, type => $type, uri => $uri, flags => $flags // 0 } );
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_GET_XML_DESC,
         { net => $self->{id}, flags => $flags // 0 } );
 }
 
-sub is_active {
-    my ($self, ) = @_;
+sub is_active($self) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_IS_ACTIVE,
         { net => $self->{id},  } );
 }
 
-sub is_persistent {
-    my ($self, ) = @_;
+sub is_persistent($self) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_IS_PERSISTENT,
         { net => $self->{id},  } );
 }
 
-sub list_all_ports {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_ports($self, $need_results, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_LIST_ALL_PORTS,
         { network => $self->{id}, need_results => $need_results, flags => $flags // 0 } );
 }
 
-sub port_create_xml {
-    my ($self, $xml, $flags) = @_;
+sub port_create_xml($self, $xml, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_CREATE_XML,
         { network => $self->{id}, xml => $xml, flags => $flags // 0 } );
 }
 
-sub port_lookup_by_uuid {
-    my ($self, $uuid) = @_;
+sub port_lookup_by_uuid($self, $uuid) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_LOOKUP_BY_UUID,
         { network => $self->{id}, uuid => $uuid } );
 }
 
-sub set_autostart {
-    my ($self, $autostart) = @_;
+sub set_autostart($self, $autostart) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_SET_AUTOSTART,
         { net => $self->{id}, autostart => $autostart } );
 }
 
-sub set_metadata {
-    my ($self, $type, $metadata, $key, $uri, $flags) = @_;
+sub set_metadata($self, $type, $metadata, $key, $uri, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_SET_METADATA,
         { network => $self->{id}, type => $type, metadata => $metadata, key => $key, uri => $uri, flags => $flags // 0 } );
 }
 
-sub undefine {
-    my ($self, ) = @_;
+sub undefine($self) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_UNDEFINE,
         { net => $self->{id},  } );
 }
 
-sub update {
-    my ($self, $command, $section, $parentIndex, $xml, $flags) = @_;
+sub update($self, $command, $section, $parentIndex, $xml, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_UPDATE,
         { net => $self->{id}, command => $command, section => $section, parentIndex => $parentIndex, xml => $xml, flags => $flags // 0 } );
@@ -200,21 +186,21 @@ v10.3.0
 
 =head2 create
 
-  await $net->create;
+  await $net->create( $self );
   # -> (* no data *)
 
 =head2 destroy
 
-  await $net->destroy;
+  await $net->destroy( $self );
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $autostart = await $net->get_autostart;
+  $autostart = await $net->get_autostart( $self );
 
 =head2 get_bridge_name
 
-  $name = await $net->get_bridge_name;
+  $name = await $net->get_bridge_name( $self );
 
 =head2 get_metadata
 
@@ -226,11 +212,11 @@ v10.3.0
 
 =head2 is_active
 
-  $active = await $net->is_active;
+  $active = await $net->is_active( $self );
 
 =head2 is_persistent
 
-  $persistent = await $net->is_persistent;
+  $persistent = await $net->is_persistent( $self );
 
 =head2 list_all_ports
 
@@ -256,7 +242,7 @@ v10.3.0
 
 =head2 undefine
 
-  await $net->undefine;
+  await $net->undefine( $self );
   # -> (* no data *)
 
 =head2 update

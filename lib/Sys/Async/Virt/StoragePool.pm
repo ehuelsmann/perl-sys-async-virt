@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::StoragePool v10.3.0;
@@ -53,127 +54,109 @@ sub new {
     }, $class;
 }
 
-sub build {
-    my ($self, $flags) = @_;
+sub build($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_BUILD,
         { pool => $self->{id}, flags => $flags // 0 } );
 }
 
-sub create {
-    my ($self, $flags) = @_;
+sub create($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_CREATE,
         { pool => $self->{id}, flags => $flags // 0 } );
 }
 
-sub delete {
-    my ($self, $flags) = @_;
+sub delete($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_DELETE,
         { pool => $self->{id}, flags => $flags // 0 } );
 }
 
-sub destroy {
-    my ($self, ) = @_;
+sub destroy($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_DESTROY,
         { pool => $self->{id},  } );
 }
 
-sub get_autostart {
-    my ($self, ) = @_;
+sub get_autostart($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_GET_AUTOSTART,
         { pool => $self->{id},  } );
 }
 
-sub get_info {
-    my ($self, ) = @_;
+sub get_info($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_GET_INFO,
         { pool => $self->{id},  } );
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_GET_XML_DESC,
         { pool => $self->{id}, flags => $flags // 0 } );
 }
 
-sub is_active {
-    my ($self, ) = @_;
+sub is_active($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_IS_ACTIVE,
         { pool => $self->{id},  } );
 }
 
-sub is_persistent {
-    my ($self, ) = @_;
+sub is_persistent($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_IS_PERSISTENT,
         { pool => $self->{id},  } );
 }
 
-sub list_all_volumes {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_volumes($self, $need_results, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_LIST_ALL_VOLUMES,
         { pool => $self->{id}, need_results => $need_results, flags => $flags // 0 } );
 }
 
-sub list_volumes {
-    my ($self, $maxnames) = @_;
+sub list_volumes($self, $maxnames) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_LIST_VOLUMES,
         { pool => $self->{id}, maxnames => $maxnames } );
 }
 
-sub num_of_volumes {
-    my ($self, ) = @_;
+sub num_of_volumes($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_NUM_OF_VOLUMES,
         { pool => $self->{id},  } );
 }
 
-sub refresh {
-    my ($self, $flags) = @_;
+sub refresh($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_REFRESH,
         { pool => $self->{id}, flags => $flags // 0 } );
 }
 
-sub set_autostart {
-    my ($self, $autostart) = @_;
+sub set_autostart($self, $autostart) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_SET_AUTOSTART,
         { pool => $self->{id}, autostart => $autostart } );
 }
 
-sub undefine {
-    my ($self, ) = @_;
+sub undefine($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_UNDEFINE,
         { pool => $self->{id},  } );
 }
 
-sub vol_create_xml {
-    my ($self, $xml, $flags) = @_;
+sub vol_create_xml($self, $xml, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_CREATE_XML,
         { pool => $self->{id}, xml => $xml, flags => $flags // 0 } );
 }
 
-sub vol_create_xml_from {
-    my ($self, $xml, $clonevol, $flags) = @_;
+sub vol_create_xml_from($self, $xml, $clonevol, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_CREATE_XML_FROM,
         { pool => $self->{id}, xml => $xml, clonevol => $clonevol, flags => $flags // 0 } );
 }
 
-sub vol_lookup_by_name {
-    my ($self, $name) = @_;
+sub vol_lookup_by_name($self, $name) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_LOOKUP_BY_NAME,
         { pool => $self->{id}, name => $name } );
@@ -223,16 +206,16 @@ v10.3.0
 
 =head2 destroy
 
-  await $pool->destroy;
+  await $pool->destroy( $self );
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $autostart = await $pool->get_autostart;
+  $autostart = await $pool->get_autostart( $self );
 
 =head2 get_info
 
-  await $pool->get_info;
+  await $pool->get_info( $self );
   # -> { allocation => $allocation,
   #      available => $available,
   #      capacity => $capacity,
@@ -244,11 +227,11 @@ v10.3.0
 
 =head2 is_active
 
-  $active = await $pool->is_active;
+  $active = await $pool->is_active( $self );
 
 =head2 is_persistent
 
-  $persistent = await $pool->is_persistent;
+  $persistent = await $pool->is_persistent( $self );
 
 =head2 list_all_volumes
 
@@ -260,7 +243,7 @@ v10.3.0
 
 =head2 num_of_volumes
 
-  $num = await $pool->num_of_volumes;
+  $num = await $pool->num_of_volumes( $self );
 
 =head2 refresh
 
@@ -274,7 +257,7 @@ v10.3.0
 
 =head2 undefine
 
-  await $pool->undefine;
+  await $pool->undefine( $self );
   # -> (* no data *)
 
 =head2 vol_create_xml

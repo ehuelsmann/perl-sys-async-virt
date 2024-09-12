@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::NodeDevice v10.3.0;
@@ -42,113 +43,97 @@ sub new {
     }, $class;
 }
 
-sub create {
-    my ($self, $flags) = @_;
+sub create($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_CREATE,
         { name => $self->{id}, flags => $flags // 0 } );
 }
 
-sub create_xml {
-    my ($self, $flags) = @_;
+sub create_xml($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_CREATE_XML,
         { xml_desc => $self->{id}, flags => $flags // 0 } );
 }
 
-sub define_xml {
-    my ($self, $flags) = @_;
+sub define_xml($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_DEFINE_XML,
         { xml_desc => $self->{id}, flags => $flags // 0 } );
 }
 
-sub destroy {
-    my ($self, ) = @_;
+sub destroy($self) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_DESTROY,
         { name => $self->{id},  } );
 }
 
-sub get_autostart {
-    my ($self, ) = @_;
+sub get_autostart($self) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_GET_AUTOSTART,
         { name => $self->{id},  } );
 }
 
-sub get_parent {
-    my ($self, ) = @_;
+sub get_parent($self) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_GET_PARENT,
         { name => $self->{id},  } );
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_GET_XML_DESC,
         { name => $self->{id}, flags => $flags // 0 } );
 }
 
-sub is_active {
-    my ($self, ) = @_;
+sub is_active($self) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_IS_ACTIVE,
         { name => $self->{id},  } );
 }
 
-sub is_persistent {
-    my ($self, ) = @_;
+sub is_persistent($self) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_IS_PERSISTENT,
         { name => $self->{id},  } );
 }
 
-sub list_caps {
-    my ($self, $maxnames) = @_;
+sub list_caps($self, $maxnames) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_LIST_CAPS,
         { name => $self->{id}, maxnames => $maxnames } );
 }
 
-sub lookup_by_name {
-    my ($self, ) = @_;
+sub lookup_by_name($self) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_LOOKUP_BY_NAME,
         { name => $self->{id},  } );
 }
 
-sub lookup_scsi_host_by_wwn {
-    my ($self, $wwpn, $flags) = @_;
+sub lookup_scsi_host_by_wwn($self, $wwpn, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_LOOKUP_SCSI_HOST_BY_WWN,
         { wwnn => $self->{id}, wwpn => $wwpn, flags => $flags // 0 } );
 }
 
-sub num_of_caps {
-    my ($self, ) = @_;
+sub num_of_caps($self) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_NUM_OF_CAPS,
         { name => $self->{id},  } );
 }
 
-sub set_autostart {
-    my ($self, $autostart) = @_;
+sub set_autostart($self, $autostart) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_SET_AUTOSTART,
         { name => $self->{id}, autostart => $autostart } );
 }
 
-sub undefine {
-    my ($self, $flags) = @_;
+sub undefine($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_UNDEFINE,
         { name => $self->{id}, flags => $flags // 0 } );
 }
 
-sub update {
-    my ($self, $xml_desc, $flags) = @_;
+sub update($self, $xml_desc, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_UPDATE,
         { name => $self->{id}, xml_desc => $xml_desc, flags => $flags // 0 } );
@@ -196,16 +181,16 @@ v10.3.0
 
 =head2 destroy
 
-  await $dev->destroy;
+  await $dev->destroy( $self );
   # -> (* no data *)
 
 =head2 get_autostart
 
-  $autostart = await $dev->get_autostart;
+  $autostart = await $dev->get_autostart( $self );
 
 =head2 get_parent
 
-  $parentName = await $dev->get_parent;
+  $parentName = await $dev->get_parent( $self );
 
 =head2 get_xml_desc
 
@@ -213,11 +198,11 @@ v10.3.0
 
 =head2 is_active
 
-  $active = await $dev->is_active;
+  $active = await $dev->is_active( $self );
 
 =head2 is_persistent
 
-  $persistent = await $dev->is_persistent;
+  $persistent = await $dev->is_persistent( $self );
 
 =head2 list_caps
 
@@ -225,7 +210,7 @@ v10.3.0
 
 =head2 lookup_by_name
 
-  $dev = await $dev->lookup_by_name;
+  $dev = await $dev->lookup_by_name( $self );
 
 =head2 lookup_scsi_host_by_wwn
 
@@ -233,7 +218,7 @@ v10.3.0
 
 =head2 num_of_caps
 
-  $num = await $dev->num_of_caps;
+  $num = await $dev->num_of_caps( $self );
 
 =head2 set_autostart
 

@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::NetworkPort v10.3.0;
@@ -41,22 +42,19 @@ sub new {
     }, $class;
 }
 
-sub delete {
-    my ($self, $flags) = @_;
+sub delete($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_DELETE,
         { port => $self->{id}, flags => $flags // 0 } );
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_GET_XML_DESC,
         { port => $self->{id}, flags => $flags // 0 } );
 }
 
-sub set_parameters {
-    my ($self, $params, $flags) = @_;
+sub set_parameters($self, $params, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_SET_PARAMETERS,
         { port => $self->{id}, params => $params, flags => $flags // 0 } );

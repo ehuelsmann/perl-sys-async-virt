@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::NwFilterBinding v10.3.0;
@@ -32,15 +33,13 @@ sub new {
     }, $class;
 }
 
-sub delete {
-    my ($self, ) = @_;
+sub delete($self) {
     return $self->{client}->_call(
         $remote->PROC_NWFILTER_BINDING_DELETE,
         { nwfilter => $self->{id},  } );
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NWFILTER_BINDING_GET_XML_DESC,
         { nwfilter => $self->{id}, flags => $flags // 0 } );
@@ -74,7 +73,7 @@ v10.3.0
 
 =head2 delete
 
-  await $binding->delete;
+  await $binding->delete( $self );
   # -> (* no data *)
 
 =head2 get_xml_desc

@@ -15,6 +15,7 @@ use warnings;
 no warnings qw(void);
 use experimental 'signatures';
 use Future::AsyncAwait;
+use Future::Queue;
 
 package Sys::Async::Virt v10.3.0;
 
@@ -1009,12 +1010,13 @@ sub _dispatch_message {
 
     if ($args{data}
         and defined $args{data}->{callbackID}
-        and my $cb = $self->{_callbacks}->{$args{data}->{callbackID}}) {
+        and my $q = $self->{_callbacks}->{$args{data}->{callbackID}}) {
         my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
-        $cb->( %{ $cbargs{data}->{msg} } );
+        $q->push( $cbargs{data} );
     }
     else {
-        $self->{on_message}->( $reply_translators[$args{header}->{proc}]->( @_ ) );
+        my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
+        $self->{on_message}->( $cbargs{data} );
     }
 }
 
@@ -1130,638 +1132,547 @@ sub close {
 }
 
 
-sub baseline_cpu {
-    my ($self, $xmlCPUs, $flags) = @_;
+sub baseline_cpu($self, $xmlCPUs, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_BASELINE_CPU,
         { xmlCPUs => $xmlCPUs, flags => $flags // 0 } );
 }
 
-sub baseline_hypervisor_cpu {
-    my ($self, $emulator, $arch, $machine, $virttype, $xmlCPUs, $flags) = @_;
+sub baseline_hypervisor_cpu($self, $emulator, $arch, $machine, $virttype, $xmlCPUs, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_BASELINE_HYPERVISOR_CPU,
         { emulator => $emulator, arch => $arch, machine => $machine, virttype => $virttype, xmlCPUs => $xmlCPUs, flags => $flags // 0 } );
 }
 
-sub compare_cpu {
-    my ($self, $xml, $flags) = @_;
+sub compare_cpu($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_COMPARE_CPU,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub compare_hypervisor_cpu {
-    my ($self, $emulator, $arch, $machine, $virttype, $xmlCPU, $flags) = @_;
+sub compare_hypervisor_cpu($self, $emulator, $arch, $machine, $virttype, $xmlCPU, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_COMPARE_HYPERVISOR_CPU,
         { emulator => $emulator, arch => $arch, machine => $machine, virttype => $virttype, xmlCPU => $xmlCPU, flags => $flags // 0 } );
 }
 
-sub domain_create_xml {
-    my ($self, $xml_desc, $flags) = @_;
+sub domain_create_xml($self, $xml_desc, $flags = 0) {
     return $self->_call(
         $remote->PROC_DOMAIN_CREATE_XML,
         { xml_desc => $xml_desc, flags => $flags // 0 } );
 }
 
-sub domain_define_xml {
-    my ($self, $xml) = @_;
+sub domain_define_xml($self, $xml) {
     return $self->_call(
         $remote->PROC_DOMAIN_DEFINE_XML,
         { xml => $xml } );
 }
 
-sub domain_define_xml_flags {
-    my ($self, $xml, $flags) = @_;
+sub domain_define_xml_flags($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_DOMAIN_DEFINE_XML_FLAGS,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub domain_lookup_by_id {
-    my ($self, $id) = @_;
+sub domain_lookup_by_id($self, $id) {
     return $self->_call(
         $remote->PROC_DOMAIN_LOOKUP_BY_ID,
         { id => $id } );
 }
 
-sub domain_lookup_by_name {
-    my ($self, $name) = @_;
+sub domain_lookup_by_name($self, $name) {
     return $self->_call(
         $remote->PROC_DOMAIN_LOOKUP_BY_NAME,
         { name => $name } );
 }
 
-sub domain_lookup_by_uuid {
-    my ($self, $uuid) = @_;
+sub domain_lookup_by_uuid($self, $uuid) {
     return $self->_call(
         $remote->PROC_DOMAIN_LOOKUP_BY_UUID,
         { uuid => $uuid } );
 }
 
-sub domain_migrate_finish {
-    my ($self, $dname, $cookie, $uri, $flags) = @_;
+sub domain_migrate_finish($self, $dname, $cookie, $uri, $flags = 0) {
     return $self->_call(
         $remote->PROC_DOMAIN_MIGRATE_FINISH,
         { dname => $dname, cookie => $cookie, uri => $uri, flags => $flags // 0 } );
 }
 
-sub domain_migrate_finish2 {
-    my ($self, $dname, $cookie, $uri, $flags, $retcode) = @_;
+sub domain_migrate_finish2($self, $dname, $cookie, $uri, $flags, $retcode) {
     return $self->_call(
         $remote->PROC_DOMAIN_MIGRATE_FINISH2,
         { dname => $dname, cookie => $cookie, uri => $uri, flags => $flags // 0, retcode => $retcode } );
 }
 
-sub domain_migrate_prepare_tunnel {
-    my ($self, $flags, $dname, $resource, $dom_xml) = @_;
+sub domain_migrate_prepare_tunnel($self, $flags, $dname, $resource, $dom_xml) {
     return $self->_call(
         $remote->PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL,
         { flags => $flags // 0, dname => $dname, resource => $resource, dom_xml => $dom_xml } );
 }
 
-sub domain_restore {
-    my ($self, $from) = @_;
+sub domain_restore($self, $from) {
     return $self->_call(
         $remote->PROC_DOMAIN_RESTORE,
         { from => $from } );
 }
 
-sub domain_restore_flags {
-    my ($self, $from, $dxml, $flags) = @_;
+sub domain_restore_flags($self, $from, $dxml, $flags = 0) {
     return $self->_call(
         $remote->PROC_DOMAIN_RESTORE_FLAGS,
         { from => $from, dxml => $dxml, flags => $flags // 0 } );
 }
 
-sub domain_restore_params {
-    my ($self, $params, $flags) = @_;
+sub domain_restore_params($self, $params, $flags = 0) {
     return $self->_call(
         $remote->PROC_DOMAIN_RESTORE_PARAMS,
         { params => $params, flags => $flags // 0 } );
 }
 
-sub domain_save_image_define_xml {
-    my ($self, $file, $dxml, $flags) = @_;
+sub domain_save_image_define_xml($self, $file, $dxml, $flags = 0) {
     return $self->_call(
         $remote->PROC_DOMAIN_SAVE_IMAGE_DEFINE_XML,
         { file => $file, dxml => $dxml, flags => $flags // 0 } );
 }
 
-sub domain_save_image_get_xml_desc {
-    my ($self, $file, $flags) = @_;
+sub domain_save_image_get_xml_desc($self, $file, $flags = 0) {
     return $self->_call(
         $remote->PROC_DOMAIN_SAVE_IMAGE_GET_XML_DESC,
         { file => $file, flags => $flags // 0 } );
 }
 
-sub domain_xml_from_native {
-    my ($self, $nativeFormat, $nativeConfig, $flags) = @_;
+sub domain_xml_from_native($self, $nativeFormat, $nativeConfig, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_DOMAIN_XML_FROM_NATIVE,
         { nativeFormat => $nativeFormat, nativeConfig => $nativeConfig, flags => $flags // 0 } );
 }
 
-sub domain_xml_to_native {
-    my ($self, $nativeFormat, $domainXml, $flags) = @_;
+sub domain_xml_to_native($self, $nativeFormat, $domainXml, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_DOMAIN_XML_TO_NATIVE,
         { nativeFormat => $nativeFormat, domainXml => $domainXml, flags => $flags // 0 } );
 }
 
-sub get_capabilities {
-    my ($self, ) = @_;
+sub get_capabilities($self) {
     return $self->_call(
         $remote->PROC_CONNECT_GET_CAPABILITIES,
         {  } );
 }
 
-sub get_domain_capabilities {
-    my ($self, $emulatorbin, $arch, $machine, $virttype, $flags) = @_;
+sub get_domain_capabilities($self, $emulatorbin, $arch, $machine, $virttype, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_GET_DOMAIN_CAPABILITIES,
         { emulatorbin => $emulatorbin, arch => $arch, machine => $machine, virttype => $virttype, flags => $flags // 0 } );
 }
 
-sub get_hostname {
-    my ($self, ) = @_;
+sub get_hostname($self) {
     return $self->_call(
         $remote->PROC_CONNECT_GET_HOSTNAME,
         {  } );
 }
 
-sub get_lib_version {
-    my ($self, ) = @_;
+sub get_lib_version($self) {
     return $self->_call(
         $remote->PROC_CONNECT_GET_LIB_VERSION,
         {  } );
 }
 
-sub get_max_vcpus {
-    my ($self, $type) = @_;
+sub get_max_vcpus($self, $type) {
     return $self->_call(
         $remote->PROC_CONNECT_GET_MAX_VCPUS,
         { type => $type } );
 }
 
-sub get_storage_pool_capabilities {
-    my ($self, $flags) = @_;
+sub get_storage_pool_capabilities($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_GET_STORAGE_POOL_CAPABILITIES,
         { flags => $flags // 0 } );
 }
 
-sub get_sysinfo {
-    my ($self, $flags) = @_;
+sub get_sysinfo($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_GET_SYSINFO,
         { flags => $flags // 0 } );
 }
 
-sub get_version {
-    my ($self, ) = @_;
+sub get_version($self) {
     return $self->_call(
         $remote->PROC_CONNECT_GET_VERSION,
         {  } );
 }
 
-sub interface_change_begin {
-    my ($self, $flags) = @_;
+sub interface_change_begin($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_INTERFACE_CHANGE_BEGIN,
         { flags => $flags // 0 } );
 }
 
-sub interface_change_commit {
-    my ($self, $flags) = @_;
+sub interface_change_commit($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_INTERFACE_CHANGE_COMMIT,
         { flags => $flags // 0 } );
 }
 
-sub interface_change_rollback {
-    my ($self, $flags) = @_;
+sub interface_change_rollback($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_INTERFACE_CHANGE_ROLLBACK,
         { flags => $flags // 0 } );
 }
 
-sub interface_define_xml {
-    my ($self, $xml, $flags) = @_;
+sub interface_define_xml($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_INTERFACE_DEFINE_XML,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub interface_lookup_by_mac_string {
-    my ($self, $mac) = @_;
+sub interface_lookup_by_mac_string($self, $mac) {
     return $self->_call(
         $remote->PROC_INTERFACE_LOOKUP_BY_MAC_STRING,
         { mac => $mac } );
 }
 
-sub interface_lookup_by_name {
-    my ($self, $name) = @_;
+sub interface_lookup_by_name($self, $name) {
     return $self->_call(
         $remote->PROC_INTERFACE_LOOKUP_BY_NAME,
         { name => $name } );
 }
 
-sub list_all_domains {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_domains($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_ALL_DOMAINS,
-        { need_results => $need_results, flags => $flags // 0 } );
+        { need_results => $remote->DOMAIN_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_all_interfaces {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_interfaces($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_ALL_INTERFACES,
-        { need_results => $need_results, flags => $flags // 0 } );
+        { need_results => $remote->INTERFACE_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_all_networks {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_networks($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_ALL_NETWORKS,
-        { need_results => $need_results, flags => $flags // 0 } );
+        { need_results => $remote->NETWORK_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_all_node_devices {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_node_devices($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_ALL_NODE_DEVICES,
-        { need_results => $need_results, flags => $flags // 0 } );
+        { need_results => $remote->NODE_DEVICE_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_all_nwfilter_bindings {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_nwfilter_bindings($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_ALL_NWFILTER_BINDINGS,
-        { need_results => $need_results, flags => $flags // 0 } );
+        { need_results => $remote->NWFILTER_BINGING_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_all_nwfilters {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_nwfilters($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_ALL_NWFILTERS,
-        { need_results => $need_results, flags => $flags // 0 } );
+        { need_results => $remote->NWFILTER_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_all_secrets {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_secrets($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_ALL_SECRETS,
-        { need_results => $need_results, flags => $flags // 0 } );
+        { need_results => $remote->SECRET_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_all_storage_pools {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_storage_pools($self, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_ALL_STORAGE_POOLS,
-        { need_results => $need_results, flags => $flags // 0 } );
+        { need_results => $remote->STORAGE_POOL_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_defined_domains {
-    my ($self, $maxnames) = @_;
+sub list_defined_domains($self, $maxnames) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_DEFINED_DOMAINS,
         { maxnames => $maxnames } );
 }
 
-sub list_defined_interfaces {
-    my ($self, $maxnames) = @_;
+sub list_defined_interfaces($self, $maxnames) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_DEFINED_INTERFACES,
         { maxnames => $maxnames } );
 }
 
-sub list_defined_networks {
-    my ($self, $maxnames) = @_;
+sub list_defined_networks($self, $maxnames) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_DEFINED_NETWORKS,
         { maxnames => $maxnames } );
 }
 
-sub list_defined_storage_pools {
-    my ($self, $maxnames) = @_;
+sub list_defined_storage_pools($self, $maxnames) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_DEFINED_STORAGE_POOLS,
         { maxnames => $maxnames } );
 }
 
-sub list_interfaces {
-    my ($self, $maxnames) = @_;
+sub list_interfaces($self, $maxnames) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_INTERFACES,
         { maxnames => $maxnames } );
 }
 
-sub list_networks {
-    my ($self, $maxnames) = @_;
+sub list_networks($self, $maxnames) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_NETWORKS,
         { maxnames => $maxnames } );
 }
 
-sub list_nwfilters {
-    my ($self, $maxnames) = @_;
+sub list_nwfilters($self, $maxnames) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_NWFILTERS,
         { maxnames => $maxnames } );
 }
 
-sub list_secrets {
-    my ($self, $maxuuids) = @_;
+sub list_secrets($self, $maxuuids) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_SECRETS,
         { maxuuids => $maxuuids } );
 }
 
-sub list_storage_pools {
-    my ($self, $maxnames) = @_;
+sub list_storage_pools($self, $maxnames) {
     return $self->_call(
         $remote->PROC_CONNECT_LIST_STORAGE_POOLS,
         { maxnames => $maxnames } );
 }
 
-sub network_create_xml {
-    my ($self, $xml) = @_;
+sub network_create_xml($self, $xml) {
     return $self->_call(
         $remote->PROC_NETWORK_CREATE_XML,
         { xml => $xml } );
 }
 
-sub network_create_xml_flags {
-    my ($self, $xml, $flags) = @_;
+sub network_create_xml_flags($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_NETWORK_CREATE_XML_FLAGS,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub network_define_xml {
-    my ($self, $xml) = @_;
+sub network_define_xml($self, $xml) {
     return $self->_call(
         $remote->PROC_NETWORK_DEFINE_XML,
         { xml => $xml } );
 }
 
-sub network_define_xml_flags {
-    my ($self, $xml, $flags) = @_;
+sub network_define_xml_flags($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_NETWORK_DEFINE_XML_FLAGS,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub network_lookup_by_name {
-    my ($self, $name) = @_;
+sub network_lookup_by_name($self, $name) {
     return $self->_call(
         $remote->PROC_NETWORK_LOOKUP_BY_NAME,
         { name => $name } );
 }
 
-sub network_lookup_by_uuid {
-    my ($self, $uuid) = @_;
+sub network_lookup_by_uuid($self, $uuid) {
     return $self->_call(
         $remote->PROC_NETWORK_LOOKUP_BY_UUID,
         { uuid => $uuid } );
 }
 
-sub node_get_free_memory {
-    my ($self, ) = @_;
+sub node_get_free_memory($self) {
     return $self->_call(
         $remote->PROC_NODE_GET_FREE_MEMORY,
         {  } );
 }
 
-sub node_get_info {
-    my ($self, ) = @_;
+sub node_get_info($self) {
     return $self->_call(
         $remote->PROC_NODE_GET_INFO,
         {  } );
 }
 
-sub node_list_devices {
-    my ($self, $cap, $maxnames, $flags) = @_;
+sub node_list_devices($self, $cap, $maxnames, $flags = 0) {
     return $self->_call(
         $remote->PROC_NODE_LIST_DEVICES,
         { cap => $cap, maxnames => $maxnames, flags => $flags // 0 } );
 }
 
-sub node_num_of_devices {
-    my ($self, $cap, $flags) = @_;
+sub node_num_of_devices($self, $cap, $flags = 0) {
     return $self->_call(
         $remote->PROC_NODE_NUM_OF_DEVICES,
         { cap => $cap, flags => $flags // 0 } );
 }
 
-sub node_set_memory_parameters {
-    my ($self, $params, $flags) = @_;
+sub node_set_memory_parameters($self, $params, $flags = 0) {
     return $self->_call(
         $remote->PROC_NODE_SET_MEMORY_PARAMETERS,
         { params => $params, flags => $flags // 0 } );
 }
 
-sub node_suspend_for_duration {
-    my ($self, $target, $duration, $flags) = @_;
+sub node_suspend_for_duration($self, $target, $duration, $flags = 0) {
     return $self->_call(
         $remote->PROC_NODE_SUSPEND_FOR_DURATION,
         { target => $target, duration => $duration, flags => $flags // 0 } );
 }
 
-sub num_of_defined_domains {
-    my ($self, ) = @_;
+sub num_of_defined_domains($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_DEFINED_DOMAINS,
         {  } );
 }
 
-sub num_of_defined_interfaces {
-    my ($self, ) = @_;
+sub num_of_defined_interfaces($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_DEFINED_INTERFACES,
         {  } );
 }
 
-sub num_of_defined_networks {
-    my ($self, ) = @_;
+sub num_of_defined_networks($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_DEFINED_NETWORKS,
         {  } );
 }
 
-sub num_of_defined_storage_pools {
-    my ($self, ) = @_;
+sub num_of_defined_storage_pools($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_DEFINED_STORAGE_POOLS,
         {  } );
 }
 
-sub num_of_domains {
-    my ($self, ) = @_;
+sub num_of_domains($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_DOMAINS,
         {  } );
 }
 
-sub num_of_interfaces {
-    my ($self, ) = @_;
+sub num_of_interfaces($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_INTERFACES,
         {  } );
 }
 
-sub num_of_networks {
-    my ($self, ) = @_;
+sub num_of_networks($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_NETWORKS,
         {  } );
 }
 
-sub num_of_nwfilters {
-    my ($self, ) = @_;
+sub num_of_nwfilters($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_NWFILTERS,
         {  } );
 }
 
-sub num_of_secrets {
-    my ($self, ) = @_;
+sub num_of_secrets($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_SECRETS,
         {  } );
 }
 
-sub num_of_storage_pools {
-    my ($self, ) = @_;
+sub num_of_storage_pools($self) {
     return $self->_call(
         $remote->PROC_CONNECT_NUM_OF_STORAGE_POOLS,
         {  } );
 }
 
-sub nwfilter_binding_create_xml {
-    my ($self, $xml, $flags) = @_;
+sub nwfilter_binding_create_xml($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_NWFILTER_BINDING_CREATE_XML,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub nwfilter_binding_lookup_by_port_dev {
-    my ($self, $name) = @_;
+sub nwfilter_binding_lookup_by_port_dev($self, $name) {
     return $self->_call(
         $remote->PROC_NWFILTER_BINDING_LOOKUP_BY_PORT_DEV,
         { name => $name } );
 }
 
-sub nwfilter_define_xml {
-    my ($self, $xml) = @_;
+sub nwfilter_define_xml($self, $xml) {
     return $self->_call(
         $remote->PROC_NWFILTER_DEFINE_XML,
         { xml => $xml } );
 }
 
-sub nwfilter_define_xml_flags {
-    my ($self, $xml, $flags) = @_;
+sub nwfilter_define_xml_flags($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_NWFILTER_DEFINE_XML_FLAGS,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub nwfilter_lookup_by_name {
-    my ($self, $name) = @_;
+sub nwfilter_lookup_by_name($self, $name) {
     return $self->_call(
         $remote->PROC_NWFILTER_LOOKUP_BY_NAME,
         { name => $name } );
 }
 
-sub nwfilter_lookup_by_uuid {
-    my ($self, $uuid) = @_;
+sub nwfilter_lookup_by_uuid($self, $uuid) {
     return $self->_call(
         $remote->PROC_NWFILTER_LOOKUP_BY_UUID,
         { uuid => $uuid } );
 }
 
-sub secret_define_xml {
-    my ($self, $xml, $flags) = @_;
+sub secret_define_xml($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_SECRET_DEFINE_XML,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub secret_lookup_by_usage {
-    my ($self, $usageType, $usageID) = @_;
+sub secret_lookup_by_usage($self, $usageType, $usageID) {
     return $self->_call(
         $remote->PROC_SECRET_LOOKUP_BY_USAGE,
         { usageType => $usageType, usageID => $usageID } );
 }
 
-sub secret_lookup_by_uuid {
-    my ($self, $uuid) = @_;
+sub secret_lookup_by_uuid($self, $uuid) {
     return $self->_call(
         $remote->PROC_SECRET_LOOKUP_BY_UUID,
         { uuid => $uuid } );
 }
 
-sub set_identity {
-    my ($self, $params, $flags) = @_;
+sub set_identity($self, $params, $flags = 0) {
     return $self->_call(
         $remote->PROC_CONNECT_SET_IDENTITY,
         { params => $params, flags => $flags // 0 } );
 }
 
-sub storage_pool_create_xml {
-    my ($self, $xml, $flags) = @_;
+sub storage_pool_create_xml($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_STORAGE_POOL_CREATE_XML,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub storage_pool_define_xml {
-    my ($self, $xml, $flags) = @_;
+sub storage_pool_define_xml($self, $xml, $flags = 0) {
     return $self->_call(
         $remote->PROC_STORAGE_POOL_DEFINE_XML,
         { xml => $xml, flags => $flags // 0 } );
 }
 
-sub storage_pool_lookup_by_name {
-    my ($self, $name) = @_;
+sub storage_pool_lookup_by_name($self, $name) {
     return $self->_call(
         $remote->PROC_STORAGE_POOL_LOOKUP_BY_NAME,
         { name => $name } );
 }
 
-sub storage_pool_lookup_by_target_path {
-    my ($self, $path) = @_;
+sub storage_pool_lookup_by_target_path($self, $path) {
     return $self->_call(
         $remote->PROC_STORAGE_POOL_LOOKUP_BY_TARGET_PATH,
         { path => $path } );
 }
 
-sub storage_pool_lookup_by_uuid {
-    my ($self, $uuid) = @_;
+sub storage_pool_lookup_by_uuid($self, $uuid) {
     return $self->_call(
         $remote->PROC_STORAGE_POOL_LOOKUP_BY_UUID,
         { uuid => $uuid } );
 }
 
-sub storage_vol_lookup_by_key {
-    my ($self, $key) = @_;
+sub storage_vol_lookup_by_key($self, $key) {
     return $self->_call(
         $remote->PROC_STORAGE_VOL_LOOKUP_BY_KEY,
         { key => $key } );
 }
 
-sub storage_vol_lookup_by_path {
-    my ($self, $path) = @_;
+sub storage_vol_lookup_by_path($self, $path) {
     return $self->_call(
         $remote->PROC_STORAGE_VOL_LOOKUP_BY_PATH,
         { path => $path } );
 }
 
-sub supports_feature {
-    my ($self, $feature) = @_;
+sub supports_feature($self, $feature) {
     return $self->_call(
         $remote->PROC_CONNECT_SUPPORTS_FEATURE,
         { feature => $feature } );
@@ -1997,7 +1908,7 @@ a confirmation message from the server after which the server will close the con
 
 =head2 get_capabilities
 
-  $capabilities = await $client->get_capabilities;
+  $capabilities = await $client->get_capabilities( $self );
 
 =head2 get_domain_capabilities
 
@@ -2005,11 +1916,11 @@ a confirmation message from the server after which the server will close the con
 
 =head2 get_hostname
 
-  $hostname = await $client->get_hostname;
+  $hostname = await $client->get_hostname( $self );
 
 =head2 get_lib_version
 
-  $lib_ver = await $client->get_lib_version;
+  $lib_ver = await $client->get_lib_version( $self );
 
 =head2 get_max_vcpus
 
@@ -2025,7 +1936,7 @@ a confirmation message from the server after which the server will close the con
 
 =head2 get_version
 
-  $hv_ver = await $client->get_version;
+  $hv_ver = await $client->get_version( $self );
 
 =head2 interface_change_begin
 
@@ -2056,35 +1967,35 @@ a confirmation message from the server after which the server will close the con
 
 =head2 list_all_domains
 
-  $domains = await $client->list_all_domains( $need_results, $flags = 0 );
+  $domains = await $client->list_all_domains( $flags = 0 );
 
 =head2 list_all_interfaces
 
-  $ifaces = await $client->list_all_interfaces( $need_results, $flags = 0 );
+  $ifaces = await $client->list_all_interfaces( $flags = 0 );
 
 =head2 list_all_networks
 
-  $nets = await $client->list_all_networks( $need_results, $flags = 0 );
+  $nets = await $client->list_all_networks( $flags = 0 );
 
 =head2 list_all_node_devices
 
-  $devices = await $client->list_all_node_devices( $need_results, $flags = 0 );
+  $devices = await $client->list_all_node_devices( $flags = 0 );
 
 =head2 list_all_nwfilter_bindings
 
-  $bindings = await $client->list_all_nwfilter_bindings( $need_results, $flags = 0 );
+  $bindings = await $client->list_all_nwfilter_bindings( $flags = 0 );
 
 =head2 list_all_nwfilters
 
-  $filters = await $client->list_all_nwfilters( $need_results, $flags = 0 );
+  $filters = await $client->list_all_nwfilters( $flags = 0 );
 
 =head2 list_all_secrets
 
-  $secrets = await $client->list_all_secrets( $need_results, $flags = 0 );
+  $secrets = await $client->list_all_secrets( $flags = 0 );
 
 =head2 list_all_storage_pools
 
-  $pools = await $client->list_all_storage_pools( $need_results, $flags = 0 );
+  $pools = await $client->list_all_storage_pools( $flags = 0 );
 
 =head2 list_defined_domains
 
@@ -2148,11 +2059,11 @@ a confirmation message from the server after which the server will close the con
 
 =head2 node_get_free_memory
 
-  $freeMem = await $client->node_get_free_memory;
+  $freeMem = await $client->node_get_free_memory( $self );
 
 =head2 node_get_info
 
-  await $client->node_get_info;
+  await $client->node_get_info( $self );
   # -> { cores => $cores,
   #      cpus => $cpus,
   #      memory => $memory,
@@ -2182,43 +2093,43 @@ a confirmation message from the server after which the server will close the con
 
 =head2 num_of_defined_domains
 
-  $num = await $client->num_of_defined_domains;
+  $num = await $client->num_of_defined_domains( $self );
 
 =head2 num_of_defined_interfaces
 
-  $num = await $client->num_of_defined_interfaces;
+  $num = await $client->num_of_defined_interfaces( $self );
 
 =head2 num_of_defined_networks
 
-  $num = await $client->num_of_defined_networks;
+  $num = await $client->num_of_defined_networks( $self );
 
 =head2 num_of_defined_storage_pools
 
-  $num = await $client->num_of_defined_storage_pools;
+  $num = await $client->num_of_defined_storage_pools( $self );
 
 =head2 num_of_domains
 
-  $num = await $client->num_of_domains;
+  $num = await $client->num_of_domains( $self );
 
 =head2 num_of_interfaces
 
-  $num = await $client->num_of_interfaces;
+  $num = await $client->num_of_interfaces( $self );
 
 =head2 num_of_networks
 
-  $num = await $client->num_of_networks;
+  $num = await $client->num_of_networks( $self );
 
 =head2 num_of_nwfilters
 
-  $num = await $client->num_of_nwfilters;
+  $num = await $client->num_of_nwfilters( $self );
 
 =head2 num_of_secrets
 
-  $num = await $client->num_of_secrets;
+  $num = await $client->num_of_secrets( $self );
 
 =head2 num_of_storage_pools
 
-  $num = await $client->num_of_storage_pools;
+  $num = await $client->num_of_storage_pools( $self );
 
 =head2 nwfilter_binding_create_xml
 

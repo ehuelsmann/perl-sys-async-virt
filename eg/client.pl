@@ -85,11 +85,11 @@ await $virt->open( 'qemu:///system' );
 
 use Data::Dumper;
 try {
-    my $rv = await $virt->list_all_domains(9999);
+    my $rv = await $virt->list_all_domains();
     #say Dumper($rv);
     #$log->trace( 'Listed' );
 
-    say Dumper(await $rv->{domains}->[0]->get_xml_desc);
+    say scalar $rv->@*;
 }
 catch ($e) {
     say Dumper($e);

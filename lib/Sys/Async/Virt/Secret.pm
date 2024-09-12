@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::Secret v10.3.0;
@@ -36,22 +37,19 @@ sub new {
     }, $class;
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_SECRET_GET_XML_DESC,
         { secret => $self->{id}, flags => $flags // 0 } );
 }
 
-sub set_value {
-    my ($self, $value, $flags) = @_;
+sub set_value($self, $value, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_SECRET_SET_VALUE,
         { secret => $self->{id}, value => $value, flags => $flags // 0 } );
 }
 
-sub undefine {
-    my ($self, ) = @_;
+sub undefine($self) {
     return $self->{client}->_call(
         $remote->PROC_SECRET_UNDEFINE,
         { secret => $self->{id},  } );
@@ -95,7 +93,7 @@ v10.3.0
 
 =head2 undefine
 
-  await $secret->undefine;
+  await $secret->undefine( $self );
   # -> (* no data *)
 
 

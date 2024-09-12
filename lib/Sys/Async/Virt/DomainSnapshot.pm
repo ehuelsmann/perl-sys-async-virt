@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::DomainSnapshot v10.3.0;
@@ -54,64 +55,55 @@ sub new {
     }, $class;
 }
 
-sub delete {
-    my ($self, $flags) = @_;
+sub delete($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_DELETE,
         { snap => $self->{id}, flags => $flags // 0 } );
 }
 
-sub get_parent {
-    my ($self, $flags) = @_;
+sub get_parent($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_GET_PARENT,
         { snap => $self->{id}, flags => $flags // 0 } );
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_GET_XML_DESC,
         { snap => $self->{id}, flags => $flags // 0 } );
 }
 
-sub has_metadata {
-    my ($self, $flags) = @_;
+sub has_metadata($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_HAS_METADATA,
         { snap => $self->{id}, flags => $flags // 0 } );
 }
 
-sub is_current {
-    my ($self, $flags) = @_;
+sub is_current($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_IS_CURRENT,
         { snap => $self->{id}, flags => $flags // 0 } );
 }
 
-sub list_all_children {
-    my ($self, $need_results, $flags) = @_;
+sub list_all_children($self, $need_results, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_LIST_ALL_CHILDREN,
         { snapshot => $self->{id}, need_results => $need_results, flags => $flags // 0 } );
 }
 
-sub list_children_names {
-    my ($self, $maxnames, $flags) = @_;
+sub list_children_names($self, $maxnames, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_LIST_CHILDREN_NAMES,
         { snap => $self->{id}, maxnames => $maxnames, flags => $flags // 0 } );
 }
 
-sub num_children {
-    my ($self, $flags) = @_;
+sub num_children($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_NUM_CHILDREN,
         { snap => $self->{id}, flags => $flags // 0 } );
 }
 
-sub revert_to_snapshot {
-    my ($self, $flags) = @_;
+sub revert_to_snapshot($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_REVERT_TO_SNAPSHOT,
         { snap => $self->{id}, flags => $flags // 0 } );

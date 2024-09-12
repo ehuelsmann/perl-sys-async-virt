@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::StorageVol v10.3.0;
@@ -60,71 +61,61 @@ sub new {
     }, $class;
 }
 
-sub delete {
-    my ($self, $flags) = @_;
+sub delete($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_DELETE,
         { vol => $self->{id}, flags => $flags // 0 } );
 }
 
-sub download {
-    my ($self, $offset, $length, $flags) = @_;
+sub download($self, $offset, $length, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_DOWNLOAD,
         { vol => $self->{id}, offset => $offset, length => $length, flags => $flags // 0 } );
 }
 
-sub get_info {
-    my ($self, ) = @_;
+sub get_info($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_INFO,
         { vol => $self->{id},  } );
 }
 
-sub get_path {
-    my ($self, ) = @_;
+sub get_path($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_PATH,
         { vol => $self->{id},  } );
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_XML_DESC,
         { vol => $self->{id}, flags => $flags // 0 } );
 }
 
-sub pool_lookup_by_volume {
-    my ($self, ) = @_;
+sub pool_lookup_by_volume($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_LOOKUP_BY_VOLUME,
         { vol => $self->{id},  } );
 }
 
-sub resize {
-    my ($self, $capacity, $flags) = @_;
+sub resize($self, $capacity, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_RESIZE,
         { vol => $self->{id}, capacity => $capacity, flags => $flags // 0 } );
 }
 
-sub upload {
-    my ($self, $offset, $length, $flags) = @_;
+sub upload($self, $offset, $length, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_UPLOAD,
         { vol => $self->{id}, offset => $offset, length => $length, flags => $flags // 0 } );
 }
 
-sub wipe {
-    my ($self, $flags) = @_;
+sub wipe($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_WIPE,
         { vol => $self->{id}, flags => $flags // 0 } );
 }
 
-sub wipe_pattern {
-    my ($self, $algorithm, $flags) = @_;
+sub wipe_pattern($self, $algorithm, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_WIPE_PATTERN,
         { vol => $self->{id}, algorithm => $algorithm, flags => $flags // 0 } );
@@ -169,14 +160,14 @@ v10.3.0
 
 =head2 get_info
 
-  await $vol->get_info;
+  await $vol->get_info( $self );
   # -> { allocation => $allocation,
   #      capacity => $capacity,
   #      type => $type }
 
 =head2 get_path
 
-  $name = await $vol->get_path;
+  $name = await $vol->get_path( $self );
 
 =head2 get_xml_desc
 
@@ -184,7 +175,7 @@ v10.3.0
 
 =head2 pool_lookup_by_volume
 
-  $pool = await $vol->pool_lookup_by_volume;
+  $pool = await $vol->pool_lookup_by_volume( $self );
 
 =head2 resize
 

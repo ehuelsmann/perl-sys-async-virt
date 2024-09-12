@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::Interface v10.3.0;
@@ -35,36 +36,31 @@ sub new {
     }, $class;
 }
 
-sub create {
-    my ($self, $flags) = @_;
+sub create($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_INTERFACE_CREATE,
         { iface => $self->{id}, flags => $flags // 0 } );
 }
 
-sub destroy {
-    my ($self, $flags) = @_;
+sub destroy($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_INTERFACE_DESTROY,
         { iface => $self->{id}, flags => $flags // 0 } );
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_INTERFACE_GET_XML_DESC,
         { iface => $self->{id}, flags => $flags // 0 } );
 }
 
-sub is_active {
-    my ($self, ) = @_;
+sub is_active($self) {
     return $self->{client}->_call(
         $remote->PROC_INTERFACE_IS_ACTIVE,
         { iface => $self->{id},  } );
 }
 
-sub undefine {
-    my ($self, ) = @_;
+sub undefine($self) {
     return $self->{client}->_call(
         $remote->PROC_INTERFACE_UNDEFINE,
         { iface => $self->{id},  } );
@@ -113,11 +109,11 @@ v10.3.0
 
 =head2 is_active
 
-  $active = await $iface->is_active;
+  $active = await $iface->is_active( $self );
 
 =head2 undefine
 
-  await $iface->undefine;
+  await $iface->undefine( $self );
   # -> (* no data *)
 
 

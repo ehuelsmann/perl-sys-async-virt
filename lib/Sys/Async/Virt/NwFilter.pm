@@ -10,8 +10,9 @@
 ####################################################################
 
 
-use v5.14;
+use v5.20;
 use warnings;
+use experimental 'signatures';
 use Future::AsyncAwait;
 
 package Sys::Async::Virt::NwFilter v10.3.0;
@@ -32,15 +33,13 @@ sub new {
     }, $class;
 }
 
-sub get_xml_desc {
-    my ($self, $flags) = @_;
+sub get_xml_desc($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NWFILTER_GET_XML_DESC,
         { nwfilter => $self->{id}, flags => $flags // 0 } );
 }
 
-sub undefine {
-    my ($self, ) = @_;
+sub undefine($self) {
     return $self->{client}->_call(
         $remote->PROC_NWFILTER_UNDEFINE,
         { nwfilter => $self->{id},  } );
@@ -78,7 +77,7 @@ v10.3.0
 
 =head2 undefine
 
-  await $filter->undefine;
+  await $filter->undefine( $self );
   # -> (* no data *)
 
 
