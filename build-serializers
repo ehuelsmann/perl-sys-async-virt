@@ -163,6 +163,7 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
                  my $argstr = ($_->{argstr} =~ s/^\$self$|\$self, //r);
                  $argstr = $argstr ? "( $argstr )" : '';
                  my $retstr = ($_->{retstr} =~ s/{\s*}/(* no data *)/r);
+                 my $retstream = $_->{retstream} ? 'Returns a stream' : '';
                  if (length $retstr > 50) {
                      $retstr =~ s/, /,\n  #      /g;
                  }
@@ -206,7 +207,8 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
     print $fh $tmpl;
 }
 
-sub proc_msg($proc_annotation, $module_returns, $msgstruct, $ast, $proc_value) {
+sub proc_msg($proc, $module_returns, $msgstruct, $ast, $proc_value) {
+    my $proc_annotation = proc_annotation($proc);
     if ($proc_annotation !~ m/\@generate: (both|client)/) {
         return;
     }
@@ -224,12 +226,24 @@ sub proc_msg($proc_annotation, $module_returns, $msgstruct, $ast, $proc_value) {
     }
 }
 
-sub proc_call($ast, $module_functions, $module_returns, $proc_value, $proc_const, $struct_basename) {
+sub proc_annotation($proc) {
+    return join("\n",
+                map { $_->{content} }
+                @{ $proc->{comments} } );
+}
+
+sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $struct_basename) {
+    my $proc_annotation = proc_annotation($proc);
+    if ($proc_annotation !~ m/\@generate: (both|client)/) {
+        $module_returns->[$proc_value] = '\&_no_translation';
+        return;
+    }
     my $func = ($struct_basename =~ s/^remote_//r);
     my $callstruct_name = $struct_basename . '_args';
     my $retstruct_name = $struct_basename . '_ret';
     my $callstruct = find_toplevel_definition($ast, $callstruct_name);
     my $retstruct = find_toplevel_definition($ast, $retstruct_name);
+    my $retstream = ($proc_annotation =~ m/@(read|write)stream:/);
     my $into_module = $main_module;
 
     my @callargs = _retvals( $callstruct );
@@ -263,9 +277,10 @@ sub proc_call($ast, $module_functions, $module_returns, $proc_value, $proc_const
     my $ret_unwrap = (@retvals == 1 ? $retvals[0]->{name} : '');
     push @{ $module_functions->{$into_module} //= [] }, {
         name => $entrypoint,
-        const => $proc_const,
+        const => proc_const($proc),
         args => \@callargs,
         ret  => \@retvals,
+        retstream => $retstream,
         retstr => ((not $ret_unwrap)
                    ? ('{ ' . join(', ',
                                   map { $_ . ' => $' . $_ }
@@ -291,6 +306,10 @@ sub proc_call($ast, $module_functions, $module_returns, $proc_value, $proc_const
     else {
         $module_returns->[$proc_value] = '\&_no_translation';
     }
+}
+
+sub proc_const($proc) {
+    return ($proc->{name}->{content} =~ s/^REMOTE_//r);
 }
 
 my %args_defaults = (
@@ -458,21 +477,16 @@ sub client($xdr_parse_version, $ast, $template, $h_syms) {
     my (%module_functions, @module_returns); # returns are always in the client!
 
     for my $proc ( @{ $procs->{definition}->{type}->{declaration}->{elements} } ) {
-        my $proc_annotation = join("\n", map { $_->{content} } @{ $proc->{comments} } );
         my $proc_name = $proc->{name}->{content};
         my $proc_value = $proc->{value}->{content};
-        my $proc_const = ($proc_name =~ s/^REMOTE_//r);
         my $struct_basename = lc($proc_name =~ s/_PROC//r);
 
         if (my $msgstruct = find_toplevel_definition($ast, $struct_basename . '_msg')) {
-            proc_msg($proc_annotation, \@module_returns, $msgstruct, $ast, $proc_value);
-        }
-        elsif ($proc_annotation =~ m/\@generate: (both|client)/) {
-            proc_call($ast, \%module_functions, \@module_returns, $proc_value,
-                      $proc_const, $struct_basename);
+            proc_msg($proc, \@module_returns, $msgstruct, $ast, $proc_value);
         }
         else {
-            $module_returns[$proc_value] = '\&_no_translation';
+            proc_call($ast, $proc, \%module_functions, \@module_returns, $proc_value,
+                      $struct_basename);
         }
     }
     for my $key ( sort keys %module_functions ) {
