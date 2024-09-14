@@ -14,14 +14,15 @@ use v5.20;
 use warnings;
 no warnings qw(void);
 use experimental 'signatures';
+use Feature::Compat::Try;
 use Future::AsyncAwait;
-use Future::Queue;
 
 package Sys::Async::Virt v10.3.0;
 
 use parent qw(IO::Async::Notifier);
 
 use Carp qw(croak);
+use Future::Queue;
 use Log::Any qw($log);
 use Scalar::Util qw(reftype weaken);
 
@@ -40,6 +41,8 @@ use Sys::Async::Virt::StoragePool v10.3.0;
 use Sys::Async::Virt::StorageVol v10.3.0;
 use Sys::Async::Virt::NodeDevice v10.3.0;
 use Sys::Async::Virt::Secret v10.3.0;
+
+use Sys::Async::Virt::Callback v10.3.0;
 
 use constant {
     CLOSE_REASON_ERROR                                 => 0,
@@ -275,7 +278,7 @@ use constant {
 
 
 sub _no_translation {
-    shift;
+    shift; # $client
     return @_;
 }
 
@@ -990,11 +993,11 @@ sub secret_instance {
 }
 
 async sub _call($self, $proc, $args = {}) {
-    my $self = shift;
     my $serial = await $self->{remote}->call( $proc, $args );
     my $f = $self->loop->new_future;
     $log->trace( "Setting serial $serial future" );
     $self->{_replies}->{$serial} = $f;
+    ### Return a stream somehow...
     return await $f;
 }
 
@@ -1020,14 +1023,13 @@ sub _dispatch_closed {
 }
 
 sub _dispatch_message {
-    my $self = shift;
-    my %args = @_;
+    my ($self, %args) = @_;
 
     if ($args{data}
         and defined $args{data}->{callbackID}
-        and my $q = $self->{_callbacks}->{$args{data}->{callbackID}}) {
+        and my $cb = $self->{_callbacks}->{$args{data}->{callbackID}}) {
         my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
-        $q->push( $cbargs{data} );
+        $cb->_dispatch_event($cbargs{data});
     }
     else {
         my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
@@ -1086,14 +1088,30 @@ sub register {
     $self->{remote} = $r;
 }
 
-sub register_callback {
+sub _register_callback {
     my ($self, $callbackID, $callback) = @_;
     $self->{_callbacks}->{$callbackID} = $callback;
 }
 
-sub unregister_callback {
+sub _unregister_callback {
     my ($self, $callbackID) = @_;
     delete $self->{_callbacks}->{$callbackID};
+}
+
+async sub domain_event_callback_register_any($self, $eventID, $domain = undef) {
+    my $rv = await $self->_call(
+        $remote->PROC_CONNECT_DOMAIN_EVENT_CALLBACK_REGISTER_ANY,
+        { eventID => $eventID, dom => $domain });
+    my $dereg = $remote->PROC_CONNECT_DOMAIN_EVENT_CALLBACK_DEREGISTER_ANY;
+    my $cb = Sys::Async::Virt::Callback->new(
+        id => $rv->{callbackID},
+        client => $self,
+        deregister_call => $dereg,
+        factory => sub { $self->loop->new_future }
+        );
+    $self->{_callbacks}->{$rv->{callbackID}} = $cb;
+
+    return $cb;
 }
 
 sub register_stream {

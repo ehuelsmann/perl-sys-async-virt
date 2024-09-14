@@ -1,11 +1,12 @@
 #!perl
 
 requires 'perl' => '5.20.0';
+requires 'Feature::Compat::Try';
 requires 'Future::AsyncAwait';
 requires 'Future::Queue';
 requires 'IO::Async::Loop';
 requires 'Log::Any';
-requires 'Protocol::Sys::Virt' => '10.3.3';
+requires 'Protocol::Sys::Virt' => '10.3.7';
 
 
 on test => sub {

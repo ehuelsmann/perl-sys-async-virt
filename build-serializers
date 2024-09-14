@@ -57,6 +57,7 @@ my %module = (
     );
 
 my $main_module = 'Client';
+my @other_modules = qw( Callback );
 
 my %prefix_strip_xdr = (
     Client => qr/^connect_/,
@@ -499,7 +500,7 @@ sub client($xdr_parse_version, $ast, $template, $h_syms) {
     }
 
     my $translators = join(",\n    ", map { $_ // 'undef'} @module_returns);
-    for my $mod ($main_module, values %module) {
+    for my $mod ($main_module, @other_modules, values %module) {
         expand_mod_template($template,
                             $mod,
                             $h_syms,
