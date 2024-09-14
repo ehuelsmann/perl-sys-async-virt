@@ -591,31 +591,28 @@ __VERSION__
   my $client = Sys::Async::Virt->new();
   $client->register( $remote );
 
-  $client->auth( $remote->AUTH_NONE, sub {
-      $client->open( 'qemu:///system', on_opened => sub { say "Opened!"; } );
-  });
+  await $client->auth( $remote->AUTH_NONE );
+  await $client->open( 'qemu:///system' );
+
 
 =head1 DESCRIPTION
 
 This module manages access to a LibVirt service through its remote protocol.
 
-The API documentation of this module and the related modules C<Sys::Async::Virt::*>
-is meant to be used in conjunction with the documentation found at L<LibVirt's API
+The API documentation of this module and the related modules
+C<Sys::Async::Virt::*> is meant to be used in conjunction with the
+documentation found at L<LibVirt's API
 reference|https://libvirt.org/html/index.html>.  Since the C API is procedural
 whereas the Perl API is object oriented; to look up a function from e.g.
 C<Sys::Async::Virt::Domain>, translate the function to CamelCase and
-add the prefix C<virDomain>.  The functions in this module may need to be prefixed
-with either C<virConnect> or C<virNode>.  An important difference with the C API
-is that this API only lists the C<INPUT> and C<INPUT|OUTPUT (as input)> arguments for its
-functions.  The C<OUTPUT> and C<INPUT|OUTPUT (as output)> arguments will be returned in the
-C<on_reply> event.
+add the prefix C<virDomain>.  The functions in this module may need to be
+prefixed with either C<virConnect> or C<virNode>.  An important difference with
+the C API is that this API only lists the C<INPUT> and C<INPUT|OUTPUT (as
+input)> arguments for its functions.  The C<OUTPUT> and C<INPUT|OUTPUT (as
+output)> arguments will be returned in the C<on_reply> event.
 
 
 =head1 CLIENT EVENTS
-
-=head2 on_reply
-
-  $on_reply->( @@@TODO );
 
 =head2 on_message
 
@@ -633,10 +630,6 @@ registration functions.
 Receives all messages for which no stream has been registered through
 L</register_stream>.
 
-=head2 on_open
-
-  $on_open->();
-
 =head2 on_close
 
   $on_close->();
@@ -645,13 +638,48 @@ L</register_stream>.
 
 =head2 domain_event_register_any
 
+  $cb = await $client->domain_event_register_any( $event_id, $dom = undef );
+
+Subscribes to events of type C<$event_id>. Restricts events to a specific
+domain by passing a value into C<$dom>.
+
+Returns a L<Sys::Async::Virt::Callback> instance.
+
 =head2 network_event_register_any
+
+  $cb = await $client->network_event_register_any( $event_id, $net = undef );
+
+Subscribes to events of type C<$event_id>. Restricts events to a specific
+network by passing a value into C<$net>.
+
+Returns a L<Sys::Async::Virt::Callback> instance.
 
 =head2 node_device_event_register_any
 
+  $cb = await $client->node_device_event_register_any( $event_id, $dev = undef );
+
+Subscribes to events of type C<$event_id>. Restricts events to a specific
+device by passing a value into C<$dev>.
+
+Returns a L<Sys::Async::Virt::Callback> instance.
+
 =head2 secret_event_register_any
 
+  $cb = await $client->secret_event_register_any( $event_id, $secret = undef);
+
+Subscribes to events of type C<$event_id>. Restricts events to a specific
+secret by passing a value into C<$secret>.
+
+Returns a L<Sys::Async::Virt::Callback> instance.
+
 =head2 storage_pool_event_register_any
+
+  $cb = await $client->storage_pool_event_register_any( $event_id, $pool = undef );
+
+Subscribes to events of type C<$event_id>. Restricts events to a specific
+storage pool by passing a value into C<$pool>.
+
+Returns a L<Sys::Async::Virt::Callback> instance.
 
 =head1 CONSTRUCTOR
 
@@ -687,13 +715,15 @@ Creates a new client instance.  The constructor supports the following arguments
 
 =head2 auth
 
-  $client->auth( $auth_type, $on_completed );
+  await $client->auth( $auth_type, $on_completed );
+  # -> (* no data *)
 
 Authenticates the client with the server.
 
 =head2 open
 
-  $serial = $client->open( $url, $flags = 0 );
+  await $client->open( $url, $flags = 0 );
+  # -> (* no data *)
 
 This function opens the connection to the remote driver C<$url> as documented in
 L<LibVirt's Connection URIs|https://libvirt.org/uri.html>.  Note that the value
@@ -702,10 +732,12 @@ connection.
 
 =head2 close
 
-  $serial = $client->close;
+  await $client->close;
+  # -> (* no data *)
 
-Announces to the remote the intent to close the connection. The client will receive
-a confirmation message from the server after which the server will close the connection.
+Announces to the remote the intent to close the connection. The client will
+receive a confirmation message from the server after which the server will
+close the connection.
 
 __ENTRYPOINTS__
 
