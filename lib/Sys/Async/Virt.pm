@@ -283,35 +283,35 @@ sub _no_translation {
 }
 
 sub _translate_remote_nonnull_domain {
-    $_[0]->domain_instance( $_[1] );
+    $_[0]->_domain_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_domain_checkpoint {
-    $_[0]->domain_checkpoint_instance( $_[1] );
+    $_[0]->_domain_checkpoint_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_domain_snapshot {
-    $_[0]->domain_snapshot_instance( $_[1] );
+    $_[0]->_domain_snapshot_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_network {
-    $_[0]->network_instance( $_[1] );
+    $_[0]->_network_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_network_port {
-    $_[0]->network_port_instance( $_[1] );
+    $_[0]->_network_port_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_nwfilter {
-    $_[0]->network_nwfilter_instance( $_[1] );
+    $_[0]->_network_nwfilter_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_nwfilter_binding {
-    $_[0]->network_nwfilter_binding_instance( $_[1] );
+    $_[0]->_network_nwfilter_binding_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_interface {
-    $_[0]->network_interface_instance( $_[1] );
+    $_[0]->_network_interface_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_storage_pool {
@@ -319,11 +319,11 @@ sub _translate_remote_nonnull_storage_pool {
 }
 
 sub _translate_remote_nonnull_storage_vol {
-    $_[0]->storage_vol_instance( $_[1] );
+    $_[0]->_storage_vol_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_node_device {
-    $_[0]->node_device_instance( $_[1] );
+    $_[0]->_node_device_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_secret {
@@ -898,7 +898,7 @@ sub new {
     return $self;
 }
 
-sub domain_instance {
+sub _domain_instance {
     my ($self, $id) = @_;
     my $c = $self->{_domains}->{$id->{uuid}}
        //= $self->{domain_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -906,7 +906,7 @@ sub domain_instance {
     return $c;
 }
 
-sub domain_checkpoint_instance {
+sub _domain_checkpoint_instance {
     my ($self, $id) = @_;
     my $key = "$id->{dom}->{uuid}/$id->{name}";
     my $c = $self->{_domain_checkpoints}->{$key}
@@ -915,7 +915,7 @@ sub domain_checkpoint_instance {
     return $c;
 }
 
-sub domain_snapshot_instance {
+sub _domain_snapshot_instance {
     my ($self, $id) = @_;
     my $key = "$id->{dom}->{uuid}/$id->{name}";
     my $c = $self->{_domain_snapshots}->{$id->{uuid}}
@@ -924,7 +924,7 @@ sub domain_snapshot_instance {
     return $c;
 }
 
-sub network_instance {
+sub _network_instance {
     my ($self, $id) = @_;
     my $c = $self->{_networks}->{$id->{uuid}}
        //= $self->{network_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -932,7 +932,7 @@ sub network_instance {
     return $c;
 }
 
-sub network_port_instance {
+sub _network_port_instance {
     my ($self, $id) = @_;
     my $c = $self->{_network_ports}->{$id->{uuid}}
        //= $self->{network_port_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -940,7 +940,7 @@ sub network_port_instance {
     return $c;
 }
 
-sub nwfilter_instance {
+sub _nwfilter_instance {
     my ($self, $id) = @_;
     my $c = $self->{_nwfilters}->{$id->{uuid}}
        //= $self->{nwfilter_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -948,7 +948,7 @@ sub nwfilter_instance {
     return $c;
 }
 
-sub nwfilter_binding_instance {
+sub _nwfilter_binding_instance {
     my ($self, $id) = @_;
     my $key = "$id->{portdev}/$id->{filtername}";
     my $c = $self->{_nwfilter_bindings}->{$key}
@@ -957,7 +957,7 @@ sub nwfilter_binding_instance {
     return $c;
 }
 
-sub interface_instance {
+sub _interface_instance {
     my ($self, $id) = @_;
     my $key = "$id->{mac}/$id->{name}";
     my $c = $self->{_interfaces}->{$key}
@@ -966,7 +966,7 @@ sub interface_instance {
     return $c;
 }
 
-sub storage_pool_instance {
+sub _storage_pool_instance {
     my ($self, $id) = @_;
     my $c = $self->{_storage_pools}->{$id->{uuid}}
        //= $self->{storage_pool_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -974,7 +974,7 @@ sub storage_pool_instance {
     return $c;
 }
 
-sub storage_vol_instance {
+sub _storage_vol_instance {
     my ($self, $id) = @_;
     my $c = $self->{_storage_vols}->{$id->{key}}
        //= $self->{storage_vol_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -982,7 +982,7 @@ sub storage_vol_instance {
     return $c;
 }
 
-sub node_device_instance {
+sub _node_device_instance {
     my ($self, $id) = @_;
     my $c = $self->{_node_devices}->{$id->{name}}
        //= $self->{node_device_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -990,7 +990,7 @@ sub node_device_instance {
     return $c;
 }
 
-sub secret_instance {
+sub _secret_instance {
     my ($self, $id) = @_;
     my $c = $self->{_secrets}->{$id->{uuid}}
        //= $self->{secret_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -1837,7 +1837,7 @@ functions.  The C<OUTPUT> and C<INPUT|OUTPUT (as output)> arguments will be retu
 C<on_reply> event.
 
 
-=head1 EVENTS
+=head1 CLIENT EVENTS
 
 =head2 on_reply
 
@@ -1867,6 +1867,18 @@ L</register_stream>.
 
   $on_close->();
 
+=head1 LIBVIRT EVENTS
+
+=head2 domain_event_register_any
+
+=head2 network_event_register_any
+
+=head2 node_device_event_register_any
+
+=head2 secret_event_register_any
+
+=head2 storage_pool_event_register_any
+
 =head1 CONSTRUCTOR
 
 =head2 new
@@ -1884,6 +1896,8 @@ Creates a new client instance.  The constructor supports the following arguments
 =back
 
 =head1 METHODS
+
+=head2 configure
 
 =head2 register
 
