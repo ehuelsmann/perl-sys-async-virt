@@ -86,7 +86,7 @@ await $virt->open( 'qemu:///system' );
 
 use Data::Dumper;
 try {
-    my $es = await $virt->domain_event_callback_register_any(
+    my $es = await $virt->domain_event_register_any(
         $virt->DOMAIN_EVENT_ID_LIFECYCLE);
     my $rv = await $virt->list_all_domains();
     #say Dumper($rv);

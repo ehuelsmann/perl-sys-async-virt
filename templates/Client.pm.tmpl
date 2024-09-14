@@ -420,7 +420,7 @@ sub _unregister_callback {
     delete $self->{_callbacks}->{$callbackID};
 }
 
-async sub domain_event_callback_register_any($self, $eventID, $domain = undef) {
+async sub domain_event_register_any($self, $eventID, $domain = undef) {
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_DOMAIN_EVENT_CALLBACK_REGISTER_ANY,
         { eventID => $eventID, dom => $domain });
@@ -433,7 +433,71 @@ async sub domain_event_callback_register_any($self, $eventID, $domain = undef) {
         );
     $self->{_callbacks}->{$rv->{callbackID}} = $cb;
 
-    return $q;
+    return $cb;
+}
+
+async sub network_event_register_any($self, $eventID, $network = undef) {
+    my $rv = await $self->_call(
+        $remote->PROC_CONNECT_NETWORK_EVENT_REGISTER_ANY,
+        { eventID => $eventID, net => $network });
+    my $dereg = $remote->PROC_CONNECT_NETWORK_EVENT_DEREGISTER_ANY;
+    my $cb = Sys::Async::Virt::Callback->new(
+        id => $rv->{callbackID},
+        client => $self,
+        deregister_call => $dereg,
+        factory => sub { $self->loop->new_future }
+        );
+    $self->{_callbacks}->{$rv->{callbackID}} = $cb;
+
+    return $cb;
+}
+
+async sub storage_pool_event_register_any($self, $eventID, $pool = undef) {
+    my $rv = await $self->_call(
+        $remote->PROC_CONNECT_STORAGE_POOL_EVENT_REGISTER_ANY,
+        { eventID => $eventID, pool => $pool });
+    my $dereg = $remote->PROC_CONNECT_STORAGE_POOL_EVENT_DEREGISTER_ANY;
+    my $cb = Sys::Async::Virt::Callback->new(
+        id => $rv->{callbackID},
+        client => $self,
+        deregister_call => $dereg,
+        factory => sub { $self->loop->new_future }
+        );
+    $self->{_callbacks}->{$rv->{callbackID}} = $cb;
+
+    return $cb;
+}
+
+async sub node_device_event_register_any($self, $eventID, $dev = undef) {
+    my $rv = await $self->_call(
+        $remote->PROC_CONNECT_NODE_DEVICE_EVENT_REGISTER_ANY,
+        { eventID => $eventID, dev => $dev });
+    my $dereg = $remote->PROC_CONNECT_NODE_DEVICE_EVENT_DEREGISTER_ANY;
+    my $cb = Sys::Async::Virt::Callback->new(
+        id => $rv->{callbackID},
+        client => $self,
+        deregister_call => $dereg,
+        factory => sub { $self->loop->new_future }
+        );
+    $self->{_callbacks}->{$rv->{callbackID}} = $cb;
+
+    return $cb;
+}
+
+async sub secret_event_register_any($self, $eventID, $secret = undef) {
+    my $rv = await $self->_call(
+        $remote->PROC_CONNECT_SECRET_EVENT_REGISTER_ANY,
+        { eventID => $eventID, secret => $secret });
+    my $dereg = $remote->PROC_CONNECT_SECRET_EVENT_DEREGISTER_ANY;
+    my $cb = Sys::Async::Virt::Callback->new(
+        id => $rv->{callbackID},
+        client => $self,
+        deregister_call => $dereg,
+        factory => sub { $self->loop->new_future }
+        );
+    $self->{_callbacks}->{$rv->{callbackID}} = $cb;
+
+    return $cb;
 }
 
 sub register_stream {
