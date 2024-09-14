@@ -80,7 +80,7 @@ __END__
 
 =head1 NAME
 
-Sys::Async::Virt::Callback - 
+Sys::Async::Virt::Callback - Client side proxy to remote LibVirt event source
 
 =head1 VERSION
 
@@ -88,25 +88,61 @@ v10.3.0
 
 =head1 SYNOPSIS
 
+  my $cb = await $client->domain_event_register_any(
+     $client->DOMAIN_EVENT_ID_LIFECYCLE );
+
+  while (my $event = await $cb->next_event) {
+     my $dom = $event->{msg}->{dom};
+
+     # process the event
+     if ($event->{event} == $dom->EVENT_STOPPED) {
+        # Act on stopped domain
+     }
+  );
+
 =head1 DESCRIPTION
 
-=head1 EVENTS
+This class provides access to events generated on the remote; its design
+allows linear handling of the generated events, by presenting the events
+as a stream of futures coming from the server.
+
+Events are buffered until they're read off the callback object. No events
+will get lost. However, since the server continues its operations, a domain
+could disappear if an event's handling is delayed too long.
 
 =head1 CONSTRUCTOR
 
 =head2 new
 
+Not to be called directly; used internally by methods returning
+instances of this class.
+
+=head1 DESTRUCTOR
+
+=head2 DESTROY
+
+Unregisters the callback from the server if it hasn't already been cancelled;
+not to be called directly: Perl calls this method when the value goes out of
+scope.
+
 =head1 METHODS
 
+=head2 next_event
 
+  my $f = $cb->next_event;
 
-=head1 CONSTANTS
+Returns a future which will resolve once the next event is available
+or until the callback is terminated using the C<cancel> method.
 
-=over 8
+Returns C<undef> when the event stream has been cancelled and all pending
+events have been handled.
 
+=head2 cancel
 
+  my $f = $cb->cancel;
 
-=back
+Returns a future which will resolve once the callback has been unregistered
+from the server and all pending events (on the client) have been cleared.
 
 =head1 SEE ALSO
 
