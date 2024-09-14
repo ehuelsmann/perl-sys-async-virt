@@ -783,6 +783,13 @@ wrapper allows for tracking all calls allowing to set up handling of the replies
 
 =item * C<@generate: none> entrypoints review (and implement relevant ones)
 
+Findings so far:
+
+  entrypoints with "nparams" have this flagging
+    -> it seems these can be generated without problem; our approach would be
+       to simply fill out the '_MAX' constant and return the actual parameters
+       in an array
+
 =item * C<@generate: server> entrypoints review (and implement relevant ones)
 
 =back
