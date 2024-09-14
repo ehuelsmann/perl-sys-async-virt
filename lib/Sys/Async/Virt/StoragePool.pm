@@ -277,7 +277,7 @@ v10.3.0
 
 =over 8
 
-INACTIVE
+=item INACTIVE
 
 =item BUILDING
 

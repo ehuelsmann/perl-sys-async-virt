@@ -179,7 +179,7 @@ v10.3.0
 
 =over 8
 
-XML_SECURE
+=item XML_SECURE
 
 =item LIST_ROOTS
 

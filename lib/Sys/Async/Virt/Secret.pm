@@ -101,7 +101,7 @@ v10.3.0
 
 =over 8
 
-EVENT_DEFINED
+=item EVENT_DEFINED
 
 =item EVENT_UNDEFINED
 

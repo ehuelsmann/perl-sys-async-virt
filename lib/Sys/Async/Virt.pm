@@ -2307,7 +2307,7 @@ a confirmation message from the server after which the server will close the con
 
 =over 8
 
-CLOSE_REASON_ERROR
+=item CLOSE_REASON_ERROR
 
 =item CLOSE_REASON_EOF
 

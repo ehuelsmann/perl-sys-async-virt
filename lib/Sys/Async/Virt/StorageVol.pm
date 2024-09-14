@@ -202,7 +202,7 @@ v10.3.0
 
 =over 8
 
-FILE
+=item FILE
 
 =item BLOCK
 

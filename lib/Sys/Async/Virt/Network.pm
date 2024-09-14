@@ -255,7 +255,7 @@ v10.3.0
 
 =over 8
 
-XML_INACTIVE
+=item XML_INACTIVE
 
 =item UPDATE_COMMAND_NONE
 
