@@ -1088,16 +1088,6 @@ sub register {
     $self->{remote} = $r;
 }
 
-sub _register_callback {
-    my ($self, $callbackID, $callback) = @_;
-    $self->{_callbacks}->{$callbackID} = $callback;
-}
-
-sub _unregister_callback {
-    my ($self, $callbackID) = @_;
-    delete $self->{_callbacks}->{$callbackID};
-}
-
 async sub domain_event_register_any($self, $eventID, $domain = undef) {
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_DOMAIN_EVENT_CALLBACK_REGISTER_ANY,
@@ -1852,7 +1842,8 @@ C<on_reply> event.
 
 Receives all messages which either don't classify as a callback invocation
 (i.e. the return value structure doesn't have a C<callbackID> member), or
-for which no callback has been registered through L</register_callback>
+for which no callback has been registered through one of the callback
+registration functions.
 
 =head2 on_stream
 
@@ -1891,17 +1882,9 @@ Creates a new client instance.  The constructor supports the following arguments
 
   $client->register( $remote );
 
-=head2 register_callback
-
-  $client->register_callback( $callbackID, sub { say 'Called back!' });
-
 =head2 register_stream
 
   $client->register_stream( $serial, $stream );
-
-=head2 unregister_callback
-
-  $client->unregister_callback( $callbackID );
 
 =head2 unregister_stream
 
