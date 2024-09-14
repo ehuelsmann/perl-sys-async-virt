@@ -649,22 +649,22 @@ my @reply_translators = (
     sub { 315; my $client = shift; _translated($client, undef, { net => \&_translate_remote_nonnull_network }, @_) },
     \&_no_translation,
     \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
+    sub { 318; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 319; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 320; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 321; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 322; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 323; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 324; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 325; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 326; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 327; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 328; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 329; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 330; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 331; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 332; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
+    sub { 333; my $client = shift; _translated($client, undef, { msg => { dom => \&_translate_remote_nonnull_domain } }, @_) },
     \&_no_translation,
     sub { 335; my $client = shift; _translated($client, 'filesystems', {  }, @_) },
     sub { 336; my $client = shift; _translated($client, 'filesystems', {  }, @_) },
@@ -783,14 +783,13 @@ my @reply_translators = (
 );
 
 
-sub _translated($client, $unwrap, $argmap, %args) {
-    return (%args, ) unless $args{data};
-    my $data = $args{data};
+sub _map( $client, $unwrap, $argmap, $data) {
     for my $key (keys %{ $argmap }) {
         my $val = $data->{$key};
 
         if (ref $argmap->{$key} and reftype $argmap->{$key} eq 'HASH') {
-            $data->{$key} = { _translated( $client, $argmap->{$key}, %{ $val } ) };
+            use Data::Dumper;
+            $data->{$key} = _map( $client, undef, $argmap->{$key}, $val );
         }
         elsif (ref $val and reftype $val eq 'ARRAY') {
             $data->{$key} = [ map { $argmap->{$key}->( $client, $_ ) } @{ $val } ];
@@ -800,6 +799,13 @@ sub _translated($client, $unwrap, $argmap, %args) {
         }
     }
 
+    return $data;
+}
+
+sub _translated($client, $unwrap, $argmap, %args) {
+    return (%args, ) unless $args{data};
+    my $data = $args{data};
+    $args{data} = _map($client, $unwrap, $argmap, $data);
     if ($unwrap) {
         $args{data} = $args{data}->{$unwrap};
     }
@@ -1022,17 +1028,18 @@ sub _dispatch_closed {
     $self->{on_closed}->( @_ );
 }
 
-sub _dispatch_message {
-    my ($self, %args) = @_;
-
+sub _dispatch_message($self, %args) {
     if ($args{data}
         and defined $args{data}->{callbackID}
         and my $cb = $self->{_callbacks}->{$args{data}->{callbackID}}) {
-        my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
+
+        my %cbargs =
+            $reply_translators[$args{header}->{proc}]->( $self, %args );
         $cb->_dispatch_event($cbargs{data});
     }
     else {
-        my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
+        my %cbargs =
+            $reply_translators[$args{header}->{proc}]->( $self, %args );
         $self->{on_message}->( $cbargs{data} );
     }
 }

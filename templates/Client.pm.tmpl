@@ -105,14 +105,13 @@ my @reply_translators = (
 );
 
 
-sub _translated($client, $unwrap, $argmap, %args) {
-    return (%args, ) unless $args{data};
-    my $data = $args{data};
+sub _map( $client, $unwrap, $argmap, $data) {
     for my $key (keys %{ $argmap }) {
         my $val = $data->{$key};
 
         if (ref $argmap->{$key} and reftype $argmap->{$key} eq 'HASH') {
-            $data->{$key} = { _translated( $client, $argmap->{$key}, %{ $val } ) };
+            use Data::Dumper;
+            $data->{$key} = _map( $client, undef, $argmap->{$key}, $val );
         }
         elsif (ref $val and reftype $val eq 'ARRAY') {
             $data->{$key} = [ map { $argmap->{$key}->( $client, $_ ) } @{ $val } ];
@@ -122,6 +121,13 @@ sub _translated($client, $unwrap, $argmap, %args) {
         }
     }
 
+    return $data;
+}
+
+sub _translated($client, $unwrap, $argmap, %args) {
+    return (%args, ) unless $args{data};
+    my $data = $args{data};
+    $args{data} = _map($client, $unwrap, $argmap, $data);
     if ($unwrap) {
         $args{data} = $args{data}->{$unwrap};
     }
@@ -344,17 +350,18 @@ sub _dispatch_closed {
     $self->{on_closed}->( @_ );
 }
 
-sub _dispatch_message {
-    my ($self, %args) = @_;
-
+sub _dispatch_message($self, %args) {
     if ($args{data}
         and defined $args{data}->{callbackID}
         and my $cb = $self->{_callbacks}->{$args{data}->{callbackID}}) {
-        my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
+
+        my %cbargs =
+            $reply_translators[$args{header}->{proc}]->( $self, %args );
         $cb->_dispatch_event($cbargs{data});
     }
     else {
-        my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
+        my %cbargs =
+            $reply_translators[$args{header}->{proc}]->( $self, %args );
         $self->{on_message}->( $cbargs{data} );
     }
 }

@@ -106,7 +106,7 @@ sub _retval_mapper {
         elsif ($retval->{type}
                and $retval->{type} =~ m/_msg$/
                and my $nested_msgstruct = find_toplevel_definition($ast, $retval->{type})) {
-            my %submap = _retval_mapper($ast, $nested_msgstruct);
+            my %submap = _retval_mapper($ast, _retvals($nested_msgstruct));
             $mapped_retvals{$retval->{name}} = \%submap if %submap;
         }
     }
