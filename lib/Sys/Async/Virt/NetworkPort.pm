@@ -93,14 +93,14 @@ v10.3.0
   await $port->delete( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortDelete>.
+See documentation of L<virNetworkPortDelete|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortDelete>.
 
 
 =head2 get_xml_desc
 
   $xml = await $port->get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortGetXMLDesc>.
+See documentation of L<virNetworkPortGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortGetXMLDesc>.
 
 
 =head2 set_parameters
@@ -108,7 +108,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $port->set_parameters( $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortSetParameters>.
+See documentation of L<virNetworkPortSetParameters|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortSetParameters>.
 
 
 

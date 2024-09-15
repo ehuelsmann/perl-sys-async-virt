@@ -75,7 +75,7 @@ v10.3.0
 
   $xml = await $filter->get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterGetXMLDesc>.
+See documentation of L<virNWFilterGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterGetXMLDesc>.
 
 
 =head2 undefine
@@ -83,7 +83,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $filter->undefine;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterUndefine>.
+See documentation of L<virNWFilterUndefine|https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterUndefine>.
 
 
 

@@ -102,28 +102,28 @@ v10.3.0
   await $checkpoint->delete( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointDelete>.
+See documentation of L<virDomainCheckpointDelete|https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointDelete>.
 
 
 =head2 get_parent
 
   $parent = await $checkpoint->get_parent( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointGetParent>.
+See documentation of L<virDomainCheckpointGetParent|https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointGetParent>.
 
 
 =head2 get_xml_desc
 
   $xml = await $checkpoint->get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointGetXMLDesc>.
+See documentation of L<virDomainCheckpointGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointGetXMLDesc>.
 
 
 =head2 list_all_children
 
   $checkpoints = await $checkpoint->list_all_children( $need_results, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointListAllChildren>.
+See documentation of L<virDomainCheckpointListAllChildren|https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointListAllChildren>.
 
 
 

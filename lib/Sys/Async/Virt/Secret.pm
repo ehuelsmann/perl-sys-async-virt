@@ -86,7 +86,7 @@ v10.3.0
 
   $xml = await $secret->get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretGetXMLDesc>.
+See documentation of L<virSecretGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretGetXMLDesc>.
 
 
 =head2 set_value
@@ -94,7 +94,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $secret->set_value( $value, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretSetValue>.
+See documentation of L<virSecretSetValue|https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretSetValue>.
 
 
 =head2 undefine
@@ -102,7 +102,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $secret->undefine;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretUndefine>.
+See documentation of L<virSecretUndefine|https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretUndefine>.
 
 
 

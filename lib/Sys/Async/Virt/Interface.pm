@@ -98,7 +98,7 @@ v10.3.0
   await $iface->create( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceCreate>.
+See documentation of L<virInterfaceCreate|https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceCreate>.
 
 
 =head2 destroy
@@ -106,21 +106,21 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $iface->destroy( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceDestroy>.
+See documentation of L<virInterfaceDestroy|https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceDestroy>.
 
 
 =head2 get_xml_desc
 
   $xml = await $iface->get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceGetXMLDesc>.
+See documentation of L<virInterfaceGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceGetXMLDesc>.
 
 
 =head2 is_active
 
   $active = await $iface->is_active;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceIsActive>.
+See documentation of L<virInterfaceIsActive|https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceIsActive>.
 
 
 =head2 undefine
@@ -128,7 +128,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $iface->undefine;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceUndefine>.
+See documentation of L<virInterfaceUndefine|https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceUndefine>.
 
 
 

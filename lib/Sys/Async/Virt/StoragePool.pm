@@ -194,7 +194,7 @@ v10.3.0
   await $pool->build( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolBuild>.
+See documentation of L<virStoragePoolBuild|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolBuild>.
 
 
 =head2 create
@@ -202,7 +202,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $pool->create( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolCreate>.
+See documentation of L<virStoragePoolCreate|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolCreate>.
 
 
 =head2 delete
@@ -210,7 +210,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $pool->delete( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolDelete>.
+See documentation of L<virStoragePoolDelete|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolDelete>.
 
 
 =head2 destroy
@@ -218,14 +218,14 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $pool->destroy;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolDestroy>.
+See documentation of L<virStoragePoolDestroy|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolDestroy>.
 
 
 =head2 get_autostart
 
   $autostart = await $pool->get_autostart;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolGetAutostart>.
+See documentation of L<virStoragePoolGetAutostart|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolGetAutostart>.
 
 
 =head2 get_info
@@ -236,49 +236,49 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   #      capacity => $capacity,
   #      state => $state }
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolGetInfo>.
+See documentation of L<virStoragePoolGetInfo|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolGetInfo>.
 
 
 =head2 get_xml_desc
 
   $xml = await $pool->get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolGetXMLDesc>.
+See documentation of L<virStoragePoolGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolGetXMLDesc>.
 
 
 =head2 is_active
 
   $active = await $pool->is_active;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolIsActive>.
+See documentation of L<virStoragePoolIsActive|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolIsActive>.
 
 
 =head2 is_persistent
 
   $persistent = await $pool->is_persistent;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolIsPersistent>.
+See documentation of L<virStoragePoolIsPersistent|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolIsPersistent>.
 
 
 =head2 list_all_volumes
 
   $vols = await $pool->list_all_volumes( $need_results, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolListAllVolumes>.
+See documentation of L<virStoragePoolListAllVolumes|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolListAllVolumes>.
 
 
 =head2 list_volumes
 
   $names = await $pool->list_volumes( $maxnames );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolListVolumes>.
+See documentation of L<virStoragePoolListVolumes|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolListVolumes>.
 
 
 =head2 num_of_volumes
 
   $num = await $pool->num_of_volumes;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolNumOfVolumes>.
+See documentation of L<virStoragePoolNumOfVolumes|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolNumOfVolumes>.
 
 
 =head2 refresh
@@ -286,7 +286,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $pool->refresh( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolRefresh>.
+See documentation of L<virStoragePoolRefresh|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolRefresh>.
 
 
 =head2 set_autostart
@@ -294,7 +294,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $pool->set_autostart( $autostart );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolSetAutostart>.
+See documentation of L<virStoragePoolSetAutostart|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolSetAutostart>.
 
 
 =head2 undefine
@@ -302,28 +302,28 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $pool->undefine;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolUndefine>.
+See documentation of L<virStoragePoolUndefine|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolUndefine>.
 
 
 =head2 vol_create_xml
 
   $vol = await $pool->vol_create_xml( $xml, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolCreateXML>.
+See documentation of L<virStorageVolCreateXML|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolCreateXML>.
 
 
 =head2 vol_create_xml_from
 
   $vol = await $pool->vol_create_xml_from( $xml, $clonevol, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolCreateXMLFrom>.
+See documentation of L<virStorageVolCreateXMLFrom|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolCreateXMLFrom>.
 
 
 =head2 vol_lookup_by_name
 
   $vol = await $pool->vol_lookup_by_name( $name );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolLookupByName>.
+See documentation of L<virStorageVolLookupByName|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolLookupByName>.
 
 
 

@@ -189,7 +189,7 @@ v10.3.0
   await $net->create;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkCreate>.
+See documentation of L<virNetworkCreate|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkCreate>.
 
 
 =head2 destroy
@@ -197,70 +197,70 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $net->destroy;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkDestroy>.
+See documentation of L<virNetworkDestroy|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkDestroy>.
 
 
 =head2 get_autostart
 
   $autostart = await $net->get_autostart;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetAutostart>.
+See documentation of L<virNetworkGetAutostart|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetAutostart>.
 
 
 =head2 get_bridge_name
 
   $name = await $net->get_bridge_name;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetBridgeName>.
+See documentation of L<virNetworkGetBridgeName|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetBridgeName>.
 
 
 =head2 get_metadata
 
   $metadata = await $net->get_metadata( $type, $uri, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetMetadata>.
+See documentation of L<virNetworkGetMetadata|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetMetadata>.
 
 
 =head2 get_xml_desc
 
   $xml = await $net->get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetXMLDesc>.
+See documentation of L<virNetworkGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetXMLDesc>.
 
 
 =head2 is_active
 
   $active = await $net->is_active;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkIsActive>.
+See documentation of L<virNetworkIsActive|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkIsActive>.
 
 
 =head2 is_persistent
 
   $persistent = await $net->is_persistent;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkIsPersistent>.
+See documentation of L<virNetworkIsPersistent|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkIsPersistent>.
 
 
 =head2 list_all_ports
 
   $ports = await $net->list_all_ports( $need_results, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkListAllPorts>.
+See documentation of L<virNetworkListAllPorts|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkListAllPorts>.
 
 
 =head2 port_create_xml
 
   $port = await $net->port_create_xml( $xml, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortCreateXML>.
+See documentation of L<virNetworkPortCreateXML|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortCreateXML>.
 
 
 =head2 port_lookup_by_uuid
 
   $port = await $net->port_lookup_by_uuid( $uuid );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortLookupByUUID>.
+See documentation of L<virNetworkPortLookupByUUID|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortLookupByUUID>.
 
 
 =head2 set_autostart
@@ -268,7 +268,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $net->set_autostart( $autostart );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkSetAutostart>.
+See documentation of L<virNetworkSetAutostart|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkSetAutostart>.
 
 
 =head2 set_metadata
@@ -276,7 +276,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $net->set_metadata( $type, $metadata, $key, $uri, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkSetMetadata>.
+See documentation of L<virNetworkSetMetadata|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkSetMetadata>.
 
 
 =head2 undefine
@@ -284,7 +284,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $net->undefine;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkUndefine>.
+See documentation of L<virNetworkUndefine|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkUndefine>.
 
 
 =head2 update
@@ -292,7 +292,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $net->update( $command, $section, $parentIndex, $xml, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkUpdate>.
+See documentation of L<virNetworkUpdate|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkUpdate>.
 
 
 

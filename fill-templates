@@ -164,7 +164,7 @@ sub ep_pod($mod, $ep, $c_api_defs) {
         my $url = "https://libvirt.org/html/libvirt-${basename}tml#$c_ep->{name}";
         $doc_url = <<~POD;
 
-        Documentation of this entrypoint can be found at L<$url>.
+        See documentation of L<$c_ep->{name}|$url>.
         POD
     }
     if (length $retstr > 50) {

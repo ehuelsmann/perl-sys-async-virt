@@ -1431,7 +1431,7 @@ v10.3.0
   await $dom->abort_job;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAbortJob>.
+See documentation of L<virDomainAbortJob|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAbortJob>.
 
 
 =head2 abort_job_flags
@@ -1439,14 +1439,14 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->abort_job_flags( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAbortJobFlags>.
+See documentation of L<virDomainAbortJobFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAbortJobFlags>.
 
 
 =head2 agent_set_response_timeout
 
   $result = await $dom->agent_set_response_timeout( $timeout, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAgentSetResponseTimeout>.
+See documentation of L<virDomainAgentSetResponseTimeout|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAgentSetResponseTimeout>.
 
 
 =head2 attach_device
@@ -1454,7 +1454,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->attach_device( $xml );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAttachDevice>.
+See documentation of L<virDomainAttachDevice|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAttachDevice>.
 
 
 =head2 attach_device_flags
@@ -1462,7 +1462,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->attach_device_flags( $xml, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAttachDeviceFlags>.
+See documentation of L<virDomainAttachDeviceFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAttachDeviceFlags>.
 
 
 =head2 backup_begin
@@ -1470,14 +1470,14 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->backup_begin( $backup_xml, $checkpoint_xml, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBackupBegin>.
+See documentation of L<virDomainBackupBegin|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBackupBegin>.
 
 
 =head2 backup_get_xml_desc
 
   $xml = await $dom->backup_get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBackupGetXMLDesc>.
+See documentation of L<virDomainBackupGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBackupGetXMLDesc>.
 
 
 =head2 block_commit
@@ -1485,7 +1485,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->block_commit( $disk, $base, $top, $bandwidth, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockCommit>.
+See documentation of L<virDomainBlockCommit|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockCommit>.
 
 
 =head2 block_copy
@@ -1493,7 +1493,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->block_copy( $path, $destxml, $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockCopy>.
+See documentation of L<virDomainBlockCopy|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockCopy>.
 
 
 =head2 block_job_abort
@@ -1501,7 +1501,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->block_job_abort( $path, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockJobAbort>.
+See documentation of L<virDomainBlockJobAbort|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockJobAbort>.
 
 
 =head2 block_job_set_speed
@@ -1509,7 +1509,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->block_job_set_speed( $path, $bandwidth, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockJobSetSpeed>.
+See documentation of L<virDomainBlockJobSetSpeed|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockJobSetSpeed>.
 
 
 =head2 block_pull
@@ -1517,7 +1517,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->block_pull( $path, $bandwidth, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockPull>.
+See documentation of L<virDomainBlockPull|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockPull>.
 
 
 =head2 block_rebase
@@ -1525,7 +1525,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->block_rebase( $path, $base, $bandwidth, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockRebase>.
+See documentation of L<virDomainBlockRebase|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockRebase>.
 
 
 =head2 block_resize
@@ -1533,7 +1533,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->block_resize( $disk, $size, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockResize>.
+See documentation of L<virDomainBlockResize|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockResize>.
 
 
 =head2 block_stats
@@ -1545,21 +1545,21 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   #      wr_bytes => $wr_bytes,
   #      wr_req => $wr_req }
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockStats>.
+See documentation of L<virDomainBlockStats|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockStats>.
 
 
 =head2 checkpoint_create_xml
 
   $checkpoint = await $dom->checkpoint_create_xml( $xml_desc, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointCreateXML>.
+See documentation of L<virDomainCheckpointCreateXML|https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointCreateXML>.
 
 
 =head2 checkpoint_lookup_by_name
 
   $checkpoint = await $dom->checkpoint_lookup_by_name( $name, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointLookupByName>.
+See documentation of L<virDomainCheckpointLookupByName|https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointLookupByName>.
 
 
 =head2 core_dump
@@ -1567,7 +1567,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->core_dump( $to, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCoreDump>.
+See documentation of L<virDomainCoreDump|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCoreDump>.
 
 
 =head2 core_dump_with_format
@@ -1575,14 +1575,14 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->core_dump_with_format( $to, $dumpformat, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCoreDumpWithFormat>.
+See documentation of L<virDomainCoreDumpWithFormat|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCoreDumpWithFormat>.
 
 
 =head2 create_with_flags
 
   $dom = await $dom->create_with_flags( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCreateWithFlags>.
+See documentation of L<virDomainCreateWithFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCreateWithFlags>.
 
 
 =head2 destroy
@@ -1590,7 +1590,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->destroy;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDestroy>.
+See documentation of L<virDomainDestroy|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDestroy>.
 
 
 =head2 destroy_flags
@@ -1598,7 +1598,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->destroy_flags( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDestroyFlags>.
+See documentation of L<virDomainDestroyFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDestroyFlags>.
 
 
 =head2 detach_device
@@ -1606,7 +1606,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->detach_device( $xml );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDetachDevice>.
+See documentation of L<virDomainDetachDevice|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDetachDevice>.
 
 
 =head2 detach_device_alias
@@ -1614,7 +1614,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->detach_device_alias( $alias, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDetachDeviceAlias>.
+See documentation of L<virDomainDetachDeviceAlias|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDetachDeviceAlias>.
 
 
 =head2 detach_device_flags
@@ -1622,21 +1622,21 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->detach_device_flags( $xml, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDetachDeviceFlags>.
+See documentation of L<virDomainDetachDeviceFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDetachDeviceFlags>.
 
 
 =head2 fsfreeze
 
   $filesystems = await $dom->fsfreeze( $mountpoints, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainFSFreeze>.
+See documentation of L<virDomainFSFreeze|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainFSFreeze>.
 
 
 =head2 fsthaw
 
   $filesystems = await $dom->fsthaw( $mountpoints, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainFSThaw>.
+See documentation of L<virDomainFSThaw|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainFSThaw>.
 
 
 =head2 fstrim
@@ -1644,14 +1644,14 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->fstrim( $mountPoint, $minimum, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainFSTrim>.
+See documentation of L<virDomainFSTrim|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainFSTrim>.
 
 
 =head2 get_autostart
 
   $autostart = await $dom->get_autostart;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetAutostart>.
+See documentation of L<virDomainGetAutostart|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetAutostart>.
 
 
 =head2 get_block_info
@@ -1661,7 +1661,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   #      capacity => $capacity,
   #      physical => $physical }
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetBlockInfo>.
+See documentation of L<virDomainGetBlockInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetBlockInfo>.
 
 
 =head2 get_control_info
@@ -1671,21 +1671,21 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   #      state => $state,
   #      stateTime => $stateTime }
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetControlInfo>.
+See documentation of L<virDomainGetControlInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetControlInfo>.
 
 
 =head2 get_guest_vcpus
 
   $params = await $dom->get_guest_vcpus( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetGuestVcpus>.
+See documentation of L<virDomainGetGuestVcpus|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetGuestVcpus>.
 
 
 =head2 get_hostname
 
   $hostname = await $dom->get_hostname( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetHostname>.
+See documentation of L<virDomainGetHostname|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetHostname>.
 
 
 =head2 get_info
@@ -1697,7 +1697,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   #      nrVirtCpu => $nrVirtCpu,
   #      state => $state }
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetInfo>.
+See documentation of L<virDomainGetInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetInfo>.
 
 
 =head2 get_job_info
@@ -1716,63 +1716,63 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   #      timeRemaining => $timeRemaining,
   #      type => $type }
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetJobInfo>.
+See documentation of L<virDomainGetJobInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetJobInfo>.
 
 
 =head2 get_max_memory
 
   $memory = await $dom->get_max_memory;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMaxMemory>.
+See documentation of L<virDomainGetMaxMemory|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMaxMemory>.
 
 
 =head2 get_max_vcpus
 
   $num = await $dom->get_max_vcpus;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMaxVcpus>.
+See documentation of L<virDomainGetMaxVcpus|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMaxVcpus>.
 
 
 =head2 get_metadata
 
   $metadata = await $dom->get_metadata( $type, $uri, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMetadata>.
+See documentation of L<virDomainGetMetadata|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMetadata>.
 
 
 =head2 get_os_type
 
   $type = await $dom->get_os_type;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetOSType>.
+See documentation of L<virDomainGetOSType|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetOSType>.
 
 
 =head2 get_scheduler_parameters
 
   $params = await $dom->get_scheduler_parameters( $nparams );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerParameters>.
+See documentation of L<virDomainGetSchedulerParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerParameters>.
 
 
 =head2 get_scheduler_parameters_flags
 
   $params = await $dom->get_scheduler_parameters_flags( $nparams, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerParametersFlags>.
+See documentation of L<virDomainGetSchedulerParametersFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerParametersFlags>.
 
 
 =head2 get_vcpus_flags
 
   $num = await $dom->get_vcpus_flags( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetVcpusFlags>.
+See documentation of L<virDomainGetVcpusFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetVcpusFlags>.
 
 
 =head2 get_xml_desc
 
   $xml = await $dom->get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetXMLDesc>.
+See documentation of L<virDomainGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetXMLDesc>.
 
 
 =head2 graphics_reload
@@ -1780,21 +1780,21 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->graphics_reload( $type, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGraphicsReload>.
+See documentation of L<virDomainGraphicsReload|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGraphicsReload>.
 
 
 =head2 has_current_snapshot
 
   $result = await $dom->has_current_snapshot( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainHasCurrentSnapshot>.
+See documentation of L<virDomainHasCurrentSnapshot|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainHasCurrentSnapshot>.
 
 
 =head2 has_managed_save_image
 
   $result = await $dom->has_managed_save_image( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainHasManagedSaveImage>.
+See documentation of L<virDomainHasManagedSaveImage|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainHasManagedSaveImage>.
 
 
 =head2 inject_nmi
@@ -1802,7 +1802,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->inject_nmi( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainInjectNMI>.
+See documentation of L<virDomainInjectNMI|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainInjectNMI>.
 
 
 =head2 interface_stats
@@ -1817,42 +1817,42 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   #      tx_errs => $tx_errs,
   #      tx_packets => $tx_packets }
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainInterfaceStats>.
+See documentation of L<virDomainInterfaceStats|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainInterfaceStats>.
 
 
 =head2 is_active
 
   $active = await $dom->is_active;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainIsActive>.
+See documentation of L<virDomainIsActive|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainIsActive>.
 
 
 =head2 is_persistent
 
   $persistent = await $dom->is_persistent;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainIsPersistent>.
+See documentation of L<virDomainIsPersistent|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainIsPersistent>.
 
 
 =head2 is_updated
 
   $updated = await $dom->is_updated;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainIsUpdated>.
+See documentation of L<virDomainIsUpdated|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainIsUpdated>.
 
 
 =head2 list_all_checkpoints
 
   $checkpoints = await $dom->list_all_checkpoints( $need_results, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainListAllCheckpoints>.
+See documentation of L<virDomainListAllCheckpoints|https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainListAllCheckpoints>.
 
 
 =head2 list_all_snapshots
 
   $snapshots = await $dom->list_all_snapshots( $need_results, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainListAllSnapshots>.
+See documentation of L<virDomainListAllSnapshots|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainListAllSnapshots>.
 
 
 =head2 managed_save
@@ -1860,7 +1860,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->managed_save( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSave>.
+See documentation of L<virDomainManagedSave|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSave>.
 
 
 =head2 managed_save_define_xml
@@ -1868,14 +1868,14 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->managed_save_define_xml( $dxml, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSaveDefineXML>.
+See documentation of L<virDomainManagedSaveDefineXML|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSaveDefineXML>.
 
 
 =head2 managed_save_get_xml_desc
 
   $xml = await $dom->managed_save_get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSaveGetXMLDesc>.
+See documentation of L<virDomainManagedSaveGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSaveGetXMLDesc>.
 
 
 =head2 managed_save_remove
@@ -1883,28 +1883,28 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->managed_save_remove( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSaveRemove>.
+See documentation of L<virDomainManagedSaveRemove|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSaveRemove>.
 
 
 =head2 migrate_get_compression_cache
 
   $cacheSize = await $dom->migrate_get_compression_cache( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateGetCompressionCache>.
+See documentation of L<virDomainMigrateGetCompressionCache|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateGetCompressionCache>.
 
 
 =head2 migrate_get_max_downtime
 
   $downtime = await $dom->migrate_get_max_downtime( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateGetMaxDowntime>.
+See documentation of L<virDomainMigrateGetMaxDowntime|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateGetMaxDowntime>.
 
 
 =head2 migrate_get_max_speed
 
   $bandwidth = await $dom->migrate_get_max_speed( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateGetMaxSpeed>.
+See documentation of L<virDomainMigrateGetMaxSpeed|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateGetMaxSpeed>.
 
 
 =head2 migrate_perform
@@ -1912,7 +1912,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->migrate_perform( $cookie, $uri, $flags, $dname, $resource );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigratePerform>.
+See documentation of L<virDomainMigratePerform|https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigratePerform>.
 
 
 =head2 migrate_set_compression_cache
@@ -1920,7 +1920,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->migrate_set_compression_cache( $cacheSize, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateSetCompressionCache>.
+See documentation of L<virDomainMigrateSetCompressionCache|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateSetCompressionCache>.
 
 
 =head2 migrate_set_max_downtime
@@ -1928,7 +1928,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->migrate_set_max_downtime( $downtime, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateSetMaxDowntime>.
+See documentation of L<virDomainMigrateSetMaxDowntime|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateSetMaxDowntime>.
 
 
 =head2 migrate_set_max_speed
@@ -1936,7 +1936,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->migrate_set_max_speed( $bandwidth, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateSetMaxSpeed>.
+See documentation of L<virDomainMigrateSetMaxSpeed|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateSetMaxSpeed>.
 
 
 =head2 migrate_start_post_copy
@@ -1944,7 +1944,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->migrate_start_post_copy( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateStartPostCopy>.
+See documentation of L<virDomainMigrateStartPostCopy|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateStartPostCopy>.
 
 
 =head2 open_channel
@@ -1952,7 +1952,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->open_channel( $name, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainOpenChannel>.
+See documentation of L<virDomainOpenChannel|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainOpenChannel>.
 
 
 =head2 open_console
@@ -1960,7 +1960,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->open_console( $dev_name, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainOpenConsole>.
+See documentation of L<virDomainOpenConsole|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainOpenConsole>.
 
 
 =head2 pin_iothread
@@ -1968,7 +1968,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->pin_iothread( $iothreads_id, $cpumap, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPinIOThread>.
+See documentation of L<virDomainPinIOThread|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPinIOThread>.
 
 
 =head2 pin_vcpu
@@ -1976,7 +1976,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->pin_vcpu( $vcpu, $cpumap );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPinVcpu>.
+See documentation of L<virDomainPinVcpu|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPinVcpu>.
 
 
 =head2 pin_vcpu_flags
@@ -1984,7 +1984,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->pin_vcpu_flags( $vcpu, $cpumap, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPinVcpuFlags>.
+See documentation of L<virDomainPinVcpuFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPinVcpuFlags>.
 
 
 =head2 pm_suspend_for_duration
@@ -1992,7 +1992,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->pm_suspend_for_duration( $target, $duration, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPMSuspendForDuration>.
+See documentation of L<virDomainPMSuspendForDuration|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPMSuspendForDuration>.
 
 
 =head2 pm_wakeup
@@ -2000,7 +2000,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->pm_wakeup( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPMWakeup>.
+See documentation of L<virDomainPMWakeup|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPMWakeup>.
 
 
 =head2 reboot
@@ -2008,7 +2008,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->reboot( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainReboot>.
+See documentation of L<virDomainReboot|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainReboot>.
 
 
 =head2 reset
@@ -2016,7 +2016,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->reset( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainReset>.
+See documentation of L<virDomainReset|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainReset>.
 
 
 =head2 resume
@@ -2024,7 +2024,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->resume;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainResume>.
+See documentation of L<virDomainResume|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainResume>.
 
 
 =head2 save
@@ -2032,7 +2032,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->save( $to );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSave>.
+See documentation of L<virDomainSave|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSave>.
 
 
 =head2 save_flags
@@ -2040,7 +2040,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->save_flags( $to, $dxml, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSaveFlags>.
+See documentation of L<virDomainSaveFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSaveFlags>.
 
 
 =head2 save_params
@@ -2048,14 +2048,14 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->save_params( $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSaveParams>.
+See documentation of L<virDomainSaveParams|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSaveParams>.
 
 
 =head2 screenshot
 
   $mime = await $dom->screenshot( $screen, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainScreenshot>.
+See documentation of L<virDomainScreenshot|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainScreenshot>.
 
 
 =head2 send_key
@@ -2063,7 +2063,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->send_key( $codeset, $holdtime, $keycodes, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSendKey>.
+See documentation of L<virDomainSendKey|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSendKey>.
 
 
 =head2 send_process_signal
@@ -2071,7 +2071,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->send_process_signal( $pid_value, $signum, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSendProcessSignal>.
+See documentation of L<virDomainSendProcessSignal|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSendProcessSignal>.
 
 
 =head2 set_autostart
@@ -2079,7 +2079,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_autostart( $autostart );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetAutostart>.
+See documentation of L<virDomainSetAutostart|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetAutostart>.
 
 
 =head2 set_blkio_parameters
@@ -2087,7 +2087,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_blkio_parameters( $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetBlkioParameters>.
+See documentation of L<virDomainSetBlkioParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetBlkioParameters>.
 
 
 =head2 set_block_io_tune
@@ -2095,7 +2095,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_block_io_tune( $disk, $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetBlockIoTune>.
+See documentation of L<virDomainSetBlockIoTune|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetBlockIoTune>.
 
 
 =head2 set_block_threshold
@@ -2103,7 +2103,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_block_threshold( $dev, $threshold, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetBlockThreshold>.
+See documentation of L<virDomainSetBlockThreshold|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetBlockThreshold>.
 
 
 =head2 set_guest_vcpus
@@ -2111,7 +2111,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_guest_vcpus( $cpumap, $state, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetGuestVcpus>.
+See documentation of L<virDomainSetGuestVcpus|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetGuestVcpus>.
 
 
 =head2 set_interface_parameters
@@ -2119,7 +2119,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_interface_parameters( $device, $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetInterfaceParameters>.
+See documentation of L<virDomainSetInterfaceParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetInterfaceParameters>.
 
 
 =head2 set_iothread_params
@@ -2127,7 +2127,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_iothread_params( $iothread_id, $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetIOThreadParams>.
+See documentation of L<virDomainSetIOThreadParams|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetIOThreadParams>.
 
 
 =head2 set_launch_security_state
@@ -2135,7 +2135,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_launch_security_state( $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetLaunchSecurityState>.
+See documentation of L<virDomainSetLaunchSecurityState|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetLaunchSecurityState>.
 
 
 =head2 set_lifecycle_action
@@ -2143,7 +2143,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_lifecycle_action( $type, $action, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetLifecycleAction>.
+See documentation of L<virDomainSetLifecycleAction|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetLifecycleAction>.
 
 
 =head2 set_max_memory
@@ -2151,7 +2151,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_max_memory( $memory );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMaxMemory>.
+See documentation of L<virDomainSetMaxMemory|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMaxMemory>.
 
 
 =head2 set_memory
@@ -2159,7 +2159,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_memory( $memory );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemory>.
+See documentation of L<virDomainSetMemory|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemory>.
 
 
 =head2 set_memory_flags
@@ -2167,7 +2167,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_memory_flags( $memory, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemoryFlags>.
+See documentation of L<virDomainSetMemoryFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemoryFlags>.
 
 
 =head2 set_memory_parameters
@@ -2175,7 +2175,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_memory_parameters( $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemoryParameters>.
+See documentation of L<virDomainSetMemoryParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemoryParameters>.
 
 
 =head2 set_memory_stats_period
@@ -2183,7 +2183,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_memory_stats_period( $period, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemoryStatsPeriod>.
+See documentation of L<virDomainSetMemoryStatsPeriod|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemoryStatsPeriod>.
 
 
 =head2 set_metadata
@@ -2191,7 +2191,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_metadata( $type, $metadata, $key, $uri, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMetadata>.
+See documentation of L<virDomainSetMetadata|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMetadata>.
 
 
 =head2 set_numa_parameters
@@ -2199,7 +2199,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_numa_parameters( $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetNumaParameters>.
+See documentation of L<virDomainSetNumaParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetNumaParameters>.
 
 
 =head2 set_perf_events
@@ -2207,7 +2207,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_perf_events( $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetPerfEvents>.
+See documentation of L<virDomainSetPerfEvents|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetPerfEvents>.
 
 
 =head2 set_scheduler_parameters
@@ -2215,7 +2215,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_scheduler_parameters( $params );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetSchedulerParameters>.
+See documentation of L<virDomainSetSchedulerParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetSchedulerParameters>.
 
 
 =head2 set_scheduler_parameters_flags
@@ -2223,7 +2223,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_scheduler_parameters_flags( $params, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetSchedulerParametersFlags>.
+See documentation of L<virDomainSetSchedulerParametersFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetSchedulerParametersFlags>.
 
 
 =head2 set_time
@@ -2231,7 +2231,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_time( $seconds, $nseconds, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetTime>.
+See documentation of L<virDomainSetTime|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetTime>.
 
 
 =head2 set_vcpu
@@ -2239,7 +2239,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_vcpu( $cpumap, $state, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetVcpu>.
+See documentation of L<virDomainSetVcpu|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetVcpu>.
 
 
 =head2 set_vcpus
@@ -2247,7 +2247,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_vcpus( $nvcpus );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetVcpus>.
+See documentation of L<virDomainSetVcpus|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetVcpus>.
 
 
 =head2 set_vcpus_flags
@@ -2255,7 +2255,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->set_vcpus_flags( $nvcpus, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetVcpusFlags>.
+See documentation of L<virDomainSetVcpusFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetVcpusFlags>.
 
 
 =head2 shutdown
@@ -2263,7 +2263,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->shutdown;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainShutdown>.
+See documentation of L<virDomainShutdown|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainShutdown>.
 
 
 =head2 shutdown_flags
@@ -2271,42 +2271,42 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->shutdown_flags( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainShutdownFlags>.
+See documentation of L<virDomainShutdownFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainShutdownFlags>.
 
 
 =head2 snapshot_create_xml
 
   $snap = await $dom->snapshot_create_xml( $xml_desc, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotCreateXML>.
+See documentation of L<virDomainSnapshotCreateXML|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotCreateXML>.
 
 
 =head2 snapshot_current
 
   $snap = await $dom->snapshot_current( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotCurrent>.
+See documentation of L<virDomainSnapshotCurrent|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotCurrent>.
 
 
 =head2 snapshot_list_names
 
   $names = await $dom->snapshot_list_names( $maxnames, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotListNames>.
+See documentation of L<virDomainSnapshotListNames|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotListNames>.
 
 
 =head2 snapshot_lookup_by_name
 
   $snap = await $dom->snapshot_lookup_by_name( $name, $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotLookupByName>.
+See documentation of L<virDomainSnapshotLookupByName|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotLookupByName>.
 
 
 =head2 snapshot_num
 
   $num = await $dom->snapshot_num( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotNum>.
+See documentation of L<virDomainSnapshotNum|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotNum>.
 
 
 =head2 start_dirty_rate_calc
@@ -2314,7 +2314,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->start_dirty_rate_calc( $seconds, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainStartDirtyRateCalc>.
+See documentation of L<virDomainStartDirtyRateCalc|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainStartDirtyRateCalc>.
 
 
 =head2 suspend
@@ -2322,7 +2322,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->suspend;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSuspend>.
+See documentation of L<virDomainSuspend|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSuspend>.
 
 
 =head2 undefine
@@ -2330,7 +2330,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->undefine;
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefine>.
+See documentation of L<virDomainUndefine|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefine>.
 
 
 =head2 undefine_flags
@@ -2338,7 +2338,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->undefine_flags( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefineFlags>.
+See documentation of L<virDomainUndefineFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefineFlags>.
 
 
 =head2 update_device_flags
@@ -2346,7 +2346,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $dom->update_device_flags( $xml, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUpdateDeviceFlags>.
+See documentation of L<virDomainUpdateDeviceFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUpdateDeviceFlags>.
 
 
 

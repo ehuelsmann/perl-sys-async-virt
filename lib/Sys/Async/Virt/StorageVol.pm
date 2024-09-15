@@ -153,7 +153,7 @@ v10.3.0
   await $vol->delete( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolDelete>.
+See documentation of L<virStorageVolDelete|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolDelete>.
 
 
 =head2 download
@@ -161,7 +161,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $vol->download( $offset, $length, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolDownload>.
+See documentation of L<virStorageVolDownload|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolDownload>.
 
 
 =head2 get_info
@@ -171,28 +171,28 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   #      capacity => $capacity,
   #      type => $type }
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolGetInfo>.
+See documentation of L<virStorageVolGetInfo|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolGetInfo>.
 
 
 =head2 get_path
 
   $name = await $vol->get_path;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolGetPath>.
+See documentation of L<virStorageVolGetPath|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolGetPath>.
 
 
 =head2 get_xml_desc
 
   $xml = await $vol->get_xml_desc( $flags = 0 );
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolGetXMLDesc>.
+See documentation of L<virStorageVolGetXMLDesc|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolGetXMLDesc>.
 
 
 =head2 pool_lookup_by_volume
 
   $pool = await $vol->pool_lookup_by_volume;
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolLookupByVolume>.
+See documentation of L<virStoragePoolLookupByVolume|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolLookupByVolume>.
 
 
 =head2 resize
@@ -200,7 +200,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $vol->resize( $capacity, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolResize>.
+See documentation of L<virStorageVolResize|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolResize>.
 
 
 =head2 upload
@@ -208,7 +208,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $vol->upload( $offset, $length, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolUpload>.
+See documentation of L<virStorageVolUpload|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolUpload>.
 
 
 =head2 wipe
@@ -216,7 +216,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $vol->wipe( $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolWipe>.
+See documentation of L<virStorageVolWipe|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolWipe>.
 
 
 =head2 wipe_pattern
@@ -224,7 +224,7 @@ Documentation of this entrypoint can be found at L<https://libvirt.org/html/libv
   await $vol->wipe_pattern( $algorithm, $flags = 0 );
   # -> (* no data *)
 
-Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolWipePattern>.
+See documentation of L<virStorageVolWipePattern|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolWipePattern>.
 
 
 
