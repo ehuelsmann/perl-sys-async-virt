@@ -542,7 +542,7 @@ my @reply_translators = (
     \&_no_translation,
     \&_no_translation,
     \&_no_translation,
-    sub { 211; my $client = shift; _translated($client, 'mime', {  }, @_) },
+    \&_no_translation,
     \&_no_translation,
     \&_no_translation,
     \&_no_translation,
@@ -1306,12 +1306,6 @@ sub domain_migrate_finish2($self, $dname, $cookie, $uri, $flags, $retcode) {
         { dname => $dname, cookie => $cookie, uri => $uri, flags => $flags // 0, retcode => $retcode } );
 }
 
-sub domain_migrate_prepare_tunnel($self, $flags, $dname, $resource, $dom_xml) {
-    return $self->_call(
-        $remote->PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL,
-        { flags => $flags // 0, dname => $dname, resource => $resource, dom_xml => $dom_xml } );
-}
-
 sub domain_restore($self, $from) {
     return $self->_call(
         $remote->PROC_DOMAIN_RESTORE,
@@ -2047,14 +2041,6 @@ See documentation of L<virDomainMigrateFinish|https://libvirt.org/html/libvirt-l
   $ddom = await $client->domain_migrate_finish2( $dname, $cookie, $uri, $flags, $retcode );
 
 See documentation of L<virDomainMigrateFinish2|https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigrateFinish2>.
-
-
-=head2 domain_migrate_prepare_tunnel
-
-  await $client->domain_migrate_prepare_tunnel( $flags, $dname, $resource, $dom_xml );
-  # -> (* no data *)
-
-See documentation of L<virDomainMigratePrepareTunnel|https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigratePrepareTunnel>.
 
 
 =head2 domain_restore
@@ -3126,6 +3112,217 @@ Findings so far:
        in an array
 
 =item * C<@generate: server> entrypoints review (and implement relevant ones)
+
+=back
+
+=head2 UNIMPLEMENTED ENTRYPOINTS
+
+The following entrypoints have not been implemented yet; contributions
+towards implementation are greatly appreciated.
+
+=over 8
+
+=over 8
+
+=item * @generate: none
+
+=over 8=item * REMOTE_PROC_CONNECT_OPEN
+
+=item * REMOTE_PROC_CONNECT_CLOSE
+
+=item * REMOTE_PROC_DOMAIN_GET_VCPUS
+
+=item * REMOTE_PROC_DOMAIN_GET_SCHEDULER_TYPE
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE
+
+=item * REMOTE_PROC_DOMAIN_BLOCK_PEEK
+
+=item * REMOTE_PROC_DOMAIN_MEMORY_PEEK
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE2
+
+=item * REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL
+
+=item * REMOTE_PROC_NODE_GET_SECURITY_MODEL
+
+=item * REMOTE_PROC_SECRET_GET_VALUE
+
+=item * REMOTE_PROC_DOMAIN_MEMORY_STATS
+
+=item * REMOTE_PROC_DOMAIN_GET_STATE
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_FINISH3
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_CONFIRM3
+
+=item * REMOTE_PROC_DOMAIN_GET_VCPU_PIN_INFO
+
+=item * REMOTE_PROC_DOMAIN_GET_BLOCK_JOB_INFO
+
+=item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS
+
+=item * REMOTE_PROC_DOMAIN_GET_DISK_ERRORS
+
+=item * REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL_LIST
+
+=item * REMOTE_PROC_DOMAIN_PIN_EMULATOR
+
+=item * REMOTE_PROC_DOMAIN_GET_EMULATOR_PIN_INFO
+
+=item * REMOTE_PROC_NODE_GET_CPU_MAP
+
+=item * REMOTE_PROC_DOMAIN_GET_JOB_STATS
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3_PARAMS
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3_PARAMS
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL3_PARAMS
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3_PARAMS
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_FINISH3_PARAMS
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_CONFIRM3_PARAMS
+
+=item * REMOTE_PROC_DOMAIN_CREATE_XML_WITH_FILES
+
+=item * REMOTE_PROC_DOMAIN_CREATE_WITH_FILES
+
+=item * REMOTE_PROC_CONNECT_GET_CPU_MODEL_NAMES
+
+=item * REMOTE_PROC_DOMAIN_GET_TIME
+
+=item * REMOTE_PROC_NODE_GET_FREE_PAGES
+
+=item * REMOTE_PROC_NETWORK_GET_DHCP_LEASES
+
+=item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS_FD
+
+=item * REMOTE_PROC_CONNECT_GET_ALL_DOMAIN_STATS
+
+=item * REMOTE_PROC_NODE_ALLOC_PAGES
+
+=item * REMOTE_PROC_DOMAIN_GET_FSINFO
+
+=item * REMOTE_PROC_DOMAIN_GET_IOTHREAD_INFO
+
+=item * REMOTE_PROC_DOMAIN_INTERFACE_ADDRESSES
+
+=item * REMOTE_PROC_DOMAIN_GET_PERF_EVENTS
+
+=item * REMOTE_PROC_DOMAIN_GET_LAUNCH_SECURITY_INFO
+
+=item * REMOTE_PROC_DOMAIN_GET_GUEST_INFO
+
+=item * REMOTE_PROC_DOMAIN_AUTHORIZED_SSH_KEYS_GET
+
+=item * REMOTE_PROC_DOMAIN_AUTHORIZED_SSH_KEYS_SET
+
+=item * REMOTE_PROC_DOMAIN_GET_MESSAGES
+
+=item * REMOTE_PROC_DOMAIN_FD_ASSOCIATE
+
+=back
+
+
+
+=item * @generate: none/nparams
+
+=over 8=item * REMOTE_PROC_DOMAIN_GET_MEMORY_PARAMETERS
+
+=item * REMOTE_PROC_DOMAIN_GET_BLKIO_PARAMETERS
+
+=item * REMOTE_PROC_NODE_GET_CPU_STATS
+
+=item * REMOTE_PROC_NODE_GET_MEMORY_STATS
+
+=item * REMOTE_PROC_DOMAIN_BLOCK_STATS_FLAGS
+
+=item * REMOTE_PROC_DOMAIN_GET_BLOCK_IO_TUNE
+
+=item * REMOTE_PROC_DOMAIN_GET_NUMA_PARAMETERS
+
+=item * REMOTE_PROC_DOMAIN_GET_INTERFACE_PARAMETERS
+
+=item * REMOTE_PROC_DOMAIN_GET_CPU_STATS
+
+=item * REMOTE_PROC_NODE_GET_MEMORY_PARAMETERS
+
+=item * REMOTE_PROC_NODE_GET_SEV_INFO
+
+=item * REMOTE_PROC_NETWORK_PORT_GET_PARAMETERS
+
+=back
+
+
+
+=item * @generate: server
+
+=over 8=item * REMOTE_PROC_CONNECT_GET_TYPE
+
+=item * REMOTE_PROC_DOMAIN_CREATE
+
+=item * REMOTE_PROC_CONNECT_LIST_DOMAINS
+
+=item * REMOTE_PROC_CONNECT_FIND_STORAGE_POOL_SOURCES
+
+=item * REMOTE_PROC_NODE_GET_CELLS_FREE_MEMORY
+
+=item * REMOTE_PROC_CONNECT_GET_URI
+
+=item * REMOTE_PROC_NODE_DEVICE_DETTACH
+
+=item * REMOTE_PROC_NODE_DEVICE_RE_ATTACH
+
+=item * REMOTE_PROC_NODE_DEVICE_RESET
+
+=item * REMOTE_PROC_CONNECT_IS_SECURE
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL3
+
+=item * REMOTE_PROC_NODE_DEVICE_DETACH_FLAGS
+
+=item * REMOTE_PROC_DOMAIN_RENAME
+
+=item * REMOTE_PROC_STORAGE_VOL_GET_INFO_FLAGS
+
+=back
+
+
+
+=item * @readstream
+
+=over 8=item * REMOTE_PROC_DOMAIN_OPEN_CONSOLE
+
+=item * REMOTE_PROC_STORAGE_VOL_DOWNLOAD
+
+=item * REMOTE_PROC_DOMAIN_SCREENSHOT
+
+=item * REMOTE_PROC_DOMAIN_OPEN_CHANNEL
+
+=back
+
+
+
+=item * @writestream
+
+=over 8=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL
+
+=item * REMOTE_PROC_STORAGE_VOL_UPLOAD
+
+=back
+
+
+
+=back
 
 =back
 

@@ -701,6 +701,12 @@ sub abort_job_flags($self, $flags = 0) {
         { dom => $self->{id}, flags => $flags // 0 } );
 }
 
+sub add_iothread($self, $iothread_id, $flags = 0) {
+    return $self->{client}->_call(
+        $remote->PROC_DOMAIN_ADD_IOTHREAD,
+        { dom => $self->{id}, iothread_id => $iothread_id, flags => $flags // 0 } );
+}
+
 sub agent_set_response_timeout($self, $timeout, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_AGENT_SET_RESPONSE_TIMEOUT,
@@ -808,6 +814,12 @@ sub create_with_flags($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_CREATE_WITH_FLAGS,
         { dom => $self->{id}, flags => $flags // 0 } );
+}
+
+sub del_iothread($self, $iothread_id, $flags = 0) {
+    return $self->{client}->_call(
+        $remote->PROC_DOMAIN_DEL_IOTHREAD,
+        { dom => $self->{id}, iothread_id => $iothread_id, flags => $flags // 0 } );
 }
 
 sub destroy($self) {
@@ -1082,18 +1094,6 @@ sub migrate_start_post_copy($self, $flags = 0) {
         { dom => $self->{id}, flags => $flags // 0 } );
 }
 
-sub open_channel($self, $name, $flags = 0) {
-    return $self->{client}->_call(
-        $remote->PROC_DOMAIN_OPEN_CHANNEL,
-        { dom => $self->{id}, name => $name, flags => $flags // 0 } );
-}
-
-sub open_console($self, $dev_name, $flags = 0) {
-    return $self->{client}->_call(
-        $remote->PROC_DOMAIN_OPEN_CONSOLE,
-        { dom => $self->{id}, dev_name => $dev_name, flags => $flags // 0 } );
-}
-
 sub pin_iothread($self, $iothreads_id, $cpumap, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_PIN_IOTHREAD,
@@ -1159,12 +1159,6 @@ async sub save_params($self, $params, $flags = 0) {
     return await $self->{client}->_call(
         $remote->PROC_DOMAIN_SAVE_PARAMS,
         { dom => $self->{id}, params => $params, flags => $flags // 0 } );
-}
-
-sub screenshot($self, $screen, $flags = 0) {
-    return $self->{client}->_call(
-        $remote->PROC_DOMAIN_SCREENSHOT,
-        { dom => $self->{id}, screen => $screen, flags => $flags // 0 } );
 }
 
 sub send_key($self, $codeset, $holdtime, $keycodes, $flags = 0) {
@@ -1309,6 +1303,12 @@ sub set_time($self, $seconds, $nseconds, $flags = 0) {
         { dom => $self->{id}, seconds => $seconds, nseconds => $nseconds, flags => $flags // 0 } );
 }
 
+sub set_user_password($self, $user, $password, $flags = 0) {
+    return $self->{client}->_call(
+        $remote->PROC_DOMAIN_SET_USER_PASSWORD,
+        { dom => $self->{id}, user => $user, password => $password, flags => $flags // 0 } );
+}
+
 sub set_vcpu($self, $cpumap, $state, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_VCPU,
@@ -1440,6 +1440,14 @@ See documentation of L<virDomainAbortJob|https://libvirt.org/html/libvirt-libvir
   # -> (* no data *)
 
 See documentation of L<virDomainAbortJobFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAbortJobFlags>.
+
+
+=head2 add_iothread
+
+  await $dom->add_iothread( $iothread_id, $flags = 0 );
+  # -> (* no data *)
+
+See documentation of L<virDomainAddIOThread|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAddIOThread>.
 
 
 =head2 agent_set_response_timeout
@@ -1583,6 +1591,14 @@ See documentation of L<virDomainCoreDumpWithFormat|https://libvirt.org/html/libv
   $dom = await $dom->create_with_flags( $flags = 0 );
 
 See documentation of L<virDomainCreateWithFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCreateWithFlags>.
+
+
+=head2 del_iothread
+
+  await $dom->del_iothread( $iothread_id, $flags = 0 );
+  # -> (* no data *)
+
+See documentation of L<virDomainDelIOThread|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDelIOThread>.
 
 
 =head2 destroy
@@ -1947,22 +1963,6 @@ See documentation of L<virDomainMigrateSetMaxSpeed|https://libvirt.org/html/libv
 See documentation of L<virDomainMigrateStartPostCopy|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateStartPostCopy>.
 
 
-=head2 open_channel
-
-  await $dom->open_channel( $name, $flags = 0 );
-  # -> (* no data *)
-
-See documentation of L<virDomainOpenChannel|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainOpenChannel>.
-
-
-=head2 open_console
-
-  await $dom->open_console( $dev_name, $flags = 0 );
-  # -> (* no data *)
-
-See documentation of L<virDomainOpenConsole|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainOpenConsole>.
-
-
 =head2 pin_iothread
 
   await $dom->pin_iothread( $iothreads_id, $cpumap, $flags = 0 );
@@ -2049,13 +2049,6 @@ See documentation of L<virDomainSaveFlags|https://libvirt.org/html/libvirt-libvi
   # -> (* no data *)
 
 See documentation of L<virDomainSaveParams|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSaveParams>.
-
-
-=head2 screenshot
-
-  $mime = await $dom->screenshot( $screen, $flags = 0 );
-
-See documentation of L<virDomainScreenshot|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainScreenshot>.
 
 
 =head2 send_key
@@ -2232,6 +2225,14 @@ See documentation of L<virDomainSetSchedulerParametersFlags|https://libvirt.org/
   # -> (* no data *)
 
 See documentation of L<virDomainSetTime|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetTime>.
+
+
+=head2 set_user_password
+
+  await $dom->set_user_password( $user, $password, $flags = 0 );
+  # -> (* no data *)
+
+See documentation of L<virDomainSetUserPassword|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetUserPassword>.
 
 
 =head2 set_vcpu

@@ -67,12 +67,6 @@ sub delete($self, $flags = 0) {
         { vol => $self->{id}, flags => $flags // 0 } );
 }
 
-sub download($self, $offset, $length, $flags = 0) {
-    return $self->{client}->_call(
-        $remote->PROC_STORAGE_VOL_DOWNLOAD,
-        { vol => $self->{id}, offset => $offset, length => $length, flags => $flags // 0 } );
-}
-
 sub get_info($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_INFO,
@@ -101,12 +95,6 @@ sub resize($self, $capacity, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_RESIZE,
         { vol => $self->{id}, capacity => $capacity, flags => $flags // 0 } );
-}
-
-sub upload($self, $offset, $length, $flags = 0) {
-    return $self->{client}->_call(
-        $remote->PROC_STORAGE_VOL_UPLOAD,
-        { vol => $self->{id}, offset => $offset, length => $length, flags => $flags // 0 } );
 }
 
 sub wipe($self, $flags = 0) {
@@ -156,14 +144,6 @@ v10.3.0
 See documentation of L<virStorageVolDelete|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolDelete>.
 
 
-=head2 download
-
-  await $vol->download( $offset, $length, $flags = 0 );
-  # -> (* no data *)
-
-See documentation of L<virStorageVolDownload|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolDownload>.
-
-
 =head2 get_info
 
   await $vol->get_info;
@@ -201,14 +181,6 @@ See documentation of L<virStoragePoolLookupByVolume|https://libvirt.org/html/lib
   # -> (* no data *)
 
 See documentation of L<virStorageVolResize|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolResize>.
-
-
-=head2 upload
-
-  await $vol->upload( $offset, $length, $flags = 0 );
-  # -> (* no data *)
-
-See documentation of L<virStorageVolUpload|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolUpload>.
 
 
 =head2 wipe

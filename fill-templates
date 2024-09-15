@@ -14,6 +14,7 @@ my $tag             = $ARGV[0];
 my $version         = $ARGV[1];
 my $dep_psv_version = $ARGV[2];
 
+my @skipped_entrypoints;
 
 sub contents {
     my ($fn) = @_;
@@ -182,6 +183,25 @@ sub ep_pod($mod, $ep, $c_api_defs) {
     }
 }
 
+sub unimplemented_pod() {
+    my %reasons = map { $_->{reason} => 1 } @skipped_entrypoints;
+    my @reasons = sort keys %reasons;
+    my @sorted = sort { $a->{name} cmp $b->{name} } @skipped_entrypoints;
+    return join("\n\n",
+                "=over 8",
+                (map {
+                    my $reason = $_;
+
+                    "=item * $_\n\n=over 8"
+                        . join( "\n\n",
+                                map { "=item * $_->{name}" }
+                                grep { $_->{reason} eq $reason }
+                                @skipped_entrypoints)
+                        . "\n\n=back\n\n"
+                 } @reasons),
+                "=back");
+}
+
 sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translators, $c_api_defs, $xdr_parse_version) {
     my $tmpl = contents( $template . $mod . '.pm.tmpl' );
     my $calls = join("\n",
@@ -193,6 +213,7 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
              map { ep_pod($mod, $_, $c_api_defs) }
              sort { $a->{name} cmp $b->{name} }
              @{ $module_functions->{$mod} });
+    my $skipped_pod = unimplemented_pod();
     my @constants = grep { $_->{mod} eq $mod } @{ $h_syms };
     my $max = max map { length $_->{sym} } @constants;
     my $constants = join("\n    ",
@@ -212,6 +233,7 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
     $tmpl =~ s/__CONSTANTS__/$constants/;
     $tmpl =~ s/__ENTRYPOINTS__/$entrypoints_pod/;
     $tmpl =~ s/__CONSTANTS_POD__/$constants_pod/;
+    $tmpl =~ s/__UNIMPLEMENTED__/$skipped_pod/;
 
     my $out = ($mod ne $main_module) ?
         "lib/Sys/Async/Virt/$mod.pm" : 'lib/Sys/Async/Virt.pm';
@@ -247,22 +269,43 @@ sub proc_annotation($proc) {
 
 sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $struct_basename) {
     my $proc_annotation = proc_annotation($proc);
-    if ($proc_annotation !~ m/\@generate: (both|client)/
-        #or $proc_annotation =~ m/@(read|write)stream:/
-        ) {
+    if ($proc_annotation !~ m/\@generate:\s*(both|client|server|none)/) {
+        die "Unexpected generator target for $proc->{name}->{content}";
+    }
+    my $generator_target = $1;
+    my $callstruct_name = $struct_basename . '_args';
+    my $callstruct = find_toplevel_definition($ast, $callstruct_name);
+    my @callargs = _retvals( $callstruct );
+    if (not ($generator_target eq 'client'
+             or $generator_target eq 'both')) {
         # skip stream-related entrypoints for now
         $module_returns->[$proc_value] = '\&_no_translation';
+
+        my $proc_name = $proc->{name}->{content};
+        return if $proc_name =~ m/_(EVENT|AUTH)_|CLOSE_CALLBACK/;
+
+        my $nparams = grep { $_->{name} eq 'nparams' } @callargs;
+        $nparams = $nparams ? '/nparams' : '';
+        push @skipped_entrypoints, {
+            name => $proc_name,
+            reason => "\@generate: $generator_target$nparams",
+        };
+        return;
+    }
+    elsif ($proc_annotation =~ m/(\@(read|write)stream):/) {
+        $module_returns->[$proc_value] = '\&_no_translation';
+        push @skipped_entrypoints, {
+            name => $proc->{name}->{content},
+            reason => $1,
+        };
         return;
     }
     my $func = ($struct_basename =~ s/^remote_//r);
-    my $callstruct_name = $struct_basename . '_args';
     my $retstruct_name = $struct_basename . '_ret';
-    my $callstruct = find_toplevel_definition($ast, $callstruct_name);
     my $retstruct = find_toplevel_definition($ast, $retstruct_name);
     my $retstream = ($proc_annotation =~ m/@(read|write)stream:/);
     my $into_module = $main_module;
 
-    my @callargs = _retvals( $callstruct );
     my @retvals  = _retvals( $retstruct );
 
     my $first_call_arg = @callargs ? $callargs[0] : undef;
