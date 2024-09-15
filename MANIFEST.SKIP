@@ -1,3 +1,5 @@
+^build-serializers
+^fill-templates
 ^.git
 ^.plx
 .*~$
@@ -6,5 +8,6 @@
 ^MANIFEST.bak
 ^Makefile$
 ^devel/
+^html/
 ^templates/
 ^Sys-Async-Virt-
