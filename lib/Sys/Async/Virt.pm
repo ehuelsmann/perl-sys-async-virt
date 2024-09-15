@@ -1790,6 +1790,8 @@ Sys::Async::Virt - LibVirt protocol implementation for clients
 
 v10.3.0
 
+Based on LibVirt tag v10.3.0
+
 =head1 SYNOPSIS
 
   use Sys::Async::Virt;

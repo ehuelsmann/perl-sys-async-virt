@@ -10,6 +10,13 @@ use Scalar::Util qw(reftype);
 
 use Protocol::Sys::Virt::Devel qw(extract_all);
 
+
+unless (scalar(@ARGV) == 3) {
+    say 'Usage: fill-templates [libvirt-tag] [version] [Protocol::Sys::Virt-version]';
+    exit 0;
+}
+
+
 my $tag             = $ARGV[0];
 my $version         = $ARGV[1];
 my $dep_psv_version = $ARGV[2];
@@ -128,6 +135,7 @@ sub _version_replacements {
     $_[0] =~ s/__XDR_PARSE_VERSION__/$xdr_parse_version/g;
     $_[0] =~ s/__P::S::V::VERSION__/$dep_psv_version/g;
     $_[0] =~ s/__VERSION__/$version/g;
+    $_[0] =~ s/__LIBVIRT_TAG__/$tag/g;
 }
 
 my %varname = (
