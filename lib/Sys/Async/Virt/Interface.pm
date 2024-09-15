@@ -98,23 +98,38 @@ v10.3.0
   await $iface->create( $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceCreate>.
+
+
 =head2 destroy
 
   await $iface->destroy( $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceDestroy>.
+
+
 =head2 get_xml_desc
 
   $xml = await $iface->get_xml_desc( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceGetXMLDesc>.
+
 
 =head2 is_active
 
   $active = await $iface->is_active;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceIsActive>.
+
+
 =head2 undefine
 
   await $iface->undefine;
   # -> (* no data *)
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceUndefine>.
+
 
 
 =head1 CONSTANTS

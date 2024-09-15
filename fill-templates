@@ -152,7 +152,44 @@ my %varname = (
     Secret => 'secret',
     );
 
-sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translators, $xdr_parse_version) {
+sub ep_pod($mod, $ep, $c_api_defs) {
+    my $argstr = ($ep->{argstr} =~ s/^\$self$|\$self, //r);
+    $argstr = $argstr ? "( $argstr )" : '';
+    my $retstr = ($ep->{retstr} =~ s/{\s*}/(* no data *)/r);
+    ### Return a stream, somehow...
+    my $retstream = $ep->{retstream} ? 'Returns a stream' : '';
+    my $doc_url = '';
+    if (my $c_ep = $c_api_defs->{$ep->{identifier}}) {
+        my $basename = ($c_ep->{header} =~ s|^.*/||r);
+        my $url = "https://libvirt.org/html/libvirt-${basename}tml#$c_ep->{name}";
+        $doc_url = <<~POD;
+
+        Documentation of this entrypoint can be found at L<$url>.
+        POD
+    }
+    if (length $retstr > 50) {
+        $retstr =~ s/, /,\n  #      /g;
+    }
+    if (not $ep->{ret_unwrap}) {
+        return <<~POD;
+          =head2 $ep->{name}
+
+            await \$$varname{$mod}->$ep->{name}$argstr;
+            # -> $retstr
+          $doc_url
+          POD
+    }
+    else {
+        return <<~POD;
+          =head2 $ep->{name}
+
+            \$$ep->{ret_unwrap} = await \$$varname{$mod}->$ep->{name}$argstr;
+          $doc_url
+          POD
+    }
+}
+
+sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translators, $c_api_defs, $xdr_parse_version) {
     my $tmpl = contents( $template . $mod . '.pm.tmpl' );
     my $calls = join("\n",
                      map { $_->{code} }
@@ -160,25 +197,7 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
                      @{ $module_functions->{$mod} });
     my $entrypoints_pod =
         join("\n",
-             map {
-                 my $argstr = ($_->{argstr} =~ s/^\$self$|\$self, //r);
-                 $argstr = $argstr ? "( $argstr )" : '';
-                 my $retstr = ($_->{retstr} =~ s/{\s*}/(* no data *)/r);
-                 my $retstream = $_->{retstream} ? 'Returns a stream' : '';
-                 if (length $retstr > 50) {
-                     $retstr =~ s/, /,\n  #      /g;
-                 }
-                 (not $_->{ret_unwrap}) ? <<~POD1 : <<~POD2;
-                 =head2 $_->{name}
-
-                   await \$$varname{$mod}->$_->{name}$argstr;
-                   # -> $retstr
-                 POD1
-                 =head2 $_->{name}
-
-                   \$$_->{ret_unwrap} = await \$$varname{$mod}->$_->{name}$argstr;
-                 POD2
-             }
+             map { ep_pod($mod, $_, $c_api_defs) }
              sort { $a->{name} cmp $b->{name} }
              @{ $module_functions->{$mod} });
     my @constants = grep { $_->{mod} eq $mod } @{ $h_syms };
@@ -235,7 +254,10 @@ sub proc_annotation($proc) {
 
 sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $struct_basename) {
     my $proc_annotation = proc_annotation($proc);
-    if ($proc_annotation !~ m/\@generate: (both|client)/) {
+    if ($proc_annotation !~ m/\@generate: (both|client)/
+        #or $proc_annotation =~ m/@(read|write)stream:/
+        ) {
+        # skip stream-related entrypoints for now
         $module_returns->[$proc_value] = '\&_no_translation';
         return;
     }
@@ -278,6 +300,7 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
     my $ret_unwrap = (@retvals == 1 ? $retvals[0]->{name} : '');
     push @{ $module_functions->{$into_module} //= [] }, {
         name => $entrypoint,
+        identifier => $proc->{name}->{content},
         const => proc_const($proc),
         args => \@callargs,
         ret  => \@retvals,
@@ -472,7 +495,7 @@ sub proc_entrypoint($module, $entrypoint) {
     }
 }
 
-sub client($xdr_parse_version, $ast, $template, $h_syms) {
+sub client($xdr_parse_version, $ast, $template, $h_syms, $c_api_defs) {
     my $procs = find_toplevel_definition($ast, 'remote_procedure');
     my @entrypoints;
     my (%module_functions, @module_returns); # returns are always in the client!
@@ -506,6 +529,7 @@ sub client($xdr_parse_version, $ast, $template, $h_syms) {
                             $h_syms,
                             \%module_functions,
                             $translators,
+                            $c_api_defs,
                             $xdr_parse_version);
     }
 }
@@ -522,8 +546,10 @@ if (not -d '../libvirt') {
 my $api_data    = extract_all( '../libvirt/' );
 my $ast         = $api_data->{ast}->{remote};
 my $header_syms = $api_data->{header_syms};
+my $c_api_defs  = $api_data->{proc_entrypoints};
 
 client($api_data->{xdr_parse_version},
        $ast,
        'templates/',
-       $header_syms);
+       $header_syms,
+       $c_api_defs);

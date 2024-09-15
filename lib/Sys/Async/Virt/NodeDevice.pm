@@ -171,69 +171,117 @@ v10.3.0
   await $dev->create( $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceCreate>.
+
+
 =head2 create_xml
 
   $dev = await $dev->create_xml( $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceCreateXML>.
+
+
 =head2 define_xml
 
   $dev = await $dev->define_xml( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceDefineXML>.
+
 
 =head2 destroy
 
   await $dev->destroy;
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceDestroy>.
+
+
 =head2 get_autostart
 
   $autostart = await $dev->get_autostart;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceGetAutostart>.
+
 
 =head2 get_parent
 
   $parentName = await $dev->get_parent;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceGetParent>.
+
+
 =head2 get_xml_desc
 
   $xml = await $dev->get_xml_desc( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceGetXMLDesc>.
+
 
 =head2 is_active
 
   $active = await $dev->is_active;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceIsActive>.
+
+
 =head2 is_persistent
 
   $persistent = await $dev->is_persistent;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceIsPersistent>.
+
 
 =head2 list_caps
 
   $names = await $dev->list_caps( $maxnames );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceListCaps>.
+
+
 =head2 lookup_by_name
 
   $dev = await $dev->lookup_by_name;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceLookupByName>.
+
 
 =head2 lookup_scsi_host_by_wwn
 
   $dev = await $dev->lookup_scsi_host_by_wwn( $wwpn, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceLookupSCSIHostByWWN>.
+
+
 =head2 num_of_caps
 
   $num = await $dev->num_of_caps;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceNumOfCaps>.
+
 
 =head2 set_autostart
 
   await $dev->set_autostart( $autostart );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceSetAutostart>.
+
+
 =head2 undefine
 
   await $dev->undefine( $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceUndefine>.
+
+
 =head2 update
 
   await $dev->update( $xml_desc, $flags = 0 );
   # -> (* no data *)
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceUpdate>.
+
 
 
 =head1 CONSTANTS

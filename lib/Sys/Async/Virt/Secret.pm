@@ -86,15 +86,24 @@ v10.3.0
 
   $xml = await $secret->get_xml_desc( $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretGetXMLDesc>.
+
+
 =head2 set_value
 
   await $secret->set_value( $value, $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretSetValue>.
+
+
 =head2 undefine
 
   await $secret->undefine;
   # -> (* no data *)
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretUndefine>.
+
 
 
 =head1 CONSTANTS

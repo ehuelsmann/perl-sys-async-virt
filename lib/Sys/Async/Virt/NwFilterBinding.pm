@@ -76,9 +76,15 @@ v10.3.0
   await $binding->delete;
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterBindingDelete>.
+
+
 =head2 get_xml_desc
 
   $xml = await $binding->get_xml_desc( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterBindingGetXMLDesc>.
+
 
 
 =head1 CONSTANTS

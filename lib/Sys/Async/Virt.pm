@@ -1969,241 +1969,415 @@ close the connection.
 
   $cpu = await $client->baseline_cpu( $xmlCPUs, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectBaselineCPU>.
+
+
 =head2 baseline_hypervisor_cpu
 
   $cpu = await $client->baseline_hypervisor_cpu( $emulator, $arch, $machine, $virttype, $xmlCPUs, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectBaselineHypervisorCPU>.
+
 
 =head2 compare_cpu
 
   $result = await $client->compare_cpu( $xml, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectCompareCPU>.
+
+
 =head2 compare_hypervisor_cpu
 
   $result = await $client->compare_hypervisor_cpu( $emulator, $arch, $machine, $virttype, $xmlCPU, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectCompareHypervisorCPU>.
+
 
 =head2 domain_create_xml
 
   $dom = await $client->domain_create_xml( $xml_desc, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCreateXML>.
+
+
 =head2 domain_define_xml
 
   $dom = await $client->domain_define_xml( $xml );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDefineXML>.
+
 
 =head2 domain_define_xml_flags
 
   $dom = await $client->domain_define_xml_flags( $xml, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainDefineXMLFlags>.
+
+
 =head2 domain_lookup_by_id
 
   $dom = await $client->domain_lookup_by_id( $id );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainLookupByID>.
+
 
 =head2 domain_lookup_by_name
 
   $dom = await $client->domain_lookup_by_name( $name );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainLookupByName>.
+
+
 =head2 domain_lookup_by_uuid
 
   $dom = await $client->domain_lookup_by_uuid( $uuid );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainLookupByUUID>.
+
 
 =head2 domain_migrate_finish
 
   $ddom = await $client->domain_migrate_finish( $dname, $cookie, $uri, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigrateFinish>.
+
+
 =head2 domain_migrate_finish2
 
   $ddom = await $client->domain_migrate_finish2( $dname, $cookie, $uri, $flags, $retcode );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigrateFinish2>.
+
 
 =head2 domain_migrate_prepare_tunnel
 
   await $client->domain_migrate_prepare_tunnel( $flags, $dname, $resource, $dom_xml );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigratePrepareTunnel>.
+
+
 =head2 domain_restore
 
   await $client->domain_restore( $from );
   # -> (* no data *)
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainRestore>.
+
 
 =head2 domain_restore_flags
 
   await $client->domain_restore_flags( $from, $dxml, $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainRestoreFlags>.
+
+
 =head2 domain_restore_params
 
   await $client->domain_restore_params( $params, $flags = 0 );
   # -> (* no data *)
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainRestoreParams>.
+
 
 =head2 domain_save_image_define_xml
 
   await $client->domain_save_image_define_xml( $file, $dxml, $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSaveImageDefineXML>.
+
+
 =head2 domain_save_image_get_xml_desc
 
   $xml = await $client->domain_save_image_get_xml_desc( $file, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSaveImageGetXMLDesc>.
+
 
 =head2 domain_xml_from_native
 
   $domainXml = await $client->domain_xml_from_native( $nativeFormat, $nativeConfig, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectDomainXMLFromNative>.
+
+
 =head2 domain_xml_to_native
 
   $nativeConfig = await $client->domain_xml_to_native( $nativeFormat, $domainXml, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectDomainXMLToNative>.
+
 
 =head2 get_capabilities
 
   $capabilities = await $client->get_capabilities;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectGetCapabilities>.
+
+
 =head2 get_domain_capabilities
 
   $capabilities = await $client->get_domain_capabilities( $emulatorbin, $arch, $machine, $virttype, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectGetDomainCapabilities>.
+
 
 =head2 get_hostname
 
   $hostname = await $client->get_hostname;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectGetHostname>.
+
+
 =head2 get_lib_version
 
   $lib_ver = await $client->get_lib_version;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectGetLibVersion>.
+
 
 =head2 get_max_vcpus
 
   $max_vcpus = await $client->get_max_vcpus( $type );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectGetMaxVcpus>.
+
+
 =head2 get_storage_pool_capabilities
 
   $capabilities = await $client->get_storage_pool_capabilities( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virConnectGetStoragePoolCapabilities>.
+
 
 =head2 get_sysinfo
 
   $sysinfo = await $client->get_sysinfo( $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectGetSysinfo>.
+
+
 =head2 get_version
 
   $hv_ver = await $client->get_version;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectGetVersion>.
+
 
 =head2 interface_change_begin
 
   await $client->interface_change_begin( $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceChangeBegin>.
+
+
 =head2 interface_change_commit
 
   await $client->interface_change_commit( $flags = 0 );
   # -> (* no data *)
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceChangeCommit>.
+
 
 =head2 interface_change_rollback
 
   await $client->interface_change_rollback( $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceChangeRollback>.
+
+
 =head2 interface_define_xml
 
   $iface = await $client->interface_define_xml( $xml, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceDefineXML>.
+
 
 =head2 interface_lookup_by_mac_string
 
   $iface = await $client->interface_lookup_by_mac_string( $mac );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceLookupByMACString>.
+
+
 =head2 interface_lookup_by_name
 
   $iface = await $client->interface_lookup_by_name( $name );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virInterfaceLookupByName>.
+
 
 =head2 list_all_domains
 
   $domains = await $client->list_all_domains( $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectListAllDomains>.
+
+
 =head2 list_all_interfaces
 
   $ifaces = await $client->list_all_interfaces( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virConnectListAllInterfaces>.
+
 
 =head2 list_all_networks
 
   $nets = await $client->list_all_networks( $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virConnectListAllNetworks>.
+
+
 =head2 list_all_node_devices
 
   $devices = await $client->list_all_node_devices( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virConnectListAllNodeDevices>.
+
 
 =head2 list_all_nwfilter_bindings
 
   $bindings = await $client->list_all_nwfilter_bindings( $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virConnectListAllNWFilterBindings>.
+
+
 =head2 list_all_nwfilters
 
   $filters = await $client->list_all_nwfilters( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virConnectListAllNWFilters>.
+
 
 =head2 list_all_secrets
 
   $secrets = await $client->list_all_secrets( $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virConnectListAllSecrets>.
+
+
 =head2 list_all_storage_pools
 
   $pools = await $client->list_all_storage_pools( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virConnectListAllStoragePools>.
+
 
 =head2 list_defined_domains
 
   $names = await $client->list_defined_domains;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectListDefinedDomains>.
+
+
 =head2 list_defined_interfaces
 
   $names = await $client->list_defined_interfaces;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virConnectListDefinedInterfaces>.
+
 
 =head2 list_defined_networks
 
   $names = await $client->list_defined_networks;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virConnectListDefinedNetworks>.
+
+
 =head2 list_defined_storage_pools
 
   $names = await $client->list_defined_storage_pools;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virConnectListDefinedStoragePools>.
+
 
 =head2 list_interfaces
 
   $names = await $client->list_interfaces;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virConnectListInterfaces>.
+
+
 =head2 list_networks
 
   $names = await $client->list_networks;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virConnectListNetworks>.
+
 
 =head2 list_nwfilters
 
   $names = await $client->list_nwfilters;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virConnectListNWFilters>.
+
+
 =head2 list_secrets
 
   $uuids = await $client->list_secrets;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virConnectListSecrets>.
+
 
 =head2 list_storage_pools
 
   $names = await $client->list_storage_pools;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virConnectListStoragePools>.
+
+
 =head2 network_create_xml
 
   $net = await $client->network_create_xml( $xml );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkCreateXML>.
+
 
 =head2 network_create_xml_flags
 
   $net = await $client->network_create_xml_flags( $xml, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkCreateXMLFlags>.
+
+
 =head2 network_define_xml
 
   $net = await $client->network_define_xml( $xml );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkDefineXML>.
+
 
 =head2 network_define_xml_flags
 
   $net = await $client->network_define_xml_flags( $xml, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkDefineXMLFlags>.
+
+
 =head2 network_lookup_by_name
 
   $net = await $client->network_lookup_by_name( $name );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkLookupByName>.
+
 
 =head2 network_lookup_by_uuid
 
   $net = await $client->network_lookup_by_uuid( $uuid );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkLookupByUUID>.
+
+
 =head2 node_get_free_memory
 
   $freeMem = await $client->node_get_free_memory;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetFreeMemory>.
+
 
 =head2 node_get_info
 
@@ -2217,136 +2391,235 @@ close the connection.
   #      sockets => $sockets,
   #      threads => $threads }
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetInfo>.
+
+
 =head2 node_list_devices
 
   $names = await $client->node_list_devices( $cap, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeListDevices>.
+
+
 =head2 node_num_of_devices
 
   $num = await $client->node_num_of_devices( $cap, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeNumOfDevices>.
+
 
 =head2 node_set_memory_parameters
 
   await $client->node_set_memory_parameters( $params, $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virNodeSetMemoryParameters>.
+
+
 =head2 node_suspend_for_duration
 
   await $client->node_suspend_for_duration( $target, $duration, $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virNodeSuspendForDuration>.
+
+
 =head2 num_of_defined_domains
 
   $num = await $client->num_of_defined_domains;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectNumOfDefinedDomains>.
+
 
 =head2 num_of_defined_interfaces
 
   $num = await $client->num_of_defined_interfaces;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virConnectNumOfDefinedInterfaces>.
+
+
 =head2 num_of_defined_networks
 
   $num = await $client->num_of_defined_networks;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virConnectNumOfDefinedNetworks>.
+
 
 =head2 num_of_defined_storage_pools
 
   $num = await $client->num_of_defined_storage_pools;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virConnectNumOfDefinedStoragePools>.
+
+
 =head2 num_of_domains
 
   $num = await $client->num_of_domains;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectNumOfDomains>.
+
 
 =head2 num_of_interfaces
 
   $num = await $client->num_of_interfaces;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-interface.html#virConnectNumOfInterfaces>.
+
+
 =head2 num_of_networks
 
   $num = await $client->num_of_networks;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-network.html#virConnectNumOfNetworks>.
+
 
 =head2 num_of_nwfilters
 
   $num = await $client->num_of_nwfilters;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virConnectNumOfNWFilters>.
+
+
 =head2 num_of_secrets
 
   $num = await $client->num_of_secrets;
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virConnectNumOfSecrets>.
+
 
 =head2 num_of_storage_pools
 
   $num = await $client->num_of_storage_pools;
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virConnectNumOfStoragePools>.
+
+
 =head2 nwfilter_binding_create_xml
 
   $nwfilter = await $client->nwfilter_binding_create_xml( $xml, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterBindingCreateXML>.
+
 
 =head2 nwfilter_binding_lookup_by_port_dev
 
   $nwfilter = await $client->nwfilter_binding_lookup_by_port_dev( $name );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterBindingLookupByPortDev>.
+
+
 =head2 nwfilter_define_xml
 
   $nwfilter = await $client->nwfilter_define_xml( $xml );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterDefineXML>.
+
 
 =head2 nwfilter_define_xml_flags
 
   $nwfilter = await $client->nwfilter_define_xml_flags( $xml, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterDefineXMLFlags>.
+
+
 =head2 nwfilter_lookup_by_name
 
   $nwfilter = await $client->nwfilter_lookup_by_name( $name );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterLookupByName>.
+
 
 =head2 nwfilter_lookup_by_uuid
 
   $nwfilter = await $client->nwfilter_lookup_by_uuid( $uuid );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterLookupByUUID>.
+
+
 =head2 secret_define_xml
 
   $secret = await $client->secret_define_xml( $xml, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretDefineXML>.
+
 
 =head2 secret_lookup_by_usage
 
   $secret = await $client->secret_lookup_by_usage( $usageType, $usageID );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretLookupByUsage>.
+
+
 =head2 secret_lookup_by_uuid
 
   $secret = await $client->secret_lookup_by_uuid( $uuid );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretLookupByUUID>.
+
 
 =head2 set_identity
 
   await $client->set_identity( $params, $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-host.html#virConnectSetIdentity>.
+
+
 =head2 storage_pool_create_xml
 
   $pool = await $client->storage_pool_create_xml( $xml, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolCreateXML>.
+
 
 =head2 storage_pool_define_xml
 
   $pool = await $client->storage_pool_define_xml( $xml, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolDefineXML>.
+
+
 =head2 storage_pool_lookup_by_name
 
   $pool = await $client->storage_pool_lookup_by_name( $name );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolLookupByName>.
+
 
 =head2 storage_pool_lookup_by_target_path
 
   $pool = await $client->storage_pool_lookup_by_target_path( $path );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolLookupByTargetPath>.
+
+
 =head2 storage_pool_lookup_by_uuid
 
   $pool = await $client->storage_pool_lookup_by_uuid( $uuid );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolLookupByUUID>.
+
 
 =head2 storage_vol_lookup_by_key
 
   $vol = await $client->storage_vol_lookup_by_key( $key );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolLookupByKey>.
+
+
 =head2 storage_vol_lookup_by_path
 
   $vol = await $client->storage_vol_lookup_by_path( $path );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolLookupByPath>.
+
+
 =head2 supports_feature
 
   $supported = await $client->supports_feature( $feature );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt_internal.html#virConnectSupportsFeature>.
+
 
 
 =head1 CONSTANTS
@@ -2838,6 +3111,10 @@ wrapper allows for tracking all calls allowing to set up handling of the replies
 =over 8
 
 =item * KeepAlive support
+
+=item * Documentation for currently mapped entry points
+
+The main idea here is to refer to the documentation on libvirt.org.
 
 =item * Stream-related entrypoints
 

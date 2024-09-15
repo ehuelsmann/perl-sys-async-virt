@@ -141,38 +141,65 @@ v10.3.0
   await $snapshot->delete( $flags = 0 );
   # -> (* no data *)
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotDelete>.
+
+
 =head2 get_parent
 
   $snap = await $snapshot->get_parent( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotGetParent>.
+
 
 =head2 get_xml_desc
 
   $xml = await $snapshot->get_xml_desc( $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotGetXMLDesc>.
+
+
 =head2 has_metadata
 
   $metadata = await $snapshot->has_metadata( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotHasMetadata>.
+
 
 =head2 is_current
 
   $current = await $snapshot->is_current( $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotIsCurrent>.
+
+
 =head2 list_all_children
 
   $snapshots = await $snapshot->list_all_children( $need_results, $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotListAllChildren>.
+
 
 =head2 list_children_names
 
   $names = await $snapshot->list_children_names( $maxnames, $flags = 0 );
 
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotListChildrenNames>.
+
+
 =head2 num_children
 
   $num = await $snapshot->num_children( $flags = 0 );
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotNumChildren>.
+
 
 =head2 revert_to_snapshot
 
   await $snapshot->revert_to_snapshot( $flags = 0 );
   # -> (* no data *)
+
+Documentation of this entrypoint can be found at L<https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainRevertToSnapshot>.
+
 
 
 =head1 CONSTANTS

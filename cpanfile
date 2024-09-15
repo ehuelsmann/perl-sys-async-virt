@@ -15,7 +15,7 @@ on test => sub {
 
 on develop => sub {
     requires 'Carp::Always';
-    requires 'Protocol::Sys::Virt::Devel' => '0.0.4';
+    requires 'Protocol::Sys::Virt::Devel' => '0.0.5';
     requires 'Test::Pod' => '1.0';
     requires 'Test::Pod::Coverage' => '1.10';
 };
