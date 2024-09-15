@@ -3137,7 +3137,9 @@ towards implementation are greatly appreciated.
 
 =item * @generate: none
 
-=over 8=item * REMOTE_PROC_CONNECT_OPEN
+=over 8
+
+=item * REMOTE_PROC_CONNECT_OPEN
 
 =item * REMOTE_PROC_CONNECT_CLOSE
 
@@ -3247,7 +3249,9 @@ towards implementation are greatly appreciated.
 
 =item * @generate: none/nparams
 
-=over 8=item * REMOTE_PROC_DOMAIN_GET_MEMORY_PARAMETERS
+=over 8
+
+=item * REMOTE_PROC_DOMAIN_GET_MEMORY_PARAMETERS
 
 =item * REMOTE_PROC_DOMAIN_GET_BLKIO_PARAMETERS
 
@@ -3277,7 +3281,9 @@ towards implementation are greatly appreciated.
 
 =item * @generate: server
 
-=over 8=item * REMOTE_PROC_CONNECT_GET_TYPE
+=over 8
+
+=item * REMOTE_PROC_CONNECT_GET_TYPE
 
 =item * REMOTE_PROC_DOMAIN_CREATE
 
@@ -3311,7 +3317,9 @@ towards implementation are greatly appreciated.
 
 =item * @readstream
 
-=over 8=item * REMOTE_PROC_DOMAIN_OPEN_CONSOLE
+=over 8
+
+=item * REMOTE_PROC_DOMAIN_OPEN_CONSOLE
 
 =item * REMOTE_PROC_STORAGE_VOL_DOWNLOAD
 
@@ -3325,7 +3333,9 @@ towards implementation are greatly appreciated.
 
 =item * @writestream
 
-=over 8=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL
+=over 8
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL
 
 =item * REMOTE_PROC_STORAGE_VOL_UPLOAD
 

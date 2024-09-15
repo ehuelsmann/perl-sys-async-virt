@@ -200,7 +200,7 @@ sub unimplemented_pod() {
                 (map {
                     my $reason = $_;
 
-                    "=item * $_\n\n=over 8"
+                    "=item * $_\n\n=over 8\n\n"
                         . join( "\n\n",
                                 map { "=item * $_->{name}" }
                                 grep { $_->{reason} eq $reason }
