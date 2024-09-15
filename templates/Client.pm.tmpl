@@ -603,14 +603,23 @@ The API documentation of this module and the related modules
 C<Sys::Async::Virt::*> is meant to be used in conjunction with the
 documentation found at L<LibVirt's API
 reference|https://libvirt.org/html/index.html>.  Since the C API is procedural
-whereas the Perl API is object oriented; to look up a function from e.g.
-C<Sys::Async::Virt::Domain>, translate the function to CamelCase and
-add the prefix C<virDomain>.  The functions in this module may need to be
-prefixed with either C<virConnect> or C<virNode>.  An important difference with
-the C API is that this API only lists the C<INPUT> and C<INPUT|OUTPUT (as
-input)> arguments for its functions.  The C<OUTPUT> and C<INPUT|OUTPUT (as
-output)> arguments will be returned in the C<on_reply> event.
+whereas the Perl API is object oriented, the mapping of API entry points isn't
+one-to-one.  Each entry point links to its C API equivalent on the libvirt.org
+site, enabling users to quickly find documentation.  (Please report any
+broken links.)
 
+An important difference with the C API is that this API only lists the
+C<INPUT> and C<INPUT|OUTPUT (as input)> arguments for its functions.  The
+C<OUTPUT> and C<INPUT|OUTPUT (as output)> arguments will be returned in the
+C<on_reply> event.
+
+=head2 STABILITY GUARANTEES
+
+The modules in this distribution are considered B<experimental>, meaning that
+no interface guarantees are made at this time.  However, since the protocol
+description from which most of the code is generated, changes are anticipated
+to be minimal.  The more feedback the project receives, the sooner the project
+will be able to commit to the API as it is.
 
 =head1 CLIENT EVENTS
 
