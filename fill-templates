@@ -10,13 +10,6 @@ use Scalar::Util qw(reftype);
 
 use Protocol::Sys::Virt::Devel qw(extract_all);
 
-my $source = '';
-my @constants;
-my @enums;
-my @serializers;
-my @deserializers;
-
-my $json            = JSON::PP->new->canonical(1);
 my $tag             = $ARGV[0];
 my $version         = $ARGV[1];
 my $dep_psv_version = $ARGV[2];
