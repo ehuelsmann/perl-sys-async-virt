@@ -314,11 +314,13 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
         $nparams = $nparams ? '/nparams' : '';
         my $needresults = grep { $_->{name} eq 'need_results' } @callargs;
         $needresults = $needresults ? '/need_results' : '';
-        push @skipped_entrypoints, {
-            name => $proc_name,
-            reason => "\@generate: $generator_target$nparams$needresults",
-        };
-        return;
+        unless ($needresults) {
+            push @skipped_entrypoints, {
+                name => $proc_name,
+                reason => "\@generate: $generator_target$nparams$needresults",
+            };
+            return;
+        }
     }
     elsif ($proc_annotation =~ m/(\@(read|write)stream):/) {
         $module_returns->[$proc_value] = '\&_no_translation';
@@ -350,7 +352,8 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
 
     my $entrypoint = ($func =~ s/$prefix_strip_xdr{$into_module}//r);
     my $pod_remarks = '';
-    if ($entrypoint =~ /^list_/) {
+    if (scalar(@retvals) > 1
+        and any { $_->{name} eq 'ret' } @retvals) {
         # list functions have a 'ret' and an array; simply return the array,
         # Perl *knows* how long the array is...
         @retvals = grep { $_->{name} ne 'ret' } @retvals;

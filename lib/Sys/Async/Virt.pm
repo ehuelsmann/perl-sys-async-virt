@@ -643,7 +643,7 @@ my @reply_translators = (
     \&_no_translation,
     \&_no_translation,
     sub { 311; my $client = shift; _translated($client, undef, { dom => \&_translate_remote_nonnull_domain }, @_) },
-    \&_no_translation,
+    sub { 312; my $client = shift; _translated($client, 'models', {  }, @_) },
     \&_no_translation,
     \&_no_translation,
     sub { 315; my $client = shift; _translated($client, undef, { net => \&_translate_remote_nonnull_network }, @_) },
@@ -672,7 +672,7 @@ my @reply_translators = (
     \&_no_translation,
     undef,
     \&_no_translation,
-    \&_no_translation,
+    sub { 341; my $client = shift; _translated($client, 'leases', {  }, @_) },
     sub { 342; my $client = shift; _translated($client, 'capabilities', {  }, @_) },
     \&_no_translation,
     \&_no_translation,
@@ -1371,6 +1371,12 @@ sub get_capabilities($self) {
     return $self->_call(
         $remote->PROC_CONNECT_GET_CAPABILITIES,
         {  } );
+}
+
+sub get_cpu_model_names($self, $arch, $flags = 0) {
+    return $self->_call(
+        $remote->PROC_CONNECT_GET_CPU_MODEL_NAMES,
+        { arch => $arch, need_results => $remote->CPU_MODELS_MAX, flags => $flags // 0 } );
 }
 
 sub get_domain_capabilities($self, $emulatorbin, $arch, $machine, $virttype, $flags = 0) {
@@ -2130,6 +2136,13 @@ See documentation of L<virConnectDomainXMLToNative|https://libvirt.org/html/libv
   $capabilities = await $client->get_capabilities;
 
 See documentation of L<virConnectGetCapabilities|https://libvirt.org/html/libvirt-libvirt-host.html#virConnectGetCapabilities>.
+
+
+=head2 get_cpu_model_names
+
+  $models = await $client->get_cpu_model_names( $arch, $flags = 0 );
+
+See documentation of L<virConnectGetCPUModelNames|https://libvirt.org/html/libvirt-libvirt-host.html#virConnectGetCPUModelNames>.
 
 
 =head2 get_domain_capabilities
@@ -3266,18 +3279,6 @@ towards implementation are greatly appreciated.
 =item * REMOTE_PROC_NODE_GET_SECURITY_MODEL
 
 =item * REMOTE_PROC_SECRET_GET_VALUE
-
-=back
-
-
-
-=item * @generate: none/need_results
-
-=over 8
-
-=item * REMOTE_PROC_CONNECT_GET_CPU_MODEL_NAMES
-
-=item * REMOTE_PROC_NETWORK_GET_DHCP_LEASES
 
 =back
 

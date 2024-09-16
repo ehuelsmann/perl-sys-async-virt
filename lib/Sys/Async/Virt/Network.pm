@@ -90,6 +90,12 @@ sub get_bridge_name($self) {
         { net => $self->{id},  } );
 }
 
+sub get_dhcp_leases($self, $mac, $flags = 0) {
+    return $self->{client}->_call(
+        $remote->PROC_NETWORK_GET_DHCP_LEASES,
+        { net => $self->{id}, mac => $mac, need_results => $remote->NETWORK_DHCP_LEASES_MAX, flags => $flags // 0 } );
+}
+
 sub get_metadata($self, $type, $uri, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_GET_METADATA,
@@ -212,6 +218,13 @@ See documentation of L<virNetworkGetAutostart|https://libvirt.org/html/libvirt-l
   $name = await $net->get_bridge_name;
 
 See documentation of L<virNetworkGetBridgeName|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetBridgeName>.
+
+
+=head2 get_dhcp_leases
+
+  $leases = await $net->get_dhcp_leases( $mac, $flags = 0 );
+
+See documentation of L<virNetworkGetDHCPLeases|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetDHCPLeases>.
 
 
 =head2 get_metadata
