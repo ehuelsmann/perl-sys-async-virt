@@ -3149,9 +3149,12 @@ wrapper allows for tracking all calls allowing to set up handling of the replies
 Findings so far:
 
   entrypoints with "nparams" have this flagging
-    -> it seems these can be generated without problem; our approach would be
-       to simply fill out the '_MAX' constant and return the actual parameters
-       in an array
+    -> it seems these can be generated without problem;
+       the call needs to be executed with nparams==0 in order to retrieve
+       the supported maximum value.
+      ==> problem here is that currently, 'nparams' gets discarded when
+          translating the server response as part of the 'unwrapping' of the
+          'params' array...
 
 =item * C<@generate: server> entrypoints review (and implement relevant ones)
 

@@ -937,17 +937,17 @@ sub get_os_type($self) {
         { dom => $self->{id},  } );
 }
 
-sub get_scheduler_parameters($self, $nparams) {
+sub get_scheduler_parameters($self) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_SCHEDULER_PARAMETERS,
-        { dom => $self->{id}, nparams => $nparams } );
+        { dom => $self->{id}, nparams => $remote->DOMAIN_SCHEDULER_PARAMETERS_MAX } );
 }
 
-async sub get_scheduler_parameters_flags($self, $nparams, $flags = 0) {
+async sub get_scheduler_parameters_flags($self, $flags = 0) {
     $flags |= await $self->{client}->_typed_param_string_okay();
     return await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_SCHEDULER_PARAMETERS_FLAGS,
-        { dom => $self->{id}, nparams => $nparams, flags => $flags // 0 } );
+        { dom => $self->{id}, nparams => $remote->DOMAIN_SCHEDULER_PARAMETERS_MAX, flags => $flags // 0 } );
 }
 
 sub get_vcpus_flags($self, $flags = 0) {
@@ -1765,14 +1765,14 @@ See documentation of L<virDomainGetOSType|https://libvirt.org/html/libvirt-libvi
 
 =head2 get_scheduler_parameters
 
-  $params = await $dom->get_scheduler_parameters( $nparams );
+  $params = await $dom->get_scheduler_parameters;
 
 See documentation of L<virDomainGetSchedulerParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerParameters>.
 
 
 =head2 get_scheduler_parameters_flags
 
-  $params = await $dom->get_scheduler_parameters_flags( $nparams, $flags = 0 );
+  $params = await $dom->get_scheduler_parameters_flags( $flags = 0 );
 
 See documentation of L<virDomainGetSchedulerParametersFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerParametersFlags>.
 

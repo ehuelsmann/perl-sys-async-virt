@@ -364,6 +364,15 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
           of it is embedded in the length of the returned array.
           POD
     }
+    if (any { $_->{name} eq 'nparams' } @retvals) {
+        @retvals = grep { $_->{name} ne 'nparams' } @retvals;
+        $pod_remarks .= <<~'POD';
+
+          B<Remark:> This function differs from the LibVirt API in that it
+          discards the C<nparams> parameter in the return structure; the value
+          of it is embedded in the length of the returned array.
+          POD
+    }
     my $ret_unwrap = (@retvals == 1 ? $retvals[0]->{name} : '');
     push @{ $module_functions->{$into_module} //= [] }, {
         name => $entrypoint,
@@ -449,7 +458,23 @@ my %fixed_args = (
         get_dhcp_leases => '$remote->NETWORK_DHCP_LEASES_MAX',
         list_all_ports => '$remote->NETWORK_PORT_LIST_MAX',
         list_all_volumes => '$remote->STORAGE_VOL_LIST_MAX',
-    });
+    },
+    'nparams' => {
+        node_get_cpu_stats => '$remote->NODE_CPU_STATS_MAX',
+        node_get_memory_stats => '$remote->NODE_MEMORY_STATS_MAX',
+        get_scheduler_parameters => '$remote->DOMAIN_SCHEDULER_PARAMETERS_MAX',
+        get_scheduler_parameters_flags => '$remote->DOMAIN_SCHEDULER_PARAMETERS_MAX',
+        get_blkio_parameters => '$remote->DOMAIN_BLKIO_PARAMETERS_MAX',
+        get_memory_parameters => '$remote->DOMAIN_MEMORY_PARAMETERS_MAX',
+        get_numa_parameters => '$remote->DOMAIN_NUMA_PARAMETERS_MAX',
+        block_stats_flags => '$remote->DOMAIN_BLOCK_STATS_PARAMETERS_MAX',
+        get_interface_parameters => '$remote->DOMAIN_INTERFACE_PARAMETERS_MAX',
+        get_block_io_tune => '$remote->DOMAIN_BLOCK_IO_TUNE_PARAMETERS_MAX',
+        get_cpu_stats => '$remote->DOMAIN_GET_CPU_STATS_MAX',
+        node_get_memory_parameters => '$remote->NODE_MEMORY_PARAMETERS_MAX',
+        node_get_sev_info => '$remote->NODE_SEV_INFO_MAX',
+        get_parameters => '$remote->NETWORK_PORT_PARAMETERS_MAX',
+});
 
 sub proc_ep_argstring($ep_name, @argnames) {
     my $maybe_optional = 1;
