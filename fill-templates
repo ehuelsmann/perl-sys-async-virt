@@ -209,10 +209,6 @@ sub unimplemented_pod() {
         grep { my $x = $_->{name}; none { $_ eq $x } @manual_entrypoints }
         @skipped_entrypoints
         );
-    use Data::Dumper;
-    say Dumper(\@manual_entrypoints);
-    say scalar @skipped_entrypoints;
-    say scalar @sorted;
     return join("\n\n",
                 "=over 8",
                 (map {
