@@ -417,6 +417,8 @@ sub register {
     $self->{remote} = $r;
 }
 
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_CALLBACK_REGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_CALLBACK_DEREGISTER_ANY
 async sub domain_event_register_any($self, $eventID, $domain = undef) {
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_DOMAIN_EVENT_CALLBACK_REGISTER_ANY,
@@ -433,6 +435,8 @@ async sub domain_event_register_any($self, $eventID, $domain = undef) {
     return $cb;
 }
 
+# ENTRYPOINT: REMOTE_PROC_CONNECT_NETWORK_EVENT_REGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_NETWORK_EVENT_DEREGISTER_ANY
 async sub network_event_register_any($self, $eventID, $network = undef) {
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_NETWORK_EVENT_REGISTER_ANY,
@@ -449,6 +453,8 @@ async sub network_event_register_any($self, $eventID, $network = undef) {
     return $cb;
 }
 
+# ENTRYPOINT: REMOTE_PROC_CONNECT_STORAGE_POOL_EVENT_REGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_STORAGE_POOL_EVENT_DEREGISTER_ANY
 async sub storage_pool_event_register_any($self, $eventID, $pool = undef) {
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_STORAGE_POOL_EVENT_REGISTER_ANY,
@@ -465,6 +471,8 @@ async sub storage_pool_event_register_any($self, $eventID, $pool = undef) {
     return $cb;
 }
 
+# ENTRYPOINT: REMOTE_PROC_CONNECT_NODE_DEVICE_EVENT_REGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_NODE_DEVICE_EVENT_DEREGISTER_ANY
 async sub node_device_event_register_any($self, $eventID, $dev = undef) {
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_NODE_DEVICE_EVENT_REGISTER_ANY,
@@ -481,6 +489,8 @@ async sub node_device_event_register_any($self, $eventID, $dev = undef) {
     return $cb;
 }
 
+# ENTRYPOINT: REMOTE_PROC_CONNECT_SECRET_EVENT_REGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_SECRET_EVENT_DEREGISTER_ANY
 async sub secret_event_register_any($self, $eventID, $secret = undef) {
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_SECRET_EVENT_REGISTER_ANY,
@@ -509,6 +519,9 @@ sub unregister_stream {
     delete $self->{_streams}->{$serial};
 }
 
+# ENTRYPOINT: REMOTE_PROC_AUTH_LIST
+# ENTRYPOINT: REMOTE_PROC_AUTH_POLKIT
+# ENTRYPOINT: REMOTE_PROC_AUTH_SASL_INIT
 async sub auth {
     my ($self, $auth_type) = @_;
 
@@ -536,6 +549,8 @@ async sub auth {
 }
 
 
+# ENTRYPOINT: REMOTE_PROC_CONNECT_OPEN
+# ENTRYPOINT: REMOTE_PROC_CONNECT_REGISTER_CLOSE_CALLBACK
 async sub open {
     my ($self, $url, $flags) = @_;
     await $self->_call( $remote->PROC_CONNECT_OPEN,
@@ -550,9 +565,12 @@ async sub open {
     }
 }
 
-sub close {
+# ENTRYPOINT: REMOTE_PROC_CONNECT_CLOSE
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DEREGISTER_CLOSE_CALLBACK
+async sub close {
     my ($self) = @_;
-    $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
+    await $self->_call( $remote->PROC_CONNECT_DEREGISTER_CLOSE_CALLBACK );
+    await $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
 }
 
 

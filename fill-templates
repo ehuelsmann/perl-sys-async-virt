@@ -5,7 +5,7 @@ use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
 use JSON::PP;
-use List::Util qw(any max);
+use List::Util qw(any none max);
 use Scalar::Util qw(reftype);
 
 use Protocol::Sys::Virt::Devel qw(extract_all);
@@ -22,6 +22,7 @@ my $version         = $ARGV[1];
 my $dep_psv_version = $ARGV[2];
 
 my @skipped_entrypoints;
+my @manual_entrypoints;
 
 sub contents {
     my ($fn) = @_;
@@ -191,10 +192,27 @@ sub ep_pod($mod, $ep, $c_api_defs) {
     }
 }
 
+sub harvest_manual_entrypoints($template, $mod) {
+    my @manual_entrypoints;
+    my $tmpl = contents( $template . $mod . '.pm.tmpl' );
+    while ($tmpl =~ m/^#\s*ENTRYPOINT:\s*([a-zA-Z0-9_]+)/gm) {
+        push @manual_entrypoints, $1;
+    }
+    return @manual_entrypoints;
+}
+
 sub unimplemented_pod() {
     my %reasons = map { $_->{reason} => 1 } @skipped_entrypoints;
     my @reasons = sort keys %reasons;
-    my @sorted = sort { $a->{name} cmp $b->{name} } @skipped_entrypoints;
+    my @sorted = (
+        sort { $a->{name} cmp $b->{name} }
+        grep { my $x = $_->{name}; none { $_ eq $x } @manual_entrypoints }
+        @skipped_entrypoints
+        );
+    use Data::Dumper;
+    say Dumper(\@manual_entrypoints);
+    say scalar @skipped_entrypoints;
+    say scalar @sorted;
     return join("\n\n",
                 "=over 8",
                 (map {
@@ -204,7 +222,7 @@ sub unimplemented_pod() {
                         . join( "\n\n",
                                 map { "=item * $_->{name}" }
                                 grep { $_->{reason} eq $reason }
-                                @skipped_entrypoints)
+                                @sorted)
                         . "\n\n=back\n\n"
                  } @reasons),
                 "=back");
@@ -290,13 +308,15 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
         $module_returns->[$proc_value] = '\&_no_translation';
 
         my $proc_name = $proc->{name}->{content};
-        return if $proc_name =~ m/_(EVENT|AUTH)_|CLOSE_CALLBACK/;
+        # return if $proc_name =~ m/_(EVENT|AUTH)_|CLOSE_CALLBACK/;
 
         my $nparams = grep { $_->{name} eq 'nparams' } @callargs;
         $nparams = $nparams ? '/nparams' : '';
+        my $needresults = grep { $_->{name} eq 'need_results' } @callargs;
+        $needresults = $needresults ? '/need_results' : '';
         push @skipped_entrypoints, {
             name => $proc_name,
-            reason => "\@generate: $generator_target$nparams",
+            reason => "\@generate: $generator_target$nparams$needresults",
         };
         return;
     }
@@ -567,6 +587,10 @@ sub client($xdr_parse_version, $ast, $template, $h_syms, $c_api_defs) {
     }
 
     my $translators = join(",\n    ", map { $_ // 'undef'} @module_returns);
+
+    for my $mod ($main_module, @other_modules, values %module) {
+        push @manual_entrypoints, harvest_manual_entrypoints($template, $mod);
+    }
     for my $mod ($main_module, @other_modules, values %module) {
         expand_mod_template($template,
                             $mod,
