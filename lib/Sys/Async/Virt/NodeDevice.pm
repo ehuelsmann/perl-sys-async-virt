@@ -97,10 +97,10 @@ sub is_persistent($self) {
         { name => $self->{id},  } );
 }
 
-sub list_caps($self, $maxnames) {
+sub list_caps($self) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_LIST_CAPS,
-        { name => $self->{id}, maxnames => $maxnames } );
+        { name => $self->{id}, maxnames => $remote->NODE_DEVICE_CAPS_LIST_MAX } );
 }
 
 sub lookup_by_name($self) {
@@ -233,7 +233,7 @@ See documentation of L<virNodeDeviceIsPersistent|https://libvirt.org/html/libvir
 
 =head2 list_caps
 
-  $names = await $dev->list_caps( $maxnames );
+  $names = await $dev->list_caps;
 
 See documentation of L<virNodeDeviceListCaps|https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceListCaps>.
 

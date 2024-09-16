@@ -64,10 +64,10 @@ sub get_xml_desc($self, $flags = 0) {
         { checkpoint => $self->{id}, flags => $flags // 0 } );
 }
 
-sub list_all_children($self, $need_results, $flags = 0) {
+sub list_all_children($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_LIST_ALL_CHILDREN,
-        { checkpoint => $self->{id}, need_results => $need_results, flags => $flags // 0 } );
+        { checkpoint => $self->{id}, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 } );
 }
 
 
@@ -121,7 +121,7 @@ See documentation of L<virDomainCheckpointGetXMLDesc|https://libvirt.org/html/li
 
 =head2 list_all_children
 
-  $checkpoints = await $checkpoint->list_all_children( $need_results, $flags = 0 );
+  $checkpoints = await $checkpoint->list_all_children( $flags = 0 );
 
 See documentation of L<virDomainCheckpointListAllChildren|https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainCheckpointListAllChildren>.
 

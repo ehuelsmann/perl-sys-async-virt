@@ -108,16 +108,16 @@ sub is_persistent($self) {
         { pool => $self->{id},  } );
 }
 
-sub list_all_volumes($self, $need_results, $flags = 0) {
+sub list_all_volumes($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_LIST_ALL_VOLUMES,
-        { pool => $self->{id}, need_results => $need_results, flags => $flags // 0 } );
+        { pool => $self->{id}, need_results => $remote->STORAGE_VOL_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_volumes($self, $maxnames) {
+sub list_volumes($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_LIST_VOLUMES,
-        { pool => $self->{id}, maxnames => $maxnames } );
+        { pool => $self->{id}, maxnames => $remote->STORAGE_VOL_LIST_MAX } );
 }
 
 sub num_of_volumes($self) {
@@ -262,14 +262,14 @@ See documentation of L<virStoragePoolIsPersistent|https://libvirt.org/html/libvi
 
 =head2 list_all_volumes
 
-  $vols = await $pool->list_all_volumes( $need_results, $flags = 0 );
+  $vols = await $pool->list_all_volumes( $flags = 0 );
 
 See documentation of L<virStoragePoolListAllVolumes|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolListAllVolumes>.
 
 
 =head2 list_volumes
 
-  $names = await $pool->list_volumes( $maxnames );
+  $names = await $pool->list_volumes;
 
 See documentation of L<virStoragePoolListVolumes|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolListVolumes>.
 

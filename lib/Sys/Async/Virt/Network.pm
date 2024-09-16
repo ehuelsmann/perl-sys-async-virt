@@ -114,10 +114,10 @@ sub is_persistent($self) {
         { net => $self->{id},  } );
 }
 
-sub list_all_ports($self, $need_results, $flags = 0) {
+sub list_all_ports($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_NETWORK_LIST_ALL_PORTS,
-        { network => $self->{id}, need_results => $need_results, flags => $flags // 0 } );
+        { network => $self->{id}, need_results => $remote->NETWORK_PORT_LIST_MAX, flags => $flags // 0 } );
 }
 
 sub port_create_xml($self, $xml, $flags = 0) {
@@ -244,7 +244,7 @@ See documentation of L<virNetworkIsPersistent|https://libvirt.org/html/libvirt-l
 
 =head2 list_all_ports
 
-  $ports = await $net->list_all_ports( $need_results, $flags = 0 );
+  $ports = await $net->list_all_ports( $flags = 0 );
 
 See documentation of L<virNetworkListAllPorts|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkListAllPorts>.
 

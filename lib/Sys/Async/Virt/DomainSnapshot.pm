@@ -85,16 +85,16 @@ sub is_current($self, $flags = 0) {
         { snap => $self->{id}, flags => $flags // 0 } );
 }
 
-sub list_all_children($self, $need_results, $flags = 0) {
+sub list_all_children($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_LIST_ALL_CHILDREN,
-        { snapshot => $self->{id}, need_results => $need_results, flags => $flags // 0 } );
+        { snapshot => $self->{id}, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_children_names($self, $maxnames, $flags = 0) {
+sub list_children_names($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_LIST_CHILDREN_NAMES,
-        { snap => $self->{id}, maxnames => $maxnames, flags => $flags // 0 } );
+        { snap => $self->{id}, maxnames => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 } );
 }
 
 sub num_children($self, $flags = 0) {
@@ -174,14 +174,14 @@ See documentation of L<virDomainSnapshotIsCurrent|https://libvirt.org/html/libvi
 
 =head2 list_all_children
 
-  $snapshots = await $snapshot->list_all_children( $need_results, $flags = 0 );
+  $snapshots = await $snapshot->list_all_children( $flags = 0 );
 
 See documentation of L<virDomainSnapshotListAllChildren|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotListAllChildren>.
 
 
 =head2 list_children_names
 
-  $names = await $snapshot->list_children_names( $maxnames, $flags = 0 );
+  $names = await $snapshot->list_children_names( $flags = 0 );
 
 See documentation of L<virDomainSnapshotListChildrenNames|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotListChildrenNames>.
 

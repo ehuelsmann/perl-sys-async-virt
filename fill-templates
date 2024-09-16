@@ -412,8 +412,8 @@ my %fixed_args = (
         list_domains => '$remote->DOMAIN_LIST_MAX',
     },
     'maxnames' => {
-        domain_snapshot_list_children_names => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
-        domain_snapshot_list_max => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
+        list_children_names => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
+        snapshot_list_names => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
         list_defined_domains => '$remote->DOMAIN_LIST_MAX',
         list_defined_interfaces => '$remote->INTERFACE_LIST_MAX',
         list_defined_networks => '$remote->NETWORK_LIST_MAX',
@@ -422,18 +422,18 @@ my %fixed_args = (
         list_networks => '$remote->NETWORK_LIST_MAX',
         list_nwfilters => '$remote->NWFILTER_LIST_MAX',
         list_storage_pools => '$remote->STORAGE_POOL_LIST_MAX',
-        node_device_list_caps => '$remote->NODE_DEVICE_CAPS_LIST_MAX',
+        list_caps => '$remote->NODE_DEVICE_CAPS_LIST_MAX',
         node_list_devices => '$remote->NODE_DEVICE_LIST_MAX',
-        storage_pool_list_volumes => '$remote->STORAGE_VOL_LIST_MAX',
+        list_volumes => '$remote->STORAGE_VOL_LIST_MAX',
     },
     'maxuuids' => {
         list_secrets => '$remote->SECRET_LIST_MAX',
     },
     'need_results' => {
-        domain_checkpoint_list_all_children => '$remote->DOMAIN_CHECKPOINT_LIST_MAX',
-        domain_list_all_checkpoints => '$remote->DOMAIN_CHECKPOINT_LIST_MAX',
-        domain_list_all_snapshots => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
-        domain_snapshot_list_all_children => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
+        list_all_children => '$remote->DOMAIN_CHECKPOINT_LIST_MAX',
+        list_all_checkpoints => '$remote->DOMAIN_CHECKPOINT_LIST_MAX',
+        list_all_snapshots => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
+        list_all_children => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',
         get_cpu_model_names => '$remote->CPU_MODELS_MAX',
         list_all_domains => '$remote->DOMAIN_LIST_MAX',
         list_all_interfaces => '$remote->INTERFACE_LIST_MAX',
@@ -443,9 +443,9 @@ my %fixed_args = (
         list_all_nwfilters => '$remote->NWFILTER_LIST_MAX',
         list_all_secrets => '$remote->SECRET_LIST_MAX',
         list_all_storage_pools => '$remote->STORAGE_POOL_LIST_MAX',
-        network_get_dhcp_leases => '$remote->NETWORK_DHCP_LEASES_MAX',
-        network_list_all_ports => '$remote->NETWORK_PORT_LIST_MAX',
-        storage_pool_list_all_volumes => '$remote->STORAGE_VOL_LIST_MAX',
+        get_dhcp_leases => '$remote->NETWORK_DHCP_LEASES_MAX',
+        list_all_ports => '$remote->NETWORK_PORT_LIST_MAX',
+        list_all_volumes => '$remote->STORAGE_VOL_LIST_MAX',
     });
 
 sub proc_ep_argstring($ep_name, @argnames) {

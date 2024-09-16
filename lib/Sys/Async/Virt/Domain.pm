@@ -1010,16 +1010,16 @@ sub is_updated($self) {
         { dom => $self->{id},  } );
 }
 
-sub list_all_checkpoints($self, $need_results, $flags = 0) {
+sub list_all_checkpoints($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_LIST_ALL_CHECKPOINTS,
-        { dom => $self->{id}, need_results => $need_results, flags => $flags // 0 } );
+        { dom => $self->{id}, need_results => $remote->DOMAIN_CHECKPOINT_LIST_MAX, flags => $flags // 0 } );
 }
 
-sub list_all_snapshots($self, $need_results, $flags = 0) {
+sub list_all_snapshots($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_LIST_ALL_SNAPSHOTS,
-        { dom => $self->{id}, need_results => $need_results, flags => $flags // 0 } );
+        { dom => $self->{id}, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 } );
 }
 
 sub managed_save($self, $flags = 0) {
@@ -1351,10 +1351,10 @@ sub snapshot_current($self, $flags = 0) {
         { dom => $self->{id}, flags => $flags // 0 } );
 }
 
-sub snapshot_list_names($self, $maxnames, $flags = 0) {
+sub snapshot_list_names($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_LIST_NAMES,
-        { dom => $self->{id}, maxnames => $maxnames, flags => $flags // 0 } );
+        { dom => $self->{id}, maxnames => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 } );
 }
 
 sub snapshot_lookup_by_name($self, $name, $flags = 0) {
@@ -1859,14 +1859,14 @@ See documentation of L<virDomainIsUpdated|https://libvirt.org/html/libvirt-libvi
 
 =head2 list_all_checkpoints
 
-  $checkpoints = await $dom->list_all_checkpoints( $need_results, $flags = 0 );
+  $checkpoints = await $dom->list_all_checkpoints( $flags = 0 );
 
 See documentation of L<virDomainListAllCheckpoints|https://libvirt.org/html/libvirt-libvirt-domain-checkpoint.html#virDomainListAllCheckpoints>.
 
 
 =head2 list_all_snapshots
 
-  $snapshots = await $dom->list_all_snapshots( $need_results, $flags = 0 );
+  $snapshots = await $dom->list_all_snapshots( $flags = 0 );
 
 See documentation of L<virDomainListAllSnapshots|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainListAllSnapshots>.
 
@@ -2291,7 +2291,7 @@ See documentation of L<virDomainSnapshotCurrent|https://libvirt.org/html/libvirt
 
 =head2 snapshot_list_names
 
-  $names = await $dom->snapshot_list_names( $maxnames, $flags = 0 );
+  $names = await $dom->snapshot_list_names( $flags = 0 );
 
 See documentation of L<virDomainSnapshotListNames|https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotListNames>.
 
