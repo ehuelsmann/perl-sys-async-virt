@@ -67,99 +67,99 @@ sub new {
 }
 
 sub create($self) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NETWORK_CREATE,
-        { net => $self->{id},  } );
+        { net => $self->{id},  } ));
 }
 
 sub destroy($self) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NETWORK_DESTROY,
-        { net => $self->{id},  } );
+        { net => $self->{id},  } ));
 }
 
-sub get_autostart($self) {
-    return $self->{client}->_call(
+async sub get_autostart($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_GET_AUTOSTART,
-        { net => $self->{id},  } );
+        { net => $self->{id},  } ))->{autostart};
 }
 
-sub get_bridge_name($self) {
-    return $self->{client}->_call(
+async sub get_bridge_name($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_GET_BRIDGE_NAME,
-        { net => $self->{id},  } );
+        { net => $self->{id},  } ))->{name};
 }
 
-sub get_dhcp_leases($self, $mac, $flags = 0) {
-    return $self->{client}->_call(
+async sub get_dhcp_leases($self, $mac, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_GET_DHCP_LEASES,
-        { net => $self->{id}, mac => $mac, need_results => $remote->NETWORK_DHCP_LEASES_MAX, flags => $flags // 0 } );
+        { net => $self->{id}, mac => $mac, need_results => $remote->NETWORK_DHCP_LEASES_MAX, flags => $flags // 0 } ))->{leases};
 }
 
-sub get_metadata($self, $type, $uri, $flags = 0) {
-    return $self->{client}->_call(
+async sub get_metadata($self, $type, $uri, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_GET_METADATA,
-        { network => $self->{id}, type => $type, uri => $uri, flags => $flags // 0 } );
+        { network => $self->{id}, type => $type, uri => $uri, flags => $flags // 0 } ))->{metadata};
 }
 
-sub get_xml_desc($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub get_xml_desc($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_GET_XML_DESC,
-        { net => $self->{id}, flags => $flags // 0 } );
+        { net => $self->{id}, flags => $flags // 0 } ))->{xml};
 }
 
-sub is_active($self) {
-    return $self->{client}->_call(
+async sub is_active($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_IS_ACTIVE,
-        { net => $self->{id},  } );
+        { net => $self->{id},  } ))->{active};
 }
 
-sub is_persistent($self) {
-    return $self->{client}->_call(
+async sub is_persistent($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_IS_PERSISTENT,
-        { net => $self->{id},  } );
+        { net => $self->{id},  } ))->{persistent};
 }
 
-sub list_all_ports($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub list_all_ports($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_LIST_ALL_PORTS,
-        { network => $self->{id}, need_results => $remote->NETWORK_PORT_LIST_MAX, flags => $flags // 0 } );
+        { network => $self->{id}, need_results => $remote->NETWORK_PORT_LIST_MAX, flags => $flags // 0 } ))->{ports};
 }
 
-sub port_create_xml($self, $xml, $flags = 0) {
-    return $self->{client}->_call(
+async sub port_create_xml($self, $xml, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_CREATE_XML,
-        { network => $self->{id}, xml => $xml, flags => $flags // 0 } );
+        { network => $self->{id}, xml => $xml, flags => $flags // 0 } ))->{port};
 }
 
-sub port_lookup_by_uuid($self, $uuid) {
-    return $self->{client}->_call(
+async sub port_lookup_by_uuid($self, $uuid) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_LOOKUP_BY_UUID,
-        { network => $self->{id}, uuid => $uuid } );
+        { network => $self->{id}, uuid => $uuid } ))->{port};
 }
 
 sub set_autostart($self, $autostart) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NETWORK_SET_AUTOSTART,
-        { net => $self->{id}, autostart => $autostart } );
+        { net => $self->{id}, autostart => $autostart } ));
 }
 
 sub set_metadata($self, $type, $metadata, $key, $uri, $flags = 0) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NETWORK_SET_METADATA,
-        { network => $self->{id}, type => $type, metadata => $metadata, key => $key, uri => $uri, flags => $flags // 0 } );
+        { network => $self->{id}, type => $type, metadata => $metadata, key => $key, uri => $uri, flags => $flags // 0 } ));
 }
 
 sub undefine($self) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NETWORK_UNDEFINE,
-        { net => $self->{id},  } );
+        { net => $self->{id},  } ));
 }
 
 sub update($self, $command, $section, $parentIndex, $xml, $flags = 0) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NETWORK_UPDATE,
-        { net => $self->{id}, command => $command, section => $section, parentIndex => $parentIndex, xml => $xml, flags => $flags // 0 } );
+        { net => $self->{id}, command => $command, section => $section, parentIndex => $parentIndex, xml => $xml, flags => $flags // 0 } ));
 }
 
 

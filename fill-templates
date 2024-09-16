@@ -397,7 +397,7 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
                           sort keys %mapped_retvals);
         $ret_unwrap = $ret_unwrap ? "'$ret_unwrap'" : 'undef';
         $module_returns->[$proc_value] =
-            qq|sub { $proc_value; my \$client = shift; _translated(\$client, $ret_unwrap, { $mapstr }, \@_) }|;
+            qq|sub { $proc_value; my \$client = shift; _translated(\$client, undef, { $mapstr }, \@_) }|;
     }
     else {
         $module_returns->[$proc_value] = '\&_no_translation';
@@ -548,16 +548,19 @@ sub proc_entrypoint($module, $entrypoint) {
         $entrypoint->{argstr} = $argstr;
         my $modify_flags = proc_ep_flag_typed_param_string_okay(1, $entrypoint);
         my $filter_params = proc_ep_filter_typed_param_string(1, $entrypoint);
-        my ($async, $await) = ($modify_flags or $filter_params)
+        my $ret_unwrap = $entrypoint->{ret_unwrap};
+        my ($async, $await) = ($modify_flags or $filter_params or $ret_unwrap)
             ? ('async ', 'await ')
             : ('', '');
+        $ret_unwrap = "->{$ret_unwrap}"
+            if $ret_unwrap;
         $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
         ${async}sub $entrypoint->{name}($argstr) {
             $modify_flags
             $filter_params
-            return ${await}\$self->_call(
+            return (${await}\$self->_call(
                 \$remote->$entrypoint->{const},
-                { $argsmap } );
+                { $argsmap } ))$ret_unwrap;
         }
         PROC
     }
@@ -567,17 +570,20 @@ sub proc_entrypoint($module, $entrypoint) {
         my $argsmap = proc_ep_argsmap($entrypoint->{name}, @argnames);
         my $modify_flags = proc_ep_flag_typed_param_string_okay(0, $entrypoint);
         my $filter_params = proc_ep_filter_typed_param_string(1, $entrypoint);
-        my ($async, $await) = ($modify_flags or $filter_params)
+        my $ret_unwrap = $entrypoint->{ret_unwrap};
+        my ($async, $await) = ($modify_flags or $filter_params or $ret_unwrap)
             ? ('async ', 'await ')
             : ('', '');
         $entrypoint->{argstr} = $argstr;
+        $ret_unwrap = "->{$ret_unwrap}"
+            if $ret_unwrap;
         $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
         ${async}sub $entrypoint->{name}($argstr) {
             $modify_flags
             $filter_params
-            return ${await}\$self->{client}->_call(
+            return (${await}\$self->{client}->_call(
                 \$remote->$entrypoint->{const},
-                { $first_arg_name => \$self->{id}, $argsmap } );
+                { $first_arg_name => \$self->{id}, $argsmap } ))$ret_unwrap;
         }
         PROC
     }

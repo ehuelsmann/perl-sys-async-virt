@@ -44,99 +44,99 @@ sub new {
 }
 
 sub create($self, $flags = 0) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NODE_DEVICE_CREATE,
-        { name => $self->{id}, flags => $flags // 0 } );
+        { name => $self->{id}, flags => $flags // 0 } ));
 }
 
-sub create_xml($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub create_xml($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_CREATE_XML,
-        { xml_desc => $self->{id}, flags => $flags // 0 } );
+        { xml_desc => $self->{id}, flags => $flags // 0 } ))->{dev};
 }
 
-sub define_xml($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub define_xml($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_DEFINE_XML,
-        { xml_desc => $self->{id}, flags => $flags // 0 } );
+        { xml_desc => $self->{id}, flags => $flags // 0 } ))->{dev};
 }
 
 sub destroy($self) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NODE_DEVICE_DESTROY,
-        { name => $self->{id},  } );
+        { name => $self->{id},  } ));
 }
 
-sub get_autostart($self) {
-    return $self->{client}->_call(
+async sub get_autostart($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_GET_AUTOSTART,
-        { name => $self->{id},  } );
+        { name => $self->{id},  } ))->{autostart};
 }
 
-sub get_parent($self) {
-    return $self->{client}->_call(
+async sub get_parent($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_GET_PARENT,
-        { name => $self->{id},  } );
+        { name => $self->{id},  } ))->{parentName};
 }
 
-sub get_xml_desc($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub get_xml_desc($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_GET_XML_DESC,
-        { name => $self->{id}, flags => $flags // 0 } );
+        { name => $self->{id}, flags => $flags // 0 } ))->{xml};
 }
 
-sub is_active($self) {
-    return $self->{client}->_call(
+async sub is_active($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_IS_ACTIVE,
-        { name => $self->{id},  } );
+        { name => $self->{id},  } ))->{active};
 }
 
-sub is_persistent($self) {
-    return $self->{client}->_call(
+async sub is_persistent($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_IS_PERSISTENT,
-        { name => $self->{id},  } );
+        { name => $self->{id},  } ))->{persistent};
 }
 
-sub list_caps($self) {
-    return $self->{client}->_call(
+async sub list_caps($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_LIST_CAPS,
-        { name => $self->{id}, maxnames => $remote->NODE_DEVICE_CAPS_LIST_MAX } );
+        { name => $self->{id}, maxnames => $remote->NODE_DEVICE_CAPS_LIST_MAX } ))->{names};
 }
 
-sub lookup_by_name($self) {
-    return $self->{client}->_call(
+async sub lookup_by_name($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_LOOKUP_BY_NAME,
-        { name => $self->{id},  } );
+        { name => $self->{id},  } ))->{dev};
 }
 
-sub lookup_scsi_host_by_wwn($self, $wwpn, $flags = 0) {
-    return $self->{client}->_call(
+async sub lookup_scsi_host_by_wwn($self, $wwpn, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_LOOKUP_SCSI_HOST_BY_WWN,
-        { wwnn => $self->{id}, wwpn => $wwpn, flags => $flags // 0 } );
+        { wwnn => $self->{id}, wwpn => $wwpn, flags => $flags // 0 } ))->{dev};
 }
 
-sub num_of_caps($self) {
-    return $self->{client}->_call(
+async sub num_of_caps($self) {
+    return (await $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_NUM_OF_CAPS,
-        { name => $self->{id},  } );
+        { name => $self->{id},  } ))->{num};
 }
 
 sub set_autostart($self, $autostart) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NODE_DEVICE_SET_AUTOSTART,
-        { name => $self->{id}, autostart => $autostart } );
+        { name => $self->{id}, autostart => $autostart } ));
 }
 
 sub undefine($self, $flags = 0) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NODE_DEVICE_UNDEFINE,
-        { name => $self->{id}, flags => $flags // 0 } );
+        { name => $self->{id}, flags => $flags // 0 } ));
 }
 
 sub update($self, $xml_desc, $flags = 0) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NODE_DEVICE_UPDATE,
-        { name => $self->{id}, xml_desc => $xml_desc, flags => $flags // 0 } );
+        { name => $self->{id}, xml_desc => $xml_desc, flags => $flags // 0 } ));
 }
 
 

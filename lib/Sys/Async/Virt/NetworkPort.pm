@@ -43,22 +43,22 @@ sub new {
 }
 
 sub delete($self, $flags = 0) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NETWORK_PORT_DELETE,
-        { port => $self->{id}, flags => $flags // 0 } );
+        { port => $self->{id}, flags => $flags // 0 } ));
 }
 
-sub get_xml_desc($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub get_xml_desc($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_GET_XML_DESC,
-        { port => $self->{id}, flags => $flags // 0 } );
+        { port => $self->{id}, flags => $flags // 0 } ))->{xml};
 }
 
 async sub set_parameters($self, $params, $flags = 0) {
     $params = await $self->_filter_typed_param_string( $params );
-    return await $self->{client}->_call(
+    return (await $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_SET_PARAMETERS,
-        { port => $self->{id}, params => $params, flags => $flags // 0 } );
+        { port => $self->{id}, params => $params, flags => $flags // 0 } ));
 }
 
 

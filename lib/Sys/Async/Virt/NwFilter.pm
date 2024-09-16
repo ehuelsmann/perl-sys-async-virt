@@ -33,16 +33,16 @@ sub new {
     }, $class;
 }
 
-sub get_xml_desc($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub get_xml_desc($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_NWFILTER_GET_XML_DESC,
-        { nwfilter => $self->{id}, flags => $flags // 0 } );
+        { nwfilter => $self->{id}, flags => $flags // 0 } ))->{xml};
 }
 
 sub undefine($self) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_NWFILTER_UNDEFINE,
-        { nwfilter => $self->{id},  } );
+        { nwfilter => $self->{id},  } ));
 }
 
 

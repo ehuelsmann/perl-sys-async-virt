@@ -47,27 +47,27 @@ sub new {
 }
 
 sub delete($self, $flags = 0) {
-    return $self->{client}->_call(
+    return ($self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_DELETE,
-        { checkpoint => $self->{id}, flags => $flags // 0 } );
+        { checkpoint => $self->{id}, flags => $flags // 0 } ));
 }
 
-sub get_parent($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub get_parent($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_GET_PARENT,
-        { checkpoint => $self->{id}, flags => $flags // 0 } );
+        { checkpoint => $self->{id}, flags => $flags // 0 } ))->{parent};
 }
 
-sub get_xml_desc($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub get_xml_desc($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_GET_XML_DESC,
-        { checkpoint => $self->{id}, flags => $flags // 0 } );
+        { checkpoint => $self->{id}, flags => $flags // 0 } ))->{xml};
 }
 
-sub list_all_children($self, $flags = 0) {
-    return $self->{client}->_call(
+async sub list_all_children($self, $flags = 0) {
+    return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_LIST_ALL_CHILDREN,
-        { checkpoint => $self->{id}, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 } );
+        { checkpoint => $self->{id}, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 } ))->{checkpoints};
 }
 
 
