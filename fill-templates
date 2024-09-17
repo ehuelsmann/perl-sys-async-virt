@@ -541,19 +541,25 @@ sub proc_ep_filter_typed_param_string($is_main, $entrypoint) {
 }
 
 sub proc_entrypoint($module, $entrypoint) {
-    if ($module eq $main_module) {
-        my (@argnames) = map { $_->{name} } @{ $entrypoint->{args} };
-        my $argstr = proc_ep_argstring($entrypoint->{name}, 'self', @argnames);
-        my $argsmap = proc_ep_argsmap($entrypoint->{name}, @argnames);
-        $entrypoint->{argstr} = $argstr;
-        my $modify_flags = proc_ep_flag_typed_param_string_okay(1, $entrypoint);
-        my $filter_params = proc_ep_filter_typed_param_string(1, $entrypoint);
-        my $ret_unwrap = $entrypoint->{ret_unwrap};
-        my ($async, $await) = ($modify_flags or $filter_params or $ret_unwrap)
-            ? ('async ', 'await ')
-            : ('', '');
-        $ret_unwrap = "->{$ret_unwrap}"
-            if $ret_unwrap;
+    my $is_main = ($module eq $main_module);
+    my (@argnames) = map { $_->{name} } @{ $entrypoint->{args} };
+    my $first_arg_name = (not $is_main) ? shift(@argnames) : '';
+    my $argstr = proc_ep_argstring($entrypoint->{name}, 'self', @argnames);
+    my $argsmap = proc_ep_argsmap($entrypoint->{name}, @argnames);
+    my $modify_flags =
+        proc_ep_flag_typed_param_string_okay($is_main, $entrypoint);
+    my $filter_params =
+        proc_ep_filter_typed_param_string($is_main, $entrypoint);
+    my $ret_unwrap = $entrypoint->{ret_unwrap};
+    my $ret_unwrap = $entrypoint->{ret_unwrap};
+    my ($async, $await) = ($modify_flags or $filter_params or $ret_unwrap)
+        ? ('async ', 'await ')
+        : ('', '');
+
+    $entrypoint->{argstr} = $argstr;
+    $ret_unwrap = "->{$ret_unwrap}"
+        if $ret_unwrap;
+    if ($is_main) {
         $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
         ${async}sub $entrypoint->{name}($argstr) {
             $modify_flags
@@ -565,18 +571,6 @@ sub proc_entrypoint($module, $entrypoint) {
         PROC
     }
     else {
-        my ($first_arg_name, @argnames) = map { $_->{name} } @{ $entrypoint->{args} };
-        my $argstr = proc_ep_argstring($entrypoint->{name}, 'self', @argnames);
-        my $argsmap = proc_ep_argsmap($entrypoint->{name}, @argnames);
-        my $modify_flags = proc_ep_flag_typed_param_string_okay(0, $entrypoint);
-        my $filter_params = proc_ep_filter_typed_param_string(1, $entrypoint);
-        my $ret_unwrap = $entrypoint->{ret_unwrap};
-        my ($async, $await) = ($modify_flags or $filter_params or $ret_unwrap)
-            ? ('async ', 'await ')
-            : ('', '');
-        $entrypoint->{argstr} = $argstr;
-        $ret_unwrap = "->{$ret_unwrap}"
-            if $ret_unwrap;
         $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
         ${async}sub $entrypoint->{name}($argstr) {
             $modify_flags

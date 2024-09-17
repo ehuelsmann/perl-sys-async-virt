@@ -744,7 +744,7 @@ sub block_commit($self, $disk, $base, $top, $bandwidth, $flags = 0) {
 }
 
 async sub block_copy($self, $path, $destxml, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_BLOCK_COPY,
         { dom => $self->{id}, path => $path, destxml => $destxml, params => $params, flags => $flags // 0 } ));
@@ -1155,7 +1155,7 @@ sub save_flags($self, $to, $dxml, $flags = 0) {
 }
 
 async sub save_params($self, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SAVE_PARAMS,
         { dom => $self->{id}, params => $params, flags => $flags // 0 } ));
@@ -1180,14 +1180,14 @@ sub set_autostart($self, $autostart) {
 }
 
 async sub set_blkio_parameters($self, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_BLKIO_PARAMETERS,
         { dom => $self->{id}, params => $params, flags => $flags // 0 } ));
 }
 
 async sub set_block_io_tune($self, $disk, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_BLOCK_IO_TUNE,
         { dom => $self->{id}, disk => $disk, params => $params, flags => $flags // 0 } ));
@@ -1206,21 +1206,21 @@ sub set_guest_vcpus($self, $cpumap, $state, $flags = 0) {
 }
 
 async sub set_interface_parameters($self, $device, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_INTERFACE_PARAMETERS,
         { dom => $self->{id}, device => $device, params => $params, flags => $flags // 0 } ));
 }
 
 async sub set_iothread_params($self, $iothread_id, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_IOTHREAD_PARAMS,
         { dom => $self->{id}, iothread_id => $iothread_id, params => $params, flags => $flags // 0 } ));
 }
 
 async sub set_launch_security_state($self, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_LAUNCH_SECURITY_STATE,
         { dom => $self->{id}, params => $params, flags => $flags // 0 } ));
@@ -1251,7 +1251,7 @@ sub set_memory_flags($self, $memory, $flags = 0) {
 }
 
 async sub set_memory_parameters($self, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_MEMORY_PARAMETERS,
         { dom => $self->{id}, params => $params, flags => $flags // 0 } ));
@@ -1270,28 +1270,28 @@ sub set_metadata($self, $type, $metadata, $key, $uri, $flags = 0) {
 }
 
 async sub set_numa_parameters($self, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_NUMA_PARAMETERS,
         { dom => $self->{id}, params => $params, flags => $flags // 0 } ));
 }
 
 async sub set_perf_events($self, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_PERF_EVENTS,
         { dom => $self->{id}, params => $params, flags => $flags // 0 } ));
 }
 
 async sub set_scheduler_parameters($self, $params) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_SCHEDULER_PARAMETERS,
         { dom => $self->{id}, params => $params } ));
 }
 
 async sub set_scheduler_parameters_flags($self, $params, $flags = 0) {
-    $params = await $self->_filter_typed_param_string( $params );
+    $params = await $self->{client}->_filter_typed_param_string( $params );
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_SET_SCHEDULER_PARAMETERS_FLAGS,
         { dom => $self->{id}, params => $params, flags => $flags // 0 } ));
