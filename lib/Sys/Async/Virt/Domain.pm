@@ -786,6 +786,16 @@ sub block_stats($self, $path) {
         { dom => $self->{id}, path => $path } ));
 }
 
+async sub block_stats_flags($self, $path, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    my $nparams = (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_BLOCK_STATS_FLAGS,
+        { dom => $self->{id}, path => $path, nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_BLOCK_STATS_FLAGS,
+        { dom => $self->{id}, path => $path, nparams => $nparams, flags => $flags // 0 } ))->{params};
+}
+
 async sub checkpoint_create_xml($self, $xml_desc, $flags = 0) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_CREATE_XML,
@@ -876,16 +886,46 @@ async sub get_autostart($self) {
         { dom => $self->{id},  } ))->{autostart};
 }
 
+async sub get_blkio_parameters($self, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    my $nparams = (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_BLKIO_PARAMETERS,
+        { dom => $self->{id}, nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_BLKIO_PARAMETERS,
+        { dom => $self->{id}, nparams => $nparams, flags => $flags // 0 } ))->{params};
+}
+
 sub get_block_info($self, $path, $flags = 0) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_GET_BLOCK_INFO,
         { dom => $self->{id}, path => $path, flags => $flags // 0 } ));
 }
 
+async sub get_block_io_tune($self, $disk, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    my $nparams = (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_BLOCK_IO_TUNE,
+        { dom => $self->{id}, disk => $disk, nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_BLOCK_IO_TUNE,
+        { dom => $self->{id}, disk => $disk, nparams => $nparams, flags => $flags // 0 } ))->{params};
+}
+
 sub get_control_info($self, $flags = 0) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_GET_CONTROL_INFO,
         { dom => $self->{id}, flags => $flags // 0 } ));
+}
+
+async sub get_cpu_stats($self, $start_cpu, $ncpus, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    my $nparams = (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_CPU_STATS,
+        { dom => $self->{id}, nparams => 0, start_cpu => $start_cpu, ncpus => $ncpus, flags => $flags // 0 } ))->{nparams};
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_CPU_STATS,
+        { dom => $self->{id}, nparams => $nparams, start_cpu => $start_cpu, ncpus => $ncpus, flags => $flags // 0 } ))->{params};
 }
 
 async sub get_guest_vcpus($self, $flags = 0) {
@@ -907,6 +947,16 @@ sub get_info($self) {
         { dom => $self->{id},  } ));
 }
 
+async sub get_interface_parameters($self, $device, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    my $nparams = (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_INTERFACE_PARAMETERS,
+        { dom => $self->{id}, device => $device, nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_INTERFACE_PARAMETERS,
+        { dom => $self->{id}, device => $device, nparams => $nparams, flags => $flags // 0 } ))->{params};
+}
+
 sub get_job_info($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_GET_JOB_INFO,
@@ -925,10 +975,30 @@ async sub get_max_vcpus($self) {
         { dom => $self->{id},  } ))->{num};
 }
 
+async sub get_memory_parameters($self, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    my $nparams = (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_MEMORY_PARAMETERS,
+        { dom => $self->{id}, nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_MEMORY_PARAMETERS,
+        { dom => $self->{id}, nparams => $nparams, flags => $flags // 0 } ))->{params};
+}
+
 async sub get_metadata($self, $type, $uri, $flags = 0) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_METADATA,
         { dom => $self->{id}, type => $type, uri => $uri, flags => $flags // 0 } ))->{metadata};
+}
+
+async sub get_numa_parameters($self, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    my $nparams = (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_NUMA_PARAMETERS,
+        { dom => $self->{id}, nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_NUMA_PARAMETERS,
+        { dom => $self->{id}, nparams => $nparams, flags => $flags // 0 } ))->{params};
 }
 
 async sub get_os_type($self) {
@@ -1556,6 +1626,13 @@ See documentation of L<virDomainBlockResize|https://libvirt.org/html/libvirt-lib
 See documentation of L<virDomainBlockStats|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockStats>.
 
 
+=head2 block_stats_flags
+
+  $params = await $dom->block_stats_flags( $path, $flags = 0 );
+
+See documentation of L<virDomainBlockStatsFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockStatsFlags>.
+
+
 =head2 checkpoint_create_xml
 
   $checkpoint = await $dom->checkpoint_create_xml( $xml_desc, $flags = 0 );
@@ -1670,6 +1747,13 @@ See documentation of L<virDomainFSTrim|https://libvirt.org/html/libvirt-libvirt-
 See documentation of L<virDomainGetAutostart|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetAutostart>.
 
 
+=head2 get_blkio_parameters
+
+  $params = await $dom->get_blkio_parameters( $flags = 0 );
+
+See documentation of L<virDomainGetBlkioParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetBlkioParameters>.
+
+
 =head2 get_block_info
 
   await $dom->get_block_info( $path, $flags = 0 );
@@ -1680,6 +1764,13 @@ See documentation of L<virDomainGetAutostart|https://libvirt.org/html/libvirt-li
 See documentation of L<virDomainGetBlockInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetBlockInfo>.
 
 
+=head2 get_block_io_tune
+
+  $params = await $dom->get_block_io_tune( $disk, $flags = 0 );
+
+See documentation of L<virDomainGetBlockIoTune|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetBlockIoTune>.
+
+
 =head2 get_control_info
 
   await $dom->get_control_info( $flags = 0 );
@@ -1688,6 +1779,13 @@ See documentation of L<virDomainGetBlockInfo|https://libvirt.org/html/libvirt-li
   #      stateTime => $stateTime }
 
 See documentation of L<virDomainGetControlInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetControlInfo>.
+
+
+=head2 get_cpu_stats
+
+  $params = await $dom->get_cpu_stats( $start_cpu, $ncpus, $flags = 0 );
+
+See documentation of L<virDomainGetCPUStats|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetCPUStats>.
 
 
 =head2 get_guest_vcpus
@@ -1714,6 +1812,13 @@ See documentation of L<virDomainGetHostname|https://libvirt.org/html/libvirt-lib
   #      state => $state }
 
 See documentation of L<virDomainGetInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetInfo>.
+
+
+=head2 get_interface_parameters
+
+  $params = await $dom->get_interface_parameters( $device, $flags = 0 );
+
+See documentation of L<virDomainGetInterfaceParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetInterfaceParameters>.
 
 
 =head2 get_job_info
@@ -1749,11 +1854,25 @@ See documentation of L<virDomainGetMaxMemory|https://libvirt.org/html/libvirt-li
 See documentation of L<virDomainGetMaxVcpus|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMaxVcpus>.
 
 
+=head2 get_memory_parameters
+
+  $params = await $dom->get_memory_parameters( $flags = 0 );
+
+See documentation of L<virDomainGetMemoryParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMemoryParameters>.
+
+
 =head2 get_metadata
 
   $metadata = await $dom->get_metadata( $type, $uri, $flags = 0 );
 
 See documentation of L<virDomainGetMetadata|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMetadata>.
+
+
+=head2 get_numa_parameters
+
+  $params = await $dom->get_numa_parameters( $flags = 0 );
+
+See documentation of L<virDomainGetNumaParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetNumaParameters>.
 
 
 =head2 get_os_type

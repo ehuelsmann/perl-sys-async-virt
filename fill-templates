@@ -310,7 +310,7 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
         $nparams = $nparams ? '/nparams' : '';
         my $needresults = grep { $_->{name} eq 'need_results' } @callargs;
         $needresults = $needresults ? '/need_results' : '';
-        unless ($needresults) {
+        unless ($needresults or $nparams) {
             push @skipped_entrypoints, {
                 name => $proc_name,
                 reason => "\@generate: $generator_target$nparams$needresults",
@@ -372,8 +372,9 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
     my $ret_unwrap = (@retvals == 1 ? $retvals[0]->{name} : '');
     push @{ $module_functions->{$into_module} //= [] }, {
         name => $entrypoint,
-        identifier => $proc->{name}->{content},
         const => proc_const($proc),
+        generator => $generator_target,
+        identifier => $proc->{name}->{content},
         args => \@callargs,
         ret  => \@retvals,
         retstream => $retstream,
@@ -494,19 +495,24 @@ sub proc_ep_argstring($ep_name, @argnames) {
                 }  @argnames);
 }
 
-sub proc_ep_argsmap($ep_name, @argnames) {
-    return join(', ',
-                map {
-                    if ($fixed_args{$_} and (defined $fixed_args{$_}->{$ep_name}
-                                             or defined $fixed_args{$_}->{'*'})) {
-                        $_ . ' => ' . ($fixed_args{$_}->{$ep_name}
-                                       // $fixed_args{$_}->{'*'});
-                    }
-                    else {
-                        $_ . ' => $' . $_ . ($_ eq 'flags' ? ' // 0' : '');
-                    }
-                }
-                @argnames);
+sub proc_ep_argsmap($ep_name, $options, @argnames) {
+    $options //= {};
+    my $overrides = $options->{override} // {};
+    return join(
+        ', ',
+        map {
+            if ($fixed_args{$_} and (defined $fixed_args{$_}->{$ep_name}
+                                     or defined $fixed_args{$_}->{'*'})) {
+                $_ . ' => ' . ($overrides->{$_}
+                               // $fixed_args{$_}->{$ep_name}
+                               // $fixed_args{$_}->{'*'});
+            }
+            else {
+                $_ . ' => ' . ($overrides->{$_}
+                               // ('$' . $_ . ($_ eq 'flags' ? ' // 0' : '')));
+            }
+        }
+        @argnames);
 }
 
 sub proc_ep_flag_typed_param_string_okay($is_main, $entrypoint) {
@@ -544,15 +550,20 @@ sub proc_entrypoint($module, $entrypoint) {
     my $is_main = ($module eq $main_module);
     my (@argnames) = map { $_->{name} } @{ $entrypoint->{args} };
     my $first_arg_name = (not $is_main) ? shift(@argnames) : '';
+    my $query_nparams =
+        (($entrypoint->{generator} !~ m/^(client|both)$/)
+         and grep { $_ eq 'nparams' } @argnames);
     my $argstr = proc_ep_argstring($entrypoint->{name}, 'self', @argnames);
-    my $argsmap = proc_ep_argsmap($entrypoint->{name}, @argnames);
+    my $argsmap_options =
+        $query_nparams ? { override => { nparams => '$nparams' } } : {};
+    my $argsmap = proc_ep_argsmap($entrypoint->{name}, $argsmap_options, @argnames);
     my $modify_flags =
         proc_ep_flag_typed_param_string_okay($is_main, $entrypoint);
     my $filter_params =
         proc_ep_filter_typed_param_string($is_main, $entrypoint);
     my $ret_unwrap = $entrypoint->{ret_unwrap};
-    my $ret_unwrap = $entrypoint->{ret_unwrap};
-    my ($async, $await) = ($modify_flags or $filter_params or $ret_unwrap)
+    my ($async, $await) = ($modify_flags or $filter_params
+                           or $ret_unwrap or $query_nparams)
         ? ('async ', 'await ')
         : ('', '');
 
@@ -560,10 +571,23 @@ sub proc_entrypoint($module, $entrypoint) {
     $ret_unwrap = "->{$ret_unwrap}"
         if $ret_unwrap;
     if ($is_main) {
+        my $nparams = '';
+        if ($query_nparams) {
+            my $nparams_argsmap = proc_ep_argsmap($entrypoint->{name},
+                                                  { override =>
+                                                    { nparams => 0 } },
+                                                  @argnames);
+            $nparams = <<~PROC;
+            my \$nparams = (await \$self->_call(
+                    \$remote->$entrypoint->{const},
+                    { $nparams_argsmap } ))->{nparams};
+            PROC
+        }
         $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
         ${async}sub $entrypoint->{name}($argstr) {
             $modify_flags
             $filter_params
+            $nparams
             return (${await}\$self->_call(
                 \$remote->$entrypoint->{const},
                 { $argsmap } ))$ret_unwrap;
@@ -571,10 +595,23 @@ sub proc_entrypoint($module, $entrypoint) {
         PROC
     }
     else {
+        my $nparams = '';
+        if ($query_nparams) {
+            my $nparams_argsmap = proc_ep_argsmap($entrypoint->{name},
+                                                  { override =>
+                                                    { nparams => 0 } },
+                                                  @argnames);
+            $nparams = <<~PROC;
+            my \$nparams = (await \$self->{client}->_call(
+                    \$remote->$entrypoint->{const},
+                    { $first_arg_name => \$self->{id}, $nparams_argsmap } ))->{nparams};
+            PROC
+        }
         $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
         ${async}sub $entrypoint->{name}($argstr) {
             $modify_flags
             $filter_params
+            $nparams
             return (${await}\$self->{client}->_call(
                 \$remote->$entrypoint->{const},
                 { $first_arg_name => \$self->{id}, $argsmap } ))$ret_unwrap;
@@ -645,3 +682,5 @@ client($api_data->{xdr_parse_version},
        'templates/',
        $header_syms,
        $c_api_defs);
+
+say (scalar @skipped_entrypoints - scalar @manual_entrypoints);

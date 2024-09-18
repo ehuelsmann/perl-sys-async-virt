@@ -48,6 +48,16 @@ sub delete($self, $flags = 0) {
         { port => $self->{id}, flags => $flags // 0 } ));
 }
 
+async sub get_parameters($self, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    my $nparams = (await $self->{client}->_call(
+        $remote->PROC_NETWORK_PORT_GET_PARAMETERS,
+        { port => $self->{id}, nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->{client}->_call(
+        $remote->PROC_NETWORK_PORT_GET_PARAMETERS,
+        { port => $self->{id}, nparams => $nparams, flags => $flags // 0 } ))->{params};
+}
+
 async sub get_xml_desc($self, $flags = 0) {
     return (await $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_GET_XML_DESC,
@@ -94,6 +104,13 @@ v0.0.1
   # -> (* no data *)
 
 See documentation of L<virNetworkPortDelete|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortDelete>.
+
+
+=head2 get_parameters
+
+  $params = await $port->get_parameters( $flags = 0 );
+
+See documentation of L<virNetworkPortGetParameters|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkPortGetParameters>.
 
 
 =head2 get_xml_desc

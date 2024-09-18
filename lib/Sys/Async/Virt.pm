@@ -529,7 +529,7 @@ my @reply_translators = (
     sub { 195; my $client = shift; _translated($client, undef, { dom => \&_translate_remote_nonnull_domain }, @_) },
     sub { 196; my $client = shift; _translated($client, undef, { dom => \&_translate_remote_nonnull_domain }, @_) },
     \&_no_translation,
-    \&_no_translation,
+    sub { 198; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 200; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
@@ -537,7 +537,7 @@ my @reply_translators = (
     sub { 203; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     \&_no_translation,
-    \&_no_translation,
+    sub { 206; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     \&_no_translation,
     \&_no_translation,
@@ -558,8 +558,8 @@ my @reply_translators = (
     undef,
     \&_no_translation,
     \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
+    sub { 227; my $client = shift; _translated($client, undef, {  }, @_) },
+    sub { 228; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     \&_no_translation,
     \&_no_translation,
@@ -574,7 +574,7 @@ my @reply_translators = (
     \&_no_translation,
     undef,
     sub { 242; my $client = shift; _translated($client, undef, {  }, @_) },
-    \&_no_translation,
+    sub { 243; my $client = shift; _translated($client, undef, {  }, @_) },
     sub { 244; my $client = shift; _translated($client, undef, { snap => \&_translate_remote_nonnull_domain_snapshot }, @_) },
     \&_no_translation,
     sub { 246; my $client = shift; _translated($client, undef, {  }, @_) },
@@ -584,16 +584,16 @@ my @reply_translators = (
     \&_no_translation,
     \&_no_translation,
     \&_no_translation,
+    sub { 253; my $client = shift; _translated($client, undef, {  }, @_) },
+    \&_no_translation,
+    sub { 255; my $client = shift; _translated($client, undef, {  }, @_) },
+    \&_no_translation,
+    sub { 257; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     \&_no_translation,
     \&_no_translation,
     \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
-    \&_no_translation,
+    sub { 262; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     \&_no_translation,
     sub { 265; my $client = shift; _translated($client, undef, {  }, @_) },
@@ -620,7 +620,7 @@ my @reply_translators = (
     sub { 286; my $client = shift; _translated($client, undef, { filters => \&_translate_remote_nonnull_nwfilter }, @_) },
     sub { 287; my $client = shift; _translated($client, undef, { secrets => \&_translate_remote_nonnull_secret }, @_) },
     \&_no_translation,
-    \&_no_translation,
+    sub { 289; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     \&_no_translation,
     sub { 292; my $client = shift; _translated($client, 'dom', { dom => \&_translate_remote_nonnull_domain }, @_) },
@@ -726,7 +726,7 @@ my @reply_translators = (
     \&_no_translation,
     sub { 393; my $client = shift; _translated($client, undef, {  }, @_) },
     sub { 394; my $client = shift; _translated($client, undef, {  }, @_) },
-    \&_no_translation,
+    sub { 395; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 397; my $client = shift; _translated($client, undef, { nwfilter => \&_translate_remote_nonnull_nwfilter_binding }, @_) },
     sub { 398; my $client = shift; _translated($client, undef, {  }, @_) },
@@ -738,7 +738,7 @@ my @reply_translators = (
     sub { 404; my $client = shift; _translated($client, undef, { ports => \&_translate_remote_nonnull_network_port }, @_) },
     sub { 405; my $client = shift; _translated($client, undef, { port => \&_translate_remote_nonnull_network_port }, @_) },
     sub { 406; my $client = shift; _translated($client, undef, { port => \&_translate_remote_nonnull_network_port }, @_) },
-    \&_no_translation,
+    sub { 407; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 409; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
@@ -1595,6 +1595,15 @@ async sub network_lookup_by_uuid($self, $uuid) {
         { uuid => $uuid } ))->{net};
 }
 
+async sub node_get_cpu_stats($self, $cpuNum, $flags = 0) {
+    my $nparams = (await $self->_call(
+        $remote->PROC_NODE_GET_CPU_STATS,
+        { cpuNum => $cpuNum, nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->_call(
+        $remote->PROC_NODE_GET_CPU_STATS,
+        { cpuNum => $cpuNum, nparams => $nparams, flags => $flags // 0 } ))->{params};
+}
+
 async sub node_get_free_memory($self) {
     return (await $self->_call(
         $remote->PROC_NODE_GET_FREE_MEMORY,
@@ -1605,6 +1614,35 @@ sub node_get_info($self) {
     return ($self->_call(
         $remote->PROC_NODE_GET_INFO,
         {  } ));
+}
+
+async sub node_get_memory_parameters($self, $flags = 0) {
+    $flags |= await $self->_typed_param_string_okay();
+    my $nparams = (await $self->_call(
+        $remote->PROC_NODE_GET_MEMORY_PARAMETERS,
+        { nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->_call(
+        $remote->PROC_NODE_GET_MEMORY_PARAMETERS,
+        { nparams => $nparams, flags => $flags // 0 } ))->{params};
+}
+
+async sub node_get_memory_stats($self, $cellNum, $flags = 0) {
+    my $nparams = (await $self->_call(
+        $remote->PROC_NODE_GET_MEMORY_STATS,
+        { nparams => 0, cellNum => $cellNum, flags => $flags // 0 } ))->{nparams};
+    return (await $self->_call(
+        $remote->PROC_NODE_GET_MEMORY_STATS,
+        { nparams => $nparams, cellNum => $cellNum, flags => $flags // 0 } ))->{params};
+}
+
+async sub node_get_sev_info($self, $flags = 0) {
+    $flags |= await $self->_typed_param_string_okay();
+    my $nparams = (await $self->_call(
+        $remote->PROC_NODE_GET_SEV_INFO,
+        { nparams => 0, flags => $flags // 0 } ))->{nparams};
+    return (await $self->_call(
+        $remote->PROC_NODE_GET_SEV_INFO,
+        { nparams => $nparams, flags => $flags // 0 } ))->{params};
 }
 
 async sub node_list_devices($self, $cap, $flags = 0) {
@@ -2400,6 +2438,13 @@ See documentation of L<virNetworkLookupByName|https://libvirt.org/html/libvirt-l
 See documentation of L<virNetworkLookupByUUID|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkLookupByUUID>.
 
 
+=head2 node_get_cpu_stats
+
+  $params = await $client->node_get_cpu_stats( $cpuNum, $flags = 0 );
+
+See documentation of L<virNodeGetCPUStats|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetCPUStats>.
+
+
 =head2 node_get_free_memory
 
   $freeMem = await $client->node_get_free_memory;
@@ -2420,6 +2465,27 @@ See documentation of L<virNodeGetFreeMemory|https://libvirt.org/html/libvirt-lib
   #      threads => $threads }
 
 See documentation of L<virNodeGetInfo|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetInfo>.
+
+
+=head2 node_get_memory_parameters
+
+  $params = await $client->node_get_memory_parameters( $flags = 0 );
+
+See documentation of L<virNodeGetMemoryParameters|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetMemoryParameters>.
+
+
+=head2 node_get_memory_stats
+
+  $params = await $client->node_get_memory_stats( $cellNum, $flags = 0 );
+
+See documentation of L<virNodeGetMemoryStats|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetMemoryStats>.
+
+
+=head2 node_get_sev_info
+
+  $params = await $client->node_get_sev_info( $flags = 0 );
+
+See documentation of L<virNodeGetSEVInfo|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetSEVInfo>.
 
 
 =head2 node_list_devices
@@ -3277,38 +3343,6 @@ towards implementation are greatly appreciated.
 =item * REMOTE_PROC_NODE_GET_SECURITY_MODEL
 
 =item * REMOTE_PROC_SECRET_GET_VALUE
-
-=back
-
-
-
-=item * @generate: none/nparams
-
-=over 8
-
-=item * REMOTE_PROC_DOMAIN_BLOCK_STATS_FLAGS
-
-=item * REMOTE_PROC_DOMAIN_GET_BLKIO_PARAMETERS
-
-=item * REMOTE_PROC_DOMAIN_GET_BLOCK_IO_TUNE
-
-=item * REMOTE_PROC_DOMAIN_GET_CPU_STATS
-
-=item * REMOTE_PROC_DOMAIN_GET_INTERFACE_PARAMETERS
-
-=item * REMOTE_PROC_DOMAIN_GET_MEMORY_PARAMETERS
-
-=item * REMOTE_PROC_DOMAIN_GET_NUMA_PARAMETERS
-
-=item * REMOTE_PROC_NETWORK_PORT_GET_PARAMETERS
-
-=item * REMOTE_PROC_NODE_GET_CPU_STATS
-
-=item * REMOTE_PROC_NODE_GET_MEMORY_PARAMETERS
-
-=item * REMOTE_PROC_NODE_GET_MEMORY_STATS
-
-=item * REMOTE_PROC_NODE_GET_SEV_INFO
 
 =back
 
