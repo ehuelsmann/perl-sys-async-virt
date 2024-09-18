@@ -17,7 +17,7 @@ use experimental 'signatures';
 use Feature::Compat::Try;
 use Future::AsyncAwait;
 
-package Sys::Async::Virt v0.0.1;
+package Sys::Async::Virt v0.0.2;
 
 use parent qw(IO::Async::Notifier);
 
@@ -29,20 +29,20 @@ use Scalar::Util qw(reftype weaken);
 use Protocol::Sys::Virt::Remote::XDR v10.3.7;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-use Sys::Async::Virt::Domain v0.0.1;
-use Sys::Async::Virt::DomainCheckpoint v0.0.1;
-use Sys::Async::Virt::DomainSnapshot v0.0.1;
-use Sys::Async::Virt::Network v0.0.1;
-use Sys::Async::Virt::NetworkPort v0.0.1;
-use Sys::Async::Virt::NwFilter v0.0.1;
-use Sys::Async::Virt::NwFilterBinding v0.0.1;
-use Sys::Async::Virt::Interface v0.0.1;
-use Sys::Async::Virt::StoragePool v0.0.1;
-use Sys::Async::Virt::StorageVol v0.0.1;
-use Sys::Async::Virt::NodeDevice v0.0.1;
-use Sys::Async::Virt::Secret v0.0.1;
+use Sys::Async::Virt::Domain v0.0.2;
+use Sys::Async::Virt::DomainCheckpoint v0.0.2;
+use Sys::Async::Virt::DomainSnapshot v0.0.2;
+use Sys::Async::Virt::Network v0.0.2;
+use Sys::Async::Virt::NetworkPort v0.0.2;
+use Sys::Async::Virt::NwFilter v0.0.2;
+use Sys::Async::Virt::NwFilterBinding v0.0.2;
+use Sys::Async::Virt::Interface v0.0.2;
+use Sys::Async::Virt::StoragePool v0.0.2;
+use Sys::Async::Virt::StorageVol v0.0.2;
+use Sys::Async::Virt::NodeDevice v0.0.2;
+use Sys::Async::Virt::Secret v0.0.2;
 
-use Sys::Async::Virt::Callback v0.0.1;
+use Sys::Async::Virt::Callback v0.0.2;
 
 use constant {
     CLOSE_REASON_ERROR                                 => 0,
@@ -1850,7 +1850,7 @@ Sys::Async::Virt - LibVirt protocol implementation for clients
 
 =head1 VERSION
 
-v0.0.1
+v0.0.2
 
 Based on LibVirt tag v10.3.0
 
