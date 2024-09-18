@@ -202,13 +202,13 @@ sub harvest_manual_entrypoints($template, $mod) {
 }
 
 sub unimplemented_pod() {
-    my %reasons = map { $_->{reason} => 1 } @skipped_entrypoints;
-    my @reasons = sort keys %reasons;
     my @sorted = (
         sort { $a->{name} cmp $b->{name} }
         grep { my $x = $_->{name}; none { $_ eq $x } @manual_entrypoints }
         @skipped_entrypoints
         );
+    my %reasons = map { $_->{reason} => 1 } @sorted;
+    my @reasons = sort keys %reasons;
     return join("\n\n",
                 "=over 8",
                 (map {
@@ -234,6 +234,7 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
         join("\n",
              map { ep_pod($mod, $_, $c_api_defs) }
              sort { $a->{name} cmp $b->{name} }
+             grep { $_->{name} !~ m/^_/ }
              @{ $module_functions->{$mod} });
     my $skipped_pod = unimplemented_pod();
     my @constants = grep { $_->{mod} eq $mod } @{ $h_syms };
@@ -289,7 +290,7 @@ sub proc_annotation($proc) {
                 @{ $proc->{comments} } );
 }
 
-sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $struct_basename) {
+sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $struct_basename, $c_api_defs) {
     my $proc_annotation = proc_annotation($proc);
     if ($proc_annotation !~ m/\@generate:\s*(both|client|server|none)/) {
         die "Unexpected generator target for $proc->{name}->{content}";
@@ -298,6 +299,8 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
     my $callstruct_name = $struct_basename . '_args';
     my $callstruct = find_toplevel_definition($ast, $callstruct_name);
     my @callargs = _retvals( $callstruct );
+    my $header =
+        $c_api_defs->{$proc->{name}->{content}}->{header} // '';
     if (not ($generator_target eq 'client'
              or $generator_target eq 'both')) {
         # skip stream-related entrypoints for now
@@ -307,13 +310,16 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
         # return if $proc_name =~ m/_(EVENT|AUTH)_|CLOSE_CALLBACK/;
 
         my $nparams = grep { $_->{name} eq 'nparams' } @callargs;
-        $nparams = $nparams ? '/nparams' : '';
         my $needresults = grep { $_->{name} eq 'need_results' } @callargs;
-        $needresults = $needresults ? '/need_results' : '';
         unless ($needresults or $nparams) {
+            my $header =
+                $c_api_defs->{$proc->{name}->{content}}->{header} // '';
+            if ($header) {
+                $header = " ($header)";
+            }
             push @skipped_entrypoints, {
                 name => $proc_name,
-                reason => "\@generate: $generator_target$nparams$needresults",
+                reason => "\@generate: $generator_target$header",
             };
             return;
         }
@@ -347,6 +353,8 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
     }
 
     my $entrypoint = ($func =~ s/$prefix_strip_xdr{$into_module}//r);
+    $entrypoint = '_' . $entrypoint
+        if $header =~ m/internal/i;
     my $pod_remarks = '';
     if (scalar(@retvals) > 1
         and any { $_->{name} eq 'ret' } @retvals) {
@@ -635,7 +643,7 @@ sub client($xdr_parse_version, $ast, $template, $h_syms, $c_api_defs) {
         }
         else {
             proc_call($ast, $proc, \%module_functions, \@module_returns, $proc_value,
-                      $struct_basename);
+                      $struct_basename, $c_api_defs);
         }
     }
     for my $key ( sort keys %module_functions ) {

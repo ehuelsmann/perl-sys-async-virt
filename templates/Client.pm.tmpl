@@ -331,7 +331,7 @@ async sub _call($self, $proc, $args = {}) {
 
 async sub _typed_param_string_okay($self) {
     return $self->{_typed_param_string_okay} //=
-        ((await $self->supports_feature(
+        ((await $self->_supports_feature(
               $self->{remote}->DRV_FEATURE_TYPED_PARAM_STRING ))
          ? $self->TYPED_PARAM_STRING_OKAY : 0);
 }
@@ -555,11 +555,11 @@ async sub open {
     my ($self, $url, $flags) = @_;
     await $self->_call( $remote->PROC_CONNECT_OPEN,
                         { name => $url, flags => $flags // 0 } );
-    if (await $self->supports_feature(
+    if (await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_REMOTE_CLOSE_CALLBACK )) {
         await $self->_call( $remote->PROC_CONNECT_REGISTER_CLOSE_CALLBACK );
     }
-    if (not await $self->supports_feature(
+    if (not await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_REMOTE_EVENT_CALLBACK )) {
         die "Remote not supported: REMOTE_EVENT_CALLBACK feature not available";
     }

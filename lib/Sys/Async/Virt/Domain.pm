@@ -689,6 +689,12 @@ sub new {
     }, $class;
 }
 
+sub _migrate_perform($self, $cookie, $uri, $flags, $dname, $resource) {
+    return ($self->{client}->_call(
+        $remote->PROC_DOMAIN_MIGRATE_PERFORM,
+        { dom => $self->{id}, cookie => $cookie, uri => $uri, flags => $flags // 0, dname => $dname, resource => $resource } ));
+}
+
 sub abort_job($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_ABORT_JOB,
@@ -1132,12 +1138,6 @@ async sub migrate_get_max_speed($self, $flags = 0) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_MIGRATE_GET_MAX_SPEED,
         { dom => $self->{id}, flags => $flags // 0 } ))->{bandwidth};
-}
-
-sub migrate_perform($self, $cookie, $uri, $flags, $dname, $resource) {
-    return ($self->{client}->_call(
-        $remote->PROC_DOMAIN_MIGRATE_PERFORM,
-        { dom => $self->{id}, cookie => $cookie, uri => $uri, flags => $flags // 0, dname => $dname, resource => $resource } ));
 }
 
 sub migrate_set_compression_cache($self, $cacheSize, $flags = 0) {
@@ -2040,14 +2040,6 @@ See documentation of L<virDomainMigrateGetMaxDowntime|https://libvirt.org/html/l
   $bandwidth = await $dom->migrate_get_max_speed( $flags = 0 );
 
 See documentation of L<virDomainMigrateGetMaxSpeed|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateGetMaxSpeed>.
-
-
-=head2 migrate_perform
-
-  await $dom->migrate_perform( $cookie, $uri, $flags, $dname, $resource );
-  # -> (* no data *)
-
-See documentation of L<virDomainMigratePerform|https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigratePerform>.
 
 
 =head2 migrate_set_compression_cache

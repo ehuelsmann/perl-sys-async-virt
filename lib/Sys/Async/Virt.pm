@@ -1009,7 +1009,7 @@ async sub _call($self, $proc, $args = {}) {
 
 async sub _typed_param_string_okay($self) {
     return $self->{_typed_param_string_okay} //=
-        ((await $self->supports_feature(
+        ((await $self->_supports_feature(
               $self->{remote}->DRV_FEATURE_TYPED_PARAM_STRING ))
          ? $self->TYPED_PARAM_STRING_OKAY : 0);
 }
@@ -1233,11 +1233,11 @@ async sub open {
     my ($self, $url, $flags) = @_;
     await $self->_call( $remote->PROC_CONNECT_OPEN,
                         { name => $url, flags => $flags // 0 } );
-    if (await $self->supports_feature(
+    if (await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_REMOTE_CLOSE_CALLBACK )) {
         await $self->_call( $remote->PROC_CONNECT_REGISTER_CLOSE_CALLBACK );
     }
-    if (not await $self->supports_feature(
+    if (not await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_REMOTE_EVENT_CALLBACK )) {
         die "Remote not supported: REMOTE_EVENT_CALLBACK feature not available";
     }
@@ -1251,6 +1251,24 @@ async sub close {
     await $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
 }
 
+
+async sub _domain_migrate_finish($self, $dname, $cookie, $uri, $flags = 0) {
+    return (await $self->_call(
+        $remote->PROC_DOMAIN_MIGRATE_FINISH,
+        { dname => $dname, cookie => $cookie, uri => $uri, flags => $flags // 0 } ))->{ddom};
+}
+
+async sub _domain_migrate_finish2($self, $dname, $cookie, $uri, $flags, $retcode) {
+    return (await $self->_call(
+        $remote->PROC_DOMAIN_MIGRATE_FINISH2,
+        { dname => $dname, cookie => $cookie, uri => $uri, flags => $flags // 0, retcode => $retcode } ))->{ddom};
+}
+
+async sub _supports_feature($self, $feature) {
+    return (await $self->_call(
+        $remote->PROC_CONNECT_SUPPORTS_FEATURE,
+        { feature => $feature } ))->{supported};
+}
 
 async sub baseline_cpu($self, $xmlCPUs, $flags = 0) {
     return (await $self->_call(
@@ -1310,18 +1328,6 @@ async sub domain_lookup_by_uuid($self, $uuid) {
     return (await $self->_call(
         $remote->PROC_DOMAIN_LOOKUP_BY_UUID,
         { uuid => $uuid } ))->{dom};
-}
-
-async sub domain_migrate_finish($self, $dname, $cookie, $uri, $flags = 0) {
-    return (await $self->_call(
-        $remote->PROC_DOMAIN_MIGRATE_FINISH,
-        { dname => $dname, cookie => $cookie, uri => $uri, flags => $flags // 0 } ))->{ddom};
-}
-
-async sub domain_migrate_finish2($self, $dname, $cookie, $uri, $flags, $retcode) {
-    return (await $self->_call(
-        $remote->PROC_DOMAIN_MIGRATE_FINISH2,
-        { dname => $dname, cookie => $cookie, uri => $uri, flags => $flags // 0, retcode => $retcode } ))->{ddom};
 }
 
 sub domain_restore($self, $from) {
@@ -1833,12 +1839,6 @@ async sub storage_vol_lookup_by_path($self, $path) {
         { path => $path } ))->{vol};
 }
 
-async sub supports_feature($self, $feature) {
-    return (await $self->_call(
-        $remote->PROC_CONNECT_SUPPORTS_FEATURE,
-        { feature => $feature } ))->{supported};
-}
-
 
 1;
 
@@ -2100,20 +2100,6 @@ See documentation of L<virDomainLookupByName|https://libvirt.org/html/libvirt-li
   $dom = await $client->domain_lookup_by_uuid( $uuid );
 
 See documentation of L<virDomainLookupByUUID|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainLookupByUUID>.
-
-
-=head2 domain_migrate_finish
-
-  $ddom = await $client->domain_migrate_finish( $dname, $cookie, $uri, $flags = 0 );
-
-See documentation of L<virDomainMigrateFinish|https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigrateFinish>.
-
-
-=head2 domain_migrate_finish2
-
-  $ddom = await $client->domain_migrate_finish2( $dname, $cookie, $uri, $flags, $retcode );
-
-See documentation of L<virDomainMigrateFinish2|https://libvirt.org/html/libvirt-libvirt_internal.html#virDomainMigrateFinish2>.
 
 
 =head2 domain_restore
@@ -2708,13 +2694,6 @@ See documentation of L<virStorageVolLookupByKey|https://libvirt.org/html/libvirt
 See documentation of L<virStorageVolLookupByPath|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolLookupByPath>.
 
 
-=head2 supports_feature
-
-  $supported = await $client->supports_feature( $feature );
-
-See documentation of L<virConnectSupportsFeature|https://libvirt.org/html/libvirt-libvirt_internal.html#virConnectSupportsFeature>.
-
-
 
 =head1 CONSTANTS
 
@@ -3240,6 +3219,14 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_AUTH_SASL_STEP
 
+=back
+
+
+
+=item * @generate: none (include/libvirt/libvirt-domain.h)
+
+=over 8
+
 =item * REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
 
 =item * REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
@@ -3302,6 +3289,46 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_DOMAIN_MEMORY_STATS
 
+=item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS
+
+=item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS_FD
+
+=item * REMOTE_PROC_DOMAIN_PIN_EMULATOR
+
+=back
+
+
+
+=item * @generate: none (include/libvirt/libvirt-host.h)
+
+=over 8
+
+=item * REMOTE_PROC_NODE_ALLOC_PAGES
+
+=item * REMOTE_PROC_NODE_GET_CPU_MAP
+
+=item * REMOTE_PROC_NODE_GET_FREE_PAGES
+
+=item * REMOTE_PROC_NODE_GET_SECURITY_MODEL
+
+=back
+
+
+
+=item * @generate: none (include/libvirt/libvirt-secret.h)
+
+=over 8
+
+=item * REMOTE_PROC_SECRET_GET_VALUE
+
+=back
+
+
+
+=item * @generate: none (src/libvirt_internal.h)
+
+=over 8
+
 =item * REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3
 
 =item * REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3_PARAMS
@@ -3328,31 +3355,27 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL3_PARAMS
 
-=item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS
+=back
 
-=item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS_FD
 
-=item * REMOTE_PROC_DOMAIN_PIN_EMULATOR
 
-=item * REMOTE_PROC_NODE_ALLOC_PAGES
+=item * @generate: server (include/libvirt/libvirt-domain.h)
 
-=item * REMOTE_PROC_NODE_GET_CPU_MAP
+=over 8
 
-=item * REMOTE_PROC_NODE_GET_FREE_PAGES
+=item * REMOTE_PROC_CONNECT_LIST_DOMAINS
 
-=item * REMOTE_PROC_NODE_GET_SECURITY_MODEL
+=item * REMOTE_PROC_DOMAIN_CREATE
 
-=item * REMOTE_PROC_SECRET_GET_VALUE
+=item * REMOTE_PROC_DOMAIN_RENAME
 
 =back
 
 
 
-=item * @generate: server
+=item * @generate: server (include/libvirt/libvirt-host.h)
 
 =over 8
-
-=item * REMOTE_PROC_CONNECT_FIND_STORAGE_POOL_SOURCES
 
 =item * REMOTE_PROC_CONNECT_GET_TYPE
 
@@ -3360,13 +3383,15 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_CONNECT_IS_SECURE
 
-=item * REMOTE_PROC_CONNECT_LIST_DOMAINS
+=item * REMOTE_PROC_NODE_GET_CELLS_FREE_MEMORY
 
-=item * REMOTE_PROC_DOMAIN_CREATE
+=back
 
-=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL3
 
-=item * REMOTE_PROC_DOMAIN_RENAME
+
+=item * @generate: server (include/libvirt/libvirt-nodedev.h)
+
+=over 8
 
 =item * REMOTE_PROC_NODE_DEVICE_DETACH_FLAGS
 
@@ -3376,9 +3401,27 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_NODE_DEVICE_RE_ATTACH
 
-=item * REMOTE_PROC_NODE_GET_CELLS_FREE_MEMORY
+=back
+
+
+
+=item * @generate: server (include/libvirt/libvirt-storage.h)
+
+=over 8
+
+=item * REMOTE_PROC_CONNECT_FIND_STORAGE_POOL_SOURCES
 
 =item * REMOTE_PROC_STORAGE_VOL_GET_INFO_FLAGS
+
+=back
+
+
+
+=item * @generate: server (src/libvirt_internal.h)
+
+=over 8
+
+=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL3
 
 =back
 
