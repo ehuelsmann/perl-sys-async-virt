@@ -236,6 +236,12 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
              sort { $a->{name} cmp $b->{name} }
              grep { $_->{name} !~ m/^_/ }
              @{ $module_functions->{$mod} });
+    my $private_ep_pod =
+        join('',
+             map { "=head2 $_->{name}\n\n" }
+             sort { $a->{name} cmp $b->{name} }
+             grep { $_->{name} =~ m/^_/ }
+             @{ $module_functions->{$mod} });
     my $skipped_pod = unimplemented_pod();
     my @constants = grep { $_->{mod} eq $mod } @{ $h_syms };
     my $max = max map { length $_->{sym} } @constants;
@@ -255,6 +261,7 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
     $tmpl =~ s/__CALLS__/$calls/;
     $tmpl =~ s/__CONSTANTS__/$constants/;
     $tmpl =~ s/__ENTRYPOINTS__/$entrypoints_pod/;
+    $tmpl =~ s/__PRIVATE_EPS__/$private_ep_pod/;
     $tmpl =~ s/__CONSTANTS_POD__/$constants_pod/;
     $tmpl =~ s/__UNIMPLEMENTED__/$skipped_pod/;
 

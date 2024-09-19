@@ -106,6 +106,10 @@ See documentation of L<virSecretUndefine|https://libvirt.org/html/libvirt-libvir
 
 
 
+=head1 INTERNAL METHODS
+
+
+
 =head1 CONSTANTS
 
 =over 8

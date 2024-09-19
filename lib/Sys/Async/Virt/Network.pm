@@ -309,6 +309,10 @@ See documentation of L<virNetworkUpdate|https://libvirt.org/html/libvirt-libvirt
 
 
 
+=head1 INTERNAL METHODS
+
+
+
 =head1 CONSTANTS
 
 =over 8

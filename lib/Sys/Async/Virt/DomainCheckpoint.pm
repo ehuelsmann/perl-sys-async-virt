@@ -127,6 +127,10 @@ See documentation of L<virDomainCheckpointListAllChildren|https://libvirt.org/ht
 
 
 
+=head1 INTERNAL METHODS
+
+
+
 =head1 CONSTANTS
 
 =over 8

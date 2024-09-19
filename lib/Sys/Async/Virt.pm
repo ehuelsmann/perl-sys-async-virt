@@ -3170,6 +3170,14 @@ wrapper allows for tracking all calls allowing to set up handling of the replies
 
 =head2 _dispatch_stream
 
+=head2 _domain_migrate_finish
+
+=head2 _domain_migrate_finish2
+
+=head2 _supports_feature
+
+
+
 =head1 BUGS AND LIMITATIONS
 
 =over 8

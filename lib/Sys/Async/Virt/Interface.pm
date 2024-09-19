@@ -132,6 +132,10 @@ See documentation of L<virInterfaceUndefine|https://libvirt.org/html/libvirt-lib
 
 
 
+=head1 INTERNAL METHODS
+
+
+
 =head1 CONSTANTS
 
 =over 8

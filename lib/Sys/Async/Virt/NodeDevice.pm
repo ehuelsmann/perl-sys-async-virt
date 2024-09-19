@@ -284,6 +284,10 @@ See documentation of L<virNodeDeviceUpdate|https://libvirt.org/html/libvirt-libv
 
 
 
+=head1 INTERNAL METHODS
+
+
+
 =head1 CONSTANTS
 
 =over 8

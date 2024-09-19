@@ -2462,6 +2462,12 @@ See documentation of L<virDomainUpdateDeviceFlags|https://libvirt.org/html/libvi
 
 
 
+=head1 INTERNAL METHODS
+
+=head2 _migrate_perform
+
+
+
 =head1 CONSTANTS
 
 =over 8
