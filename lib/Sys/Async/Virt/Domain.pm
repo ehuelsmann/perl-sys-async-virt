@@ -1026,6 +1026,12 @@ async sub get_scheduler_parameters_flags($self, $flags = 0) {
         { dom => $self->{id}, nparams => $remote->DOMAIN_SCHEDULER_PARAMETERS_MAX, flags => $flags // 0 } ))->{params};
 }
 
+sub get_state($self, $flags = 0) {
+    return ($self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_STATE,
+        { dom => $self->{id}, flags => $flags // 0 } ));
+}
+
 async sub get_vcpus_flags($self, $flags = 0) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_VCPUS_FLAGS,
@@ -1060,6 +1066,12 @@ sub inject_nmi($self, $flags = 0) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_INJECT_NMI,
         { dom => $self->{id}, flags => $flags // 0 } ));
+}
+
+async sub interface_addresses($self, $source, $flags = 0) {
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_INTERFACE_ADDRESSES,
+        { dom => $self->{id}, source => $source, flags => $flags // 0 } ))->{ifaces};
 }
 
 sub interface_stats($self, $device) {
@@ -1198,6 +1210,12 @@ sub reboot($self, $flags = 0) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_REBOOT,
         { dom => $self->{id}, flags => $flags // 0 } ));
+}
+
+async sub rename($self, $new_name, $flags = 0) {
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_RENAME,
+        { dom => $self->{id}, new_name => $new_name, flags => $flags // 0 } ))->{retcode};
 }
 
 sub reset($self, $flags = 0) {
@@ -1896,6 +1914,14 @@ See documentation of L<virDomainGetSchedulerParameters|https://libvirt.org/html/
 See documentation of L<virDomainGetSchedulerParametersFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerParametersFlags>.
 
 
+=head2 get_state
+
+  await $dom->get_state( $flags = 0 );
+  # -> { reason => $reason, state => $state }
+
+See documentation of L<virDomainGetState|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetState>.
+
+
 =head2 get_vcpus_flags
 
   $num = await $dom->get_vcpus_flags( $flags = 0 );
@@ -1938,6 +1964,13 @@ See documentation of L<virDomainHasManagedSaveImage|https://libvirt.org/html/lib
   # -> (* no data *)
 
 See documentation of L<virDomainInjectNMI|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainInjectNMI>.
+
+
+=head2 interface_addresses
+
+  $ifaces = await $dom->interface_addresses( $source, $flags = 0 );
+
+See documentation of L<virDomainInterfaceAddresses|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainInterfaceAddresses>.
 
 
 =head2 interface_stats
@@ -2120,6 +2153,13 @@ See documentation of L<virDomainPMWakeup|https://libvirt.org/html/libvirt-libvir
   # -> (* no data *)
 
 See documentation of L<virDomainReboot|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainReboot>.
+
+
+=head2 rename
+
+  $retcode = await $dom->rename( $new_name, $flags = 0 );
+
+See documentation of L<virDomainRename|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainRename>.
 
 
 =head2 reset

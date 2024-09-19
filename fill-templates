@@ -23,6 +23,15 @@ my $dep_psv_version = $ARGV[2];
 
 my @skipped_entrypoints;
 my @manual_entrypoints;
+my @whitelisted_entrypoints = qw(
+    REMOTE_PROC_CONNECT_GET_ALL_DOMAIN_STATS
+    REMOTE_PROC_CONNECT_GET_TYPE
+    REMOTE_PROC_CONNECT_GET_URI
+    REMOTE_PROC_CONNECT_LIST_DOMAINS
+    REMOTE_PROC_DOMAIN_GET_STATE
+    REMOTE_PROC_DOMAIN_INTERFACE_ADDRESSES
+    REMOTE_PROC_DOMAIN_RENAME
+    );
 
 sub contents {
     my ($fn) = @_;
@@ -91,7 +100,8 @@ sub _retvals {
     my ($struct) = @_;
     return (
         map { +{ name => $_->{name}->{content},
-                 type => _named_type_name( $_->{declaration}->{type} ) } }
+                 type => _named_type_name( $_->{declaration}->{type} ),
+                 declaration => $_->{declaration} } }
         @{ $struct ? $struct->{definition}->{type}->{declaration}->{members} : [] }
         );
 }
@@ -309,7 +319,8 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
     my $header =
         $c_api_defs->{$proc->{name}->{content}}->{header} // '';
     if (not ($generator_target eq 'client'
-             or $generator_target eq 'both')) {
+             or $generator_target eq 'both')
+        and none { $proc->{name}->{content} eq $_ } @whitelisted_entrypoints) {
         # skip stream-related entrypoints for now
         $module_returns->[$proc_value] = '\&_no_translation';
 
@@ -350,6 +361,7 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
     my $first_call_arg = @callargs ? $callargs[0] : undef;
     if ($first_call_arg) {
         my $first_arg_type_name = $first_call_arg->{type} // '__unmapped__';
+        $first_arg_type_name = '__unmapped__' if $first_call_arg->{declaration}->{array};
         $into_module = $module{$first_arg_type_name} // $main_module;
     }
 
