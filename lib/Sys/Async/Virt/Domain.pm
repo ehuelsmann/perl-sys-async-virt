@@ -731,6 +731,18 @@ sub attach_device_flags($self, $xml, $flags = 0) {
         { dom => $self->{id}, xml => $xml, flags => $flags // 0 } ));
 }
 
+async sub authorized_ssh_keys_get($self, $user, $flags = 0) {
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_AUTHORIZED_SSH_KEYS_GET,
+        { dom => $self->{id}, user => $user, flags => $flags // 0 } ))->{keys};
+}
+
+sub authorized_ssh_keys_set($self, $user, $keys, $flags = 0) {
+    return ($self->{client}->_call(
+        $remote->PROC_DOMAIN_AUTHORIZED_SSH_KEYS_SET,
+        { dom => $self->{id}, user => $user, keys => $keys, flags => $flags // 0 } ));
+}
+
 sub backup_begin($self, $backup_xml, $checkpoint_xml, $flags = 0) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_BACKUP_BEGIN,
@@ -934,6 +946,19 @@ async sub get_cpu_stats($self, $start_cpu, $ncpus, $flags = 0) {
         { dom => $self->{id}, nparams => $nparams, start_cpu => $start_cpu, ncpus => $ncpus, flags => $flags // 0 } ))->{params};
 }
 
+async sub get_fsinfo($self, $flags = 0) {
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_FSINFO,
+        { dom => $self->{id}, flags => $flags // 0 } ))->{info};
+}
+
+async sub get_guest_info($self, $types, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_GUEST_INFO,
+        { dom => $self->{id}, types => $types, flags => $flags // 0 } ))->{params};
+}
+
 async sub get_guest_vcpus($self, $flags = 0) {
     $flags |= await $self->{client}->_typed_param_string_okay();
     return (await $self->{client}->_call(
@@ -1024,6 +1049,12 @@ async sub get_scheduler_parameters_flags($self, $flags = 0) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_SCHEDULER_PARAMETERS_FLAGS,
         { dom => $self->{id}, nparams => $remote->DOMAIN_SCHEDULER_PARAMETERS_MAX, flags => $flags // 0 } ))->{params};
+}
+
+async sub get_scheduler_type($self) {
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_SCHEDULER_TYPE,
+        { dom => $self->{id},  } ))->{type};
 }
 
 sub get_state($self, $flags = 0) {
@@ -1561,6 +1592,21 @@ See documentation of L<virDomainAttachDevice|https://libvirt.org/html/libvirt-li
 See documentation of L<virDomainAttachDeviceFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAttachDeviceFlags>.
 
 
+=head2 authorized_ssh_keys_get
+
+  $keys = await $dom->authorized_ssh_keys_get( $user, $flags = 0 );
+
+See documentation of L<virDomainAuthorizedSSHKeysGet|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAuthorizedSSHKeysGet>.
+
+
+=head2 authorized_ssh_keys_set
+
+  await $dom->authorized_ssh_keys_set( $user, $keys, $flags = 0 );
+  # -> (* no data *)
+
+See documentation of L<virDomainAuthorizedSSHKeysSet|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainAuthorizedSSHKeysSet>.
+
+
 =head2 backup_begin
 
   await $dom->backup_begin( $backup_xml, $checkpoint_xml, $flags = 0 );
@@ -1806,6 +1852,20 @@ See documentation of L<virDomainGetControlInfo|https://libvirt.org/html/libvirt-
 See documentation of L<virDomainGetCPUStats|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetCPUStats>.
 
 
+=head2 get_fsinfo
+
+  $info = await $dom->get_fsinfo( $flags = 0 );
+
+See documentation of L<virDomainGetFSInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetFSInfo>.
+
+
+=head2 get_guest_info
+
+  $params = await $dom->get_guest_info( $types, $flags = 0 );
+
+See documentation of L<virDomainGetGuestInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetGuestInfo>.
+
+
 =head2 get_guest_vcpus
 
   $params = await $dom->get_guest_vcpus( $flags = 0 );
@@ -1912,6 +1972,13 @@ See documentation of L<virDomainGetSchedulerParameters|https://libvirt.org/html/
   $params = await $dom->get_scheduler_parameters_flags( $flags = 0 );
 
 See documentation of L<virDomainGetSchedulerParametersFlags|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerParametersFlags>.
+
+
+=head2 get_scheduler_type
+
+  $type = await $dom->get_scheduler_type;
+
+See documentation of L<virDomainGetSchedulerType|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerType>.
 
 
 =head2 get_state
@@ -3821,6 +3888,29 @@ See documentation of L<virDomainUpdateDeviceFlags|https://libvirt.org/html/libvi
 =item GRAPHICS_RELOAD_TYPE_VNC
 
 =back
+
+=head1 BUGS AND LIMITATIONS
+
+=head2 Unimplemented entry points
+
+The following entry points have intentionally not been implemented,
+because they are deprecated or contain bugs.
+
+=over 8
+
+=item * REMOTE_PROC_DOMAIN_CREATE (virDomainCreate)
+
+This entry point contains a bug in the protocol definition; use
+L</domain_create_flags> without flags (i.e. C<< $dom->domain_create_flags; >>)
+to achieve the same effect.
+
+=back
+
+=begin fill-templates
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_CREATE
+
+=end fill-templates
 
 =head1 SEE ALSO
 

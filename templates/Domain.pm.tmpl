@@ -75,6 +75,29 @@ __CONSTANTS_POD__
 
 =back
 
+=head1 BUGS AND LIMITATIONS
+
+=head2 Unimplemented entry points
+
+The following entry points have intentionally not been implemented,
+because they are deprecated or contain bugs.
+
+=over 8
+
+=item * REMOTE_PROC_DOMAIN_CREATE (virDomainCreate)
+
+This entry point contains a bug in the protocol definition; use
+L</domain_create_flags> without flags (i.e. C<< $dom->domain_create_flags; >>)
+to achieve the same effect.
+
+=back
+
+=begin fill-templates
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_CREATE
+
+=end fill-templates
+
 =head1 SEE ALSO
 
 L<LibVirt|https://libvirt.org>, L<Sys::Virt>

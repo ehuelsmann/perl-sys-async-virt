@@ -387,7 +387,7 @@ my @reply_translators = (
     \&_no_translation,
     \&_no_translation,
     \&_no_translation,
-    \&_no_translation,
+    sub { 56; my $client = shift; _translated($client, undef, {  }, @_) },
     sub { 57; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 59; my $client = shift; _translated($client, undef, {  }, @_) },
@@ -680,7 +680,7 @@ my @reply_translators = (
     sub { 346; my $client = shift; _translated($client, undef, { dom => \&_translate_remote_nonnull_domain }, @_) },
     \&_no_translation,
     sub { 348; my $client = shift; _translated($client, undef, { dom => \&_translate_remote_nonnull_domain }, @_) },
-    \&_no_translation,
+    sub { 349; my $client = shift; _translated($client, undef, {  }, @_) },
     sub { 350; my $client = shift; _translated($client, undef, { dom => \&_translate_remote_nonnull_domain }, @_) },
     \&_no_translation,
     \&_no_translation,
@@ -749,13 +749,13 @@ my @reply_translators = (
     sub { 415; my $client = shift; _translated($client, undef, { checkpoint => \&_translate_remote_nonnull_domain_checkpoint }, @_) },
     sub { 416; my $client = shift; _translated($client, undef, { parent => \&_translate_remote_nonnull_domain_checkpoint }, @_) },
     \&_no_translation,
-    \&_no_translation,
+    sub { 418; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 420; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 422; my $client = shift; _translated($client, undef, {  }, @_) },
     sub { 423; my $client = shift; _translated($client, undef, { dom => \&_translate_remote_nonnull_domain }, @_) },
-    \&_no_translation,
+    sub { 424; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     \&_no_translation,
     \&_no_translation,
@@ -3295,10 +3295,6 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
 
-=item * REMOTE_PROC_DOMAIN_AUTHORIZED_SSH_KEYS_GET
-
-=item * REMOTE_PROC_DOMAIN_AUTHORIZED_SSH_KEYS_SET
-
 =item * REMOTE_PROC_DOMAIN_BLOCK_PEEK
 
 =item * REMOTE_PROC_DOMAIN_CREATE_WITH_FILES
@@ -3313,10 +3309,6 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_DOMAIN_GET_EMULATOR_PIN_INFO
 
-=item * REMOTE_PROC_DOMAIN_GET_FSINFO
-
-=item * REMOTE_PROC_DOMAIN_GET_GUEST_INFO
-
 =item * REMOTE_PROC_DOMAIN_GET_IOTHREAD_INFO
 
 =item * REMOTE_PROC_DOMAIN_GET_JOB_STATS
@@ -3326,8 +3318,6 @@ towards implementation are greatly appreciated.
 =item * REMOTE_PROC_DOMAIN_GET_MESSAGES
 
 =item * REMOTE_PROC_DOMAIN_GET_PERF_EVENTS
-
-=item * REMOTE_PROC_DOMAIN_GET_SCHEDULER_TYPE
 
 =item * REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL
 
@@ -3408,16 +3398,6 @@ towards implementation are greatly appreciated.
 =item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3_PARAMS
 
 =item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL3_PARAMS
-
-=back
-
-
-
-=item * @generate: server (include/libvirt/libvirt-domain.h)
-
-=over 8
-
-=item * REMOTE_PROC_DOMAIN_CREATE
 
 =back
 
