@@ -32,6 +32,7 @@ my @whitelisted_entrypoints = qw(
     REMOTE_PROC_DOMAIN_AUTHORIZED_SSH_KEYS_SET
     REMOTE_PROC_DOMAIN_GET_FSINFO
     REMOTE_PROC_DOMAIN_GET_GUEST_INFO
+    REMOTE_PROC_DOMAIN_GET_JOB_STATS
     REMOTE_PROC_DOMAIN_GET_SCHEDULER_TYPE
     REMOTE_PROC_DOMAIN_GET_STATE
     REMOTE_PROC_DOMAIN_INTERFACE_ADDRESSES
@@ -42,6 +43,9 @@ my @whitelisted_entrypoints = qw(
 #    REMOTE_PROC_DOMAIN_GET_VCPUS
 #    REMOTE_PROC_DOMAIN_GET_VCPU_PIN_INFO
 
+my @blacklist_typed_param_string_okay = qw(
+    REMOTE_PROC_DOMAIN_GET_JOB_STATS
+    );
 
 sub contents {
     my ($fn) = @_;
@@ -560,7 +564,8 @@ sub proc_ep_argsmap($ep_name, $options, @argnames) {
 
 sub proc_ep_flag_typed_param_string_okay($is_main, $entrypoint) {
     if (any { $_->{name} eq 'flags' } @{ $entrypoint->{args} }
-        and any { $_->{type} and $_->{type} eq 'remote_typed_param' } @{ $entrypoint->{ret} }) {
+        and (any { $_->{type} and $_->{type} eq 'remote_typed_param' } @{ $entrypoint->{ret} })
+        and (none { $_ eq $entrypoint->{identifier} } @blacklist_typed_param_string_okay)) {
         if ($is_main) {
             return '$flags |= await $self->_typed_param_string_okay();';
         }

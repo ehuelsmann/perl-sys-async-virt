@@ -994,6 +994,12 @@ sub get_job_info($self) {
         { dom => $self->{id},  } ));
 }
 
+sub get_job_stats($self, $flags = 0) {
+    return ($self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_JOB_STATS,
+        { dom => $self->{id}, flags => $flags // 0 } ));
+}
+
 async sub get_max_memory($self) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_MAX_MEMORY,
@@ -1916,6 +1922,14 @@ See documentation of L<virDomainGetInterfaceParameters|https://libvirt.org/html/
   #      type => $type }
 
 See documentation of L<virDomainGetJobInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetJobInfo>.
+
+
+=head2 get_job_stats
+
+  await $dom->get_job_stats( $flags = 0 );
+  # -> { params => $params, type => $type }
+
+See documentation of L<virDomainGetJobStats|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetJobStats>.
 
 
 =head2 get_max_memory
