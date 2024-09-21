@@ -3235,8 +3235,17 @@ wrapper allows for tracking all calls allowing to set up handling of the replies
 
 =over 8
 
-=item * Talking to servers without the REMOTE_EVENT_CALLBACK (since v1.3.3) feature
+=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature (v1.3.3)
   is not - currently - supported
+
+=begin fill-templates
+
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
+
+=end fill-templates
 
 =back
 
@@ -3280,14 +3289,6 @@ towards implementation are greatly appreciated.
 =item * @generate: none (include/libvirt/libvirt-domain.h)
 
 =over 8
-
-=item * REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
-
-=item * REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
-
-=item * REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER
-
-=item * REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
 
 =item * REMOTE_PROC_DOMAIN_BLOCK_PEEK
 

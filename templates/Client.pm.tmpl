@@ -798,8 +798,17 @@ __PRIVATE_EPS__
 
 =over 8
 
-=item * Talking to servers without the REMOTE_EVENT_CALLBACK (since v1.3.3) feature
+=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature (v1.3.3)
   is not - currently - supported
+
+=begin fill-templates
+
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
+
+=end fill-templates
 
 =back
 
