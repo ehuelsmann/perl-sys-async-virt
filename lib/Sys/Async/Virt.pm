@@ -490,7 +490,7 @@ my @reply_translators = (
     sub { 156; my $client = shift; _translated($client, undef, {  }, @_) },
     sub { 157; my $client = shift; _translated($client, undef, {  }, @_) },
     sub { 158; my $client = shift; _translated($client, undef, {  }, @_) },
-    \&_no_translation,
+    sub { 159; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     \&_no_translation,
     sub { 162; my $client = shift; _translated($client, undef, {  }, @_) },
@@ -594,7 +594,7 @@ my @reply_translators = (
     \&_no_translation,
     \&_no_translation,
     sub { 262; my $client = shift; _translated($client, undef, {  }, @_) },
-    \&_no_translation,
+    sub { 263; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 265; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
@@ -757,7 +757,7 @@ my @reply_translators = (
     sub { 423; my $client = shift; _translated($client, undef, { dom => \&_translate_remote_nonnull_domain }, @_) },
     sub { 424; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
-    \&_no_translation,
+    sub { 426; my $client = shift; _translated($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 428; my $client = shift; _translated($client, undef, { dev => \&_translate_remote_nonnull_node_device }, @_) },
     \&_no_translation,
@@ -3298,15 +3298,11 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_DOMAIN_GET_BLOCK_JOB_INFO
 
-=item * REMOTE_PROC_DOMAIN_GET_DISK_ERRORS
-
 =item * REMOTE_PROC_DOMAIN_GET_EMULATOR_PIN_INFO
 
 =item * REMOTE_PROC_DOMAIN_GET_IOTHREAD_INFO
 
 =item * REMOTE_PROC_DOMAIN_GET_LAUNCH_SECURITY_INFO
-
-=item * REMOTE_PROC_DOMAIN_GET_MESSAGES
 
 =item * REMOTE_PROC_DOMAIN_GET_PERF_EVENTS
 
@@ -3321,8 +3317,6 @@ towards implementation are greatly appreciated.
 =item * REMOTE_PROC_DOMAIN_GET_VCPU_PIN_INFO
 
 =item * REMOTE_PROC_DOMAIN_MEMORY_PEEK
-
-=item * REMOTE_PROC_DOMAIN_MEMORY_STATS
 
 =item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS
 

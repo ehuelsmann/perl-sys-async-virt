@@ -30,12 +30,15 @@ my @whitelisted_entrypoints = qw(
     REMOTE_PROC_CONNECT_LIST_DOMAINS
     REMOTE_PROC_DOMAIN_AUTHORIZED_SSH_KEYS_GET
     REMOTE_PROC_DOMAIN_AUTHORIZED_SSH_KEYS_SET
+    REMOTE_PROC_DOMAIN_GET_DISK_ERRORS
     REMOTE_PROC_DOMAIN_GET_FSINFO
     REMOTE_PROC_DOMAIN_GET_GUEST_INFO
     REMOTE_PROC_DOMAIN_GET_JOB_STATS
+    REMOTE_PROC_DOMAIN_GET_MESSAGES
     REMOTE_PROC_DOMAIN_GET_SCHEDULER_TYPE
     REMOTE_PROC_DOMAIN_GET_STATE
     REMOTE_PROC_DOMAIN_INTERFACE_ADDRESSES
+    REMOTE_PROC_DOMAIN_MEMORY_STATS
     REMOTE_PROC_DOMAIN_RENAME
     );
 
@@ -410,6 +413,15 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
           of it is embedded in the length of the returned array.
           POD
     }
+    if (any { $_->{name} eq 'nerrors' } @retvals) {
+        @retvals = grep { $_->{name} ne 'nerrors' } @retvals;
+        $pod_remarks .= <<~'POD';
+
+          B<Remark:> This function differs from the LibVirt API in that it
+          discards the C<nerrors> parameter in the return structure; the value
+          of it is embedded in the length of the returned array.
+          POD
+    }
     my $ret_unwrap = (@retvals == 1 ? $retvals[0]->{name} : '');
     push @{ $module_functions->{$into_module} //= [] }, {
         name => $entrypoint,
@@ -461,11 +473,17 @@ my %fixed_args = (
     'maxcells' => {
         node_get_cells_free_memory => '$remote->NODE_MAX_CELLS',
     },
+    'maxerrors' => {
+        get_disk_errors => '$remote->DOMAIN_DISK_ERRORS_MAX',
+    },
     'maxids' => {
         list_domains => '$remote->DOMAIN_LIST_MAX',
     },
     'maxinfo' => {
         get_vcpus => '$remote->VCPUINFO_MAX',
+    },
+    'maxStats' => {
+        memory_stats => '$remote->DOMAIN_MEMORY_STATS_MAX',
     },
     'maxnames' => {
         list_children_names => '$remote->DOMAIN_SNAPSHOT_LIST_MAX',

@@ -946,6 +946,12 @@ async sub get_cpu_stats($self, $start_cpu, $ncpus, $flags = 0) {
         { dom => $self->{id}, nparams => $nparams, start_cpu => $start_cpu, ncpus => $ncpus, flags => $flags // 0 } ))->{params};
 }
 
+async sub get_disk_errors($self, $flags = 0) {
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_DISK_ERRORS,
+        { dom => $self->{id}, maxerrors => $remote->DOMAIN_DISK_ERRORS_MAX, flags => $flags // 0 } ))->{errors};
+}
+
 async sub get_fsinfo($self, $flags = 0) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_FSINFO,
@@ -1020,6 +1026,12 @@ async sub get_memory_parameters($self, $flags = 0) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_MEMORY_PARAMETERS,
         { dom => $self->{id}, nparams => $nparams, flags => $flags // 0 } ))->{params};
+}
+
+async sub get_messages($self, $flags = 0) {
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_MESSAGES,
+        { dom => $self->{id}, flags => $flags // 0 } ))->{msgs};
 }
 
 async sub get_metadata($self, $type, $uri, $flags = 0) {
@@ -1169,6 +1181,12 @@ sub managed_save_remove($self, $flags = 0) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_MANAGED_SAVE_REMOVE,
         { dom => $self->{id}, flags => $flags // 0 } ));
+}
+
+async sub memory_stats($self, $flags = 0) {
+    return (await $self->{client}->_call(
+        $remote->PROC_DOMAIN_MEMORY_STATS,
+        { dom => $self->{id}, maxStats => $remote->DOMAIN_MEMORY_STATS_MAX, flags => $flags // 0 } ))->{stats};
 }
 
 async sub migrate_get_compression_cache($self, $flags = 0) {
@@ -1858,6 +1876,13 @@ See documentation of L<virDomainGetControlInfo|https://libvirt.org/html/libvirt-
 See documentation of L<virDomainGetCPUStats|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetCPUStats>.
 
 
+=head2 get_disk_errors
+
+  $errors = await $dom->get_disk_errors( $flags = 0 );
+
+See documentation of L<virDomainGetDiskErrors|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetDiskErrors>.
+
+
 =head2 get_fsinfo
 
   $info = await $dom->get_fsinfo( $flags = 0 );
@@ -1951,6 +1976,13 @@ See documentation of L<virDomainGetMaxVcpus|https://libvirt.org/html/libvirt-lib
   $params = await $dom->get_memory_parameters( $flags = 0 );
 
 See documentation of L<virDomainGetMemoryParameters|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMemoryParameters>.
+
+
+=head2 get_messages
+
+  $msgs = await $dom->get_messages( $flags = 0 );
+
+See documentation of L<virDomainGetMessages|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMessages>.
 
 
 =head2 get_metadata
@@ -2133,6 +2165,13 @@ See documentation of L<virDomainManagedSaveGetXMLDesc|https://libvirt.org/html/l
   # -> (* no data *)
 
 See documentation of L<virDomainManagedSaveRemove|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSaveRemove>.
+
+
+=head2 memory_stats
+
+  $stats = await $dom->memory_stats( $flags = 0 );
+
+See documentation of L<virDomainMemoryStats|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMemoryStats>.
 
 
 =head2 migrate_get_compression_cache
