@@ -1109,6 +1109,7 @@ async sub domain_event_register_any($self, $eventID, $domain = undef) {
         factory => sub { $self->loop->new_future }
         );
     $self->{_callbacks}->{$rv->{callbackID}} = $cb;
+    weaken $self->{_callbacks}->{$rv->{callbackID}};
 
     return $cb;
 }
