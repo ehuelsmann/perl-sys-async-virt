@@ -3251,13 +3251,6 @@ wrapper allows for tracking all calls allowing to set up handling of the replies
 
 =item * C<@generate: none> entrypoints review (and implement relevant ones)
 
-Findings so far:
-
-  entrypoints with "nparams" have this flagging
-    -> it seems these can be generated without problem;
-       the call needs to be executed with nparams==0 in order to retrieve
-       the supported maximum value.
-
 =item * C<@generate: server> entrypoints review (and implement relevant ones)
 
 =back
