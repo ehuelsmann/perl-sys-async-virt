@@ -18,6 +18,7 @@ on develop => sub {
     requires 'Protocol::Sys::Virt::Devel' => '0.0.5';
     requires 'Test::Pod' => '1.0';
     requires 'Test::Pod::Coverage' => '1.10';
+    requires 'Pod::ProjectDocs';
 };
 
 feature 'examples', 'Dependencies for examples' => sub {
