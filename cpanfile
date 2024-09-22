@@ -4,7 +4,7 @@ requires 'perl' => '5.20.0';
 requires 'Feature::Compat::Try';
 requires 'Future::AsyncAwait';
 requires 'Future::Queue';
-requires 'IO::Async::Loop';
+requires 'IO::Async::Notifier';
 requires 'Log::Any';
 requires 'Protocol::Sys::Virt' => '10.3.7';
 
@@ -23,4 +23,5 @@ on develop => sub {
 
 feature 'examples', 'Dependencies for examples' => sub {
     requires 'Feature::Compat::Try';
+    requires 'IO::Async::Loop';
 };
