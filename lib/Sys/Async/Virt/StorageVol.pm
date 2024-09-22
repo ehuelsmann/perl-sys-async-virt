@@ -62,51 +62,59 @@ sub new {
 }
 
 sub delete($self, $flags = 0) {
-    return ($self->{client}->_call(
+    return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_DELETE,
-        { vol => $self->{id}, flags => $flags // 0 } ));
+        { vol => $self->{id}, flags => $flags // 0 } );
+;
 }
 
 sub get_info($self) {
-    return ($self->{client}->_call(
+    return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_INFO,
-        { vol => $self->{id} } ));
+        { vol => $self->{id} } );
+;
 }
 
 async sub get_path($self) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_PATH,
-        { vol => $self->{id} } ))->{name};
+        { vol => $self->{id} }, unwrap => 'name' );
+;
 }
 
 async sub get_xml_desc($self, $flags = 0) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_XML_DESC,
-        { vol => $self->{id}, flags => $flags // 0 } ))->{xml};
+        { vol => $self->{id}, flags => $flags // 0 }, unwrap => 'xml' );
+;
 }
 
 async sub pool_lookup_by_volume($self) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_LOOKUP_BY_VOLUME,
-        { vol => $self->{id} } ))->{pool};
+        { vol => $self->{id} }, unwrap => 'pool' );
+;
 }
 
 sub resize($self, $capacity, $flags = 0) {
-    return ($self->{client}->_call(
+    return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_RESIZE,
-        { vol => $self->{id}, capacity => $capacity, flags => $flags // 0 } ));
+        { vol => $self->{id}, capacity => $capacity, flags => $flags // 0 } );
+;
 }
 
 sub wipe($self, $flags = 0) {
-    return ($self->{client}->_call(
+    return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_WIPE,
-        { vol => $self->{id}, flags => $flags // 0 } ));
+        { vol => $self->{id}, flags => $flags // 0 } );
+;
 }
 
 sub wipe_pattern($self, $algorithm, $flags = 0) {
-    return ($self->{client}->_call(
+    return $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_WIPE_PATTERN,
-        { vol => $self->{id}, algorithm => $algorithm, flags => $flags // 0 } ));
+        { vol => $self->{id}, algorithm => $algorithm, flags => $flags // 0 } );
+;
 }
 
 

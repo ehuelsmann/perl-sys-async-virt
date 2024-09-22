@@ -56,57 +56,66 @@ sub new {
 }
 
 sub delete($self, $flags = 0) {
-    return ($self->{client}->_call(
+    return $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_DELETE,
-        { snap => $self->{id}, flags => $flags // 0 } ));
+        { snap => $self->{id}, flags => $flags // 0 } );
+;
 }
 
 async sub get_parent($self, $flags = 0) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_GET_PARENT,
-        { snap => $self->{id}, flags => $flags // 0 } ))->{snap};
+        { snap => $self->{id}, flags => $flags // 0 }, unwrap => 'snap' );
+;
 }
 
 async sub get_xml_desc($self, $flags = 0) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_GET_XML_DESC,
-        { snap => $self->{id}, flags => $flags // 0 } ))->{xml};
+        { snap => $self->{id}, flags => $flags // 0 }, unwrap => 'xml' );
+;
 }
 
 async sub has_metadata($self, $flags = 0) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_HAS_METADATA,
-        { snap => $self->{id}, flags => $flags // 0 } ))->{metadata};
+        { snap => $self->{id}, flags => $flags // 0 }, unwrap => 'metadata' );
+;
 }
 
 async sub is_current($self, $flags = 0) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_IS_CURRENT,
-        { snap => $self->{id}, flags => $flags // 0 } ))->{current};
+        { snap => $self->{id}, flags => $flags // 0 }, unwrap => 'current' );
+;
 }
 
 async sub list_all_children($self, $flags = 0) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_LIST_ALL_CHILDREN,
-        { snapshot => $self->{id}, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 } ))->{snapshots};
+        { snapshot => $self->{id}, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 }, unwrap => 'snapshots' );
+;
 }
 
 async sub list_children_names($self, $flags = 0) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_LIST_CHILDREN_NAMES,
-        { snap => $self->{id}, maxnames => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 } ))->{names};
+        { snap => $self->{id}, maxnames => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 }, unwrap => 'names' );
+;
 }
 
 async sub num_children($self, $flags = 0) {
-    return (await $self->{client}->_call(
+    return await $self->{client}->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_NUM_CHILDREN,
-        { snap => $self->{id}, flags => $flags // 0 } ))->{num};
+        { snap => $self->{id}, flags => $flags // 0 }, unwrap => 'num' );
+;
 }
 
 sub revert_to_snapshot($self, $flags = 0) {
-    return ($self->{client}->_call(
+    return $self->{client}->_call(
         $remote->PROC_DOMAIN_REVERT_TO_SNAPSHOT,
-        { snap => $self->{id}, flags => $flags // 0 } ));
+        { snap => $self->{id}, flags => $flags // 0 } );
+;
 }
 
 

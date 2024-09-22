@@ -627,7 +627,8 @@ sub proc_entrypoint($module, $entrypoint) {
         first_arg_name => $first_arg_name,
         ($query_nparams ? ( override => { nparams => '$nparams' } ) : ()),
     };
-    my $argsmap = proc_ep_argsmap($entrypoint->{name}, $argsmap_options, @argnames);
+    my $argsmap =
+        proc_ep_argsmap($entrypoint->{name}, $argsmap_options, @argnames);
     my $modify_flags =
         proc_ep_flag_typed_param_string_okay($is_main, $entrypoint);
     my $filter_params =
@@ -640,7 +641,7 @@ sub proc_entrypoint($module, $entrypoint) {
     my $call = $is_main ? '$self->_call' : '$self->{client}->_call';
 
     $entrypoint->{argstr} = $argstr;
-    $ret_unwrap = "->{$ret_unwrap}"
+    $ret_unwrap = ", unwrap => '$ret_unwrap'"
         if $ret_unwrap;
     my $nparams = '';
     if ($query_nparams) {
@@ -650,19 +651,24 @@ sub proc_entrypoint($module, $entrypoint) {
                               override => { nparams => 0 } },
                             @argnames);
         $nparams = <<~PROC;
-            my \$nparams = (await $call(
+            my \$nparams = await $call(
                     \$remote->$entrypoint->{const},
-                    { $nparams_argsmap } ))->{nparams};
+                    { $nparams_argsmap }, 'nparams' );
             PROC
     }
+    my $result = '';
+    my $return = <<~RETURN;
+         ${await}$call(
+                 \$remote->$entrypoint->{const},
+                 { $argsmap }$ret_unwrap );
+         RETURN
     $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
         ${async}sub $entrypoint->{name}($argstr) {
             $modify_flags
             $filter_params
             $nparams
-            return (${await}$call(
-                \$remote->$entrypoint->{const},
-                { $argsmap } ))$ret_unwrap;
+            $result
+            return $return;
         }
         PROC
 }

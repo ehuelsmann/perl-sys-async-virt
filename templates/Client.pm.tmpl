@@ -16,6 +16,7 @@ no warnings qw(void);
 use experimental 'signatures';
 use Feature::Compat::Try;
 use Future::AsyncAwait;
+use Sublike::Extended; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
 package Sys::Async::Virt __VERSION__;
 
@@ -320,13 +321,15 @@ sub _secret_instance {
     return $c;
 }
 
-async sub _call($self, $proc, $args = {}) {
+extended async sub _call($self, $proc, $args = {}, :$unwrap = '', :$stream = '', :$empty = '') {
     my $serial = await $self->{remote}->call( $proc, $args );
     my $f = $self->loop->new_future;
     $log->trace( "Setting serial $serial future" );
     $self->{_replies}->{$serial} = $f;
     ### Return a stream somehow...
-    return await $f;
+    my @rv = await $f;
+    $rv[0] = $rv[0]->{$unwrap} if $unwrap;
+    return @rv;
 }
 
 async sub _typed_param_string_okay($self) {
