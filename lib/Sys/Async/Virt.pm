@@ -789,7 +789,6 @@ sub _map( $client, $unwrap, $argmap, $data) {
         my $val = $data->{$key};
 
         if (ref $argmap->{$key} and reftype $argmap->{$key} eq 'HASH') {
-            use Data::Dumper;
             $data->{$key} = _map( $client, undef, $argmap->{$key}, $val );
         }
         elsif (ref $val and reftype $val eq 'ARRAY') {
