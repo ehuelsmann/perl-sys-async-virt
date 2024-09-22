@@ -316,7 +316,7 @@ sub _translate_remote_nonnull_interface {
 }
 
 sub _translate_remote_nonnull_storage_pool {
-    $_[0]->storage_pool_instance( $_[1] );
+    $_[0]->_storage_pool_instance( $_[1] );
 }
 
 sub _translate_remote_nonnull_storage_vol {
@@ -328,7 +328,7 @@ sub _translate_remote_nonnull_node_device {
 }
 
 sub _translate_remote_nonnull_secret {
-    $_[0]->secret_instance( $_[1] );
+    $_[0]->_secret_instance( $_[1] );
 }
 
 my @reply_translators = (
