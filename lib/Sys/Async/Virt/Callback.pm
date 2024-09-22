@@ -27,7 +27,7 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 sub new {
     my ($class, %args) = @_;
-    return = bless {
+    return bless {
         id => $args{id},
         client => $args{client},
         deregister_call => $args{deregister_call},
