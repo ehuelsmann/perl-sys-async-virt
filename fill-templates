@@ -632,58 +632,39 @@ sub proc_entrypoint($module, $entrypoint) {
                            or $ret_unwrap or $query_nparams)
         ? ('async ', 'await ')
         : ('', '');
+    my $call = $is_main ? '$self->_call' : '$self->{client}->_call';
 
     $entrypoint->{argstr} = $argstr;
     $ret_unwrap = "->{$ret_unwrap}"
         if $ret_unwrap;
-    if ($is_main) {
-        my $nparams = '';
-        if ($query_nparams) {
-            my $nparams_argsmap = proc_ep_argsmap($entrypoint->{name},
-                                                  { override =>
-                                                    { nparams => 0 } },
-                                                  @argnames);
-            $nparams = <<~PROC;
-            my \$nparams = (await \$self->_call(
+    $argsmap =
+        "$first_arg_name => \$self->{id}, $argsmap"
+        if $first_arg_name;
+    my $nparams = '';
+    if ($query_nparams) {
+        my $nparams_argsmap = proc_ep_argsmap($entrypoint->{name},
+                                              { override =>
+                                                { nparams => 0 } },
+                                              @argnames);
+        $nparams_argsmap =
+            "$first_arg_name => \$self->{id}, $nparams_argsmap"
+            if $first_arg_name;
+        $nparams = <<~PROC;
+            my \$nparams = (await $call(
                     \$remote->$entrypoint->{const},
                     { $nparams_argsmap } ))->{nparams};
             PROC
-        }
-        $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
+    }
+    $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
         ${async}sub $entrypoint->{name}($argstr) {
             $modify_flags
             $filter_params
             $nparams
-            return (${await}\$self->_call(
+            return (${await}$call(
                 \$remote->$entrypoint->{const},
                 { $argsmap } ))$ret_unwrap;
         }
         PROC
-    }
-    else {
-        my $nparams = '';
-        if ($query_nparams) {
-            my $nparams_argsmap = proc_ep_argsmap($entrypoint->{name},
-                                                  { override =>
-                                                    { nparams => 0 } },
-                                                  @argnames);
-            $nparams = <<~PROC;
-            my \$nparams = (await \$self->{client}->_call(
-                    \$remote->$entrypoint->{const},
-                    { $first_arg_name => \$self->{id}, $nparams_argsmap } ))->{nparams};
-            PROC
-        }
-        $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
-        ${async}sub $entrypoint->{name}($argstr) {
-            $modify_flags
-            $filter_params
-            $nparams
-            return (${await}\$self->{client}->_call(
-                \$remote->$entrypoint->{const},
-                { $first_arg_name => \$self->{id}, $argsmap } ))$ret_unwrap;
-        }
-        PROC
-    }
 }
 
 sub client($xdr_parse_version, $ast, $template, $h_syms, $c_api_defs) {
