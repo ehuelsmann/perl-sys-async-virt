@@ -52,7 +52,7 @@ sub set_value($self, $value, $flags = 0) {
 sub undefine($self) {
     return ($self->{client}->_call(
         $remote->PROC_SECRET_UNDEFINE,
-        { secret => $self->{id},  } ));
+        { secret => $self->{id} } ));
 }
 
 

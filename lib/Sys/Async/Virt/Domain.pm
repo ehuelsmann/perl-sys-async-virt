@@ -698,7 +698,7 @@ sub _migrate_perform($self, $cookie, $uri, $flags, $dname, $resource) {
 sub abort_job($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_ABORT_JOB,
-        { dom => $self->{id},  } ));
+        { dom => $self->{id} } ));
 }
 
 sub abort_job_flags($self, $flags = 0) {
@@ -853,7 +853,7 @@ sub del_iothread($self, $iothread_id, $flags = 0) {
 sub destroy($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_DESTROY,
-        { dom => $self->{id},  } ));
+        { dom => $self->{id} } ));
 }
 
 sub destroy_flags($self, $flags = 0) {
@@ -901,7 +901,7 @@ sub fstrim($self, $mountPoint, $minimum, $flags = 0) {
 async sub get_autostart($self) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_AUTOSTART,
-        { dom => $self->{id},  } ))->{autostart};
+        { dom => $self->{id} } ))->{autostart};
 }
 
 async sub get_blkio_parameters($self, $flags = 0) {
@@ -981,7 +981,7 @@ async sub get_hostname($self, $flags = 0) {
 sub get_info($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_GET_INFO,
-        { dom => $self->{id},  } ));
+        { dom => $self->{id} } ));
 }
 
 async sub get_interface_parameters($self, $device, $flags = 0) {
@@ -997,7 +997,7 @@ async sub get_interface_parameters($self, $device, $flags = 0) {
 sub get_job_info($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_GET_JOB_INFO,
-        { dom => $self->{id},  } ));
+        { dom => $self->{id} } ));
 }
 
 sub get_job_stats($self, $flags = 0) {
@@ -1009,13 +1009,13 @@ sub get_job_stats($self, $flags = 0) {
 async sub get_max_memory($self) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_MAX_MEMORY,
-        { dom => $self->{id},  } ))->{memory};
+        { dom => $self->{id} } ))->{memory};
 }
 
 async sub get_max_vcpus($self) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_MAX_VCPUS,
-        { dom => $self->{id},  } ))->{num};
+        { dom => $self->{id} } ))->{num};
 }
 
 async sub get_memory_parameters($self, $flags = 0) {
@@ -1053,7 +1053,7 @@ async sub get_numa_parameters($self, $flags = 0) {
 async sub get_os_type($self) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_OS_TYPE,
-        { dom => $self->{id},  } ))->{type};
+        { dom => $self->{id} } ))->{type};
 }
 
 async sub get_scheduler_parameters($self) {
@@ -1072,7 +1072,7 @@ async sub get_scheduler_parameters_flags($self, $flags = 0) {
 async sub get_scheduler_type($self) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_SCHEDULER_TYPE,
-        { dom => $self->{id},  } ))->{type};
+        { dom => $self->{id} } ))->{type};
 }
 
 sub get_state($self, $flags = 0) {
@@ -1132,19 +1132,19 @@ sub interface_stats($self, $device) {
 async sub is_active($self) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_IS_ACTIVE,
-        { dom => $self->{id},  } ))->{active};
+        { dom => $self->{id} } ))->{active};
 }
 
 async sub is_persistent($self) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_IS_PERSISTENT,
-        { dom => $self->{id},  } ))->{persistent};
+        { dom => $self->{id} } ))->{persistent};
 }
 
 async sub is_updated($self) {
     return (await $self->{client}->_call(
         $remote->PROC_DOMAIN_IS_UPDATED,
-        { dom => $self->{id},  } ))->{updated};
+        { dom => $self->{id} } ))->{updated};
 }
 
 async sub list_all_checkpoints($self, $flags = 0) {
@@ -1282,7 +1282,7 @@ sub reset($self, $flags = 0) {
 sub resume($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_RESUME,
-        { dom => $self->{id},  } ));
+        { dom => $self->{id} } ));
 }
 
 sub save($self, $to) {
@@ -1473,7 +1473,7 @@ sub set_vcpus_flags($self, $nvcpus, $flags = 0) {
 sub shutdown($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_SHUTDOWN,
-        { dom => $self->{id},  } ));
+        { dom => $self->{id} } ));
 }
 
 sub shutdown_flags($self, $flags = 0) {
@@ -1521,13 +1521,13 @@ sub start_dirty_rate_calc($self, $seconds, $flags = 0) {
 sub suspend($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_SUSPEND,
-        { dom => $self->{id},  } ));
+        { dom => $self->{id} } ));
 }
 
 sub undefine($self) {
     return ($self->{client}->_call(
         $remote->PROC_DOMAIN_UNDEFINE,
-        { dom => $self->{id},  } ));
+        { dom => $self->{id} } ));
 }
 
 sub undefine_flags($self, $flags = 0) {

@@ -75,19 +75,19 @@ sub delete($self, $flags = 0) {
 sub destroy($self) {
     return ($self->{client}->_call(
         $remote->PROC_STORAGE_POOL_DESTROY,
-        { pool => $self->{id},  } ));
+        { pool => $self->{id} } ));
 }
 
 async sub get_autostart($self) {
     return (await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_GET_AUTOSTART,
-        { pool => $self->{id},  } ))->{autostart};
+        { pool => $self->{id} } ))->{autostart};
 }
 
 sub get_info($self) {
     return ($self->{client}->_call(
         $remote->PROC_STORAGE_POOL_GET_INFO,
-        { pool => $self->{id},  } ));
+        { pool => $self->{id} } ));
 }
 
 async sub get_xml_desc($self, $flags = 0) {
@@ -99,13 +99,13 @@ async sub get_xml_desc($self, $flags = 0) {
 async sub is_active($self) {
     return (await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_IS_ACTIVE,
-        { pool => $self->{id},  } ))->{active};
+        { pool => $self->{id} } ))->{active};
 }
 
 async sub is_persistent($self) {
     return (await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_IS_PERSISTENT,
-        { pool => $self->{id},  } ))->{persistent};
+        { pool => $self->{id} } ))->{persistent};
 }
 
 async sub list_all_volumes($self, $flags = 0) {
@@ -123,7 +123,7 @@ async sub list_volumes($self) {
 async sub num_of_volumes($self) {
     return (await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_NUM_OF_VOLUMES,
-        { pool => $self->{id},  } ))->{num};
+        { pool => $self->{id} } ))->{num};
 }
 
 sub refresh($self, $flags = 0) {
@@ -141,7 +141,7 @@ sub set_autostart($self, $autostart) {
 sub undefine($self) {
     return ($self->{client}->_call(
         $remote->PROC_STORAGE_POOL_UNDEFINE,
-        { pool => $self->{id},  } ));
+        { pool => $self->{id} } ));
 }
 
 async sub vol_create_xml($self, $xml, $flags = 0) {

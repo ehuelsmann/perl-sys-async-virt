@@ -42,7 +42,7 @@ async sub get_xml_desc($self, $flags = 0) {
 sub undefine($self) {
     return ($self->{client}->_call(
         $remote->PROC_NWFILTER_UNDEFINE,
-        { nwfilter => $self->{id},  } ));
+        { nwfilter => $self->{id} } ));
 }
 
 

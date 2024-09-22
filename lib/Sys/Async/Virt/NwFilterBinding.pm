@@ -36,7 +36,7 @@ sub new {
 sub delete($self) {
     return ($self->{client}->_call(
         $remote->PROC_NWFILTER_BINDING_DELETE,
-        { nwfilter => $self->{id},  } ));
+        { nwfilter => $self->{id} } ));
 }
 
 async sub get_xml_desc($self, $flags = 0) {

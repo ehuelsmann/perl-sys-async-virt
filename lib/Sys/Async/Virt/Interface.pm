@@ -57,13 +57,13 @@ async sub get_xml_desc($self, $flags = 0) {
 async sub is_active($self) {
     return (await $self->{client}->_call(
         $remote->PROC_INTERFACE_IS_ACTIVE,
-        { iface => $self->{id},  } ))->{active};
+        { iface => $self->{id} } ))->{active};
 }
 
 sub undefine($self) {
     return ($self->{client}->_call(
         $remote->PROC_INTERFACE_UNDEFINE,
-        { iface => $self->{id},  } ));
+        { iface => $self->{id} } ));
 }
 
 

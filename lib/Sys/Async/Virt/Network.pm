@@ -69,25 +69,25 @@ sub new {
 sub create($self) {
     return ($self->{client}->_call(
         $remote->PROC_NETWORK_CREATE,
-        { net => $self->{id},  } ));
+        { net => $self->{id} } ));
 }
 
 sub destroy($self) {
     return ($self->{client}->_call(
         $remote->PROC_NETWORK_DESTROY,
-        { net => $self->{id},  } ));
+        { net => $self->{id} } ));
 }
 
 async sub get_autostart($self) {
     return (await $self->{client}->_call(
         $remote->PROC_NETWORK_GET_AUTOSTART,
-        { net => $self->{id},  } ))->{autostart};
+        { net => $self->{id} } ))->{autostart};
 }
 
 async sub get_bridge_name($self) {
     return (await $self->{client}->_call(
         $remote->PROC_NETWORK_GET_BRIDGE_NAME,
-        { net => $self->{id},  } ))->{name};
+        { net => $self->{id} } ))->{name};
 }
 
 async sub get_dhcp_leases($self, $mac, $flags = 0) {
@@ -111,13 +111,13 @@ async sub get_xml_desc($self, $flags = 0) {
 async sub is_active($self) {
     return (await $self->{client}->_call(
         $remote->PROC_NETWORK_IS_ACTIVE,
-        { net => $self->{id},  } ))->{active};
+        { net => $self->{id} } ))->{active};
 }
 
 async sub is_persistent($self) {
     return (await $self->{client}->_call(
         $remote->PROC_NETWORK_IS_PERSISTENT,
-        { net => $self->{id},  } ))->{persistent};
+        { net => $self->{id} } ))->{persistent};
 }
 
 async sub list_all_ports($self, $flags = 0) {
@@ -153,7 +153,7 @@ sub set_metadata($self, $type, $metadata, $key, $uri, $flags = 0) {
 sub undefine($self) {
     return ($self->{client}->_call(
         $remote->PROC_NETWORK_UNDEFINE,
-        { net => $self->{id},  } ));
+        { net => $self->{id} } ));
 }
 
 sub update($self, $command, $section, $parentIndex, $xml, $flags = 0) {

@@ -70,13 +70,13 @@ sub delete($self, $flags = 0) {
 sub get_info($self) {
     return ($self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_INFO,
-        { vol => $self->{id},  } ));
+        { vol => $self->{id} } ));
 }
 
 async sub get_path($self) {
     return (await $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_PATH,
-        { vol => $self->{id},  } ))->{name};
+        { vol => $self->{id} } ))->{name};
 }
 
 async sub get_xml_desc($self, $flags = 0) {
@@ -88,7 +88,7 @@ async sub get_xml_desc($self, $flags = 0) {
 async sub pool_lookup_by_volume($self) {
     return (await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_LOOKUP_BY_VOLUME,
-        { vol => $self->{id},  } ))->{pool};
+        { vol => $self->{id} } ))->{pool};
 }
 
 sub resize($self, $capacity, $flags = 0) {
