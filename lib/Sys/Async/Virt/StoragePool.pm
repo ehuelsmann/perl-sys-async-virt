@@ -57,127 +57,109 @@ sub new {
 sub build($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_BUILD,
-        { pool => $self->{id}, flags => $flags // 0 } );
-;
+        { pool => $self->{id}, flags => $flags // 0 }, empty => 1 );
 }
 
 sub create($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_CREATE,
-        { pool => $self->{id}, flags => $flags // 0 } );
-;
+        { pool => $self->{id}, flags => $flags // 0 }, empty => 1 );
 }
 
 sub delete($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_DELETE,
-        { pool => $self->{id}, flags => $flags // 0 } );
-;
+        { pool => $self->{id}, flags => $flags // 0 }, empty => 1 );
 }
 
 sub destroy($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_DESTROY,
-        { pool => $self->{id} } );
-;
+        { pool => $self->{id} }, empty => 1 );
 }
 
 async sub get_autostart($self) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_GET_AUTOSTART,
         { pool => $self->{id} }, unwrap => 'autostart' );
-;
 }
 
 sub get_info($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_GET_INFO,
         { pool => $self->{id} } );
-;
 }
 
 async sub get_xml_desc($self, $flags = 0) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_GET_XML_DESC,
         { pool => $self->{id}, flags => $flags // 0 }, unwrap => 'xml' );
-;
 }
 
 async sub is_active($self) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_IS_ACTIVE,
         { pool => $self->{id} }, unwrap => 'active' );
-;
 }
 
 async sub is_persistent($self) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_IS_PERSISTENT,
         { pool => $self->{id} }, unwrap => 'persistent' );
-;
 }
 
 async sub list_all_volumes($self, $flags = 0) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_LIST_ALL_VOLUMES,
         { pool => $self->{id}, need_results => $remote->STORAGE_VOL_LIST_MAX, flags => $flags // 0 }, unwrap => 'vols' );
-;
 }
 
 async sub list_volumes($self) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_LIST_VOLUMES,
         { pool => $self->{id}, maxnames => $remote->STORAGE_VOL_LIST_MAX }, unwrap => 'names' );
-;
 }
 
 async sub num_of_volumes($self) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_NUM_OF_VOLUMES,
         { pool => $self->{id} }, unwrap => 'num' );
-;
 }
 
 sub refresh($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_REFRESH,
-        { pool => $self->{id}, flags => $flags // 0 } );
-;
+        { pool => $self->{id}, flags => $flags // 0 }, empty => 1 );
 }
 
 sub set_autostart($self, $autostart) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_SET_AUTOSTART,
-        { pool => $self->{id}, autostart => $autostart } );
-;
+        { pool => $self->{id}, autostart => $autostart }, empty => 1 );
 }
 
 sub undefine($self) {
     return $self->{client}->_call(
         $remote->PROC_STORAGE_POOL_UNDEFINE,
-        { pool => $self->{id} } );
-;
+        { pool => $self->{id} }, empty => 1 );
 }
 
 async sub vol_create_xml($self, $xml, $flags = 0) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_CREATE_XML,
         { pool => $self->{id}, xml => $xml, flags => $flags // 0 }, unwrap => 'vol' );
-;
 }
 
 async sub vol_create_xml_from($self, $xml, $clonevol, $flags = 0) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_CREATE_XML_FROM,
         { pool => $self->{id}, xml => $xml, clonevol => $clonevol, flags => $flags // 0 }, unwrap => 'vol' );
-;
 }
 
 async sub vol_lookup_by_name($self, $name) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_LOOKUP_BY_NAME,
         { pool => $self->{id}, name => $name }, unwrap => 'vol' );
-;
 }
 
 

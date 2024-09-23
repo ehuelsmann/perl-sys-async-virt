@@ -39,36 +39,31 @@ sub new {
 sub create($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_INTERFACE_CREATE,
-        { iface => $self->{id}, flags => $flags // 0 } );
-;
+        { iface => $self->{id}, flags => $flags // 0 }, empty => 1 );
 }
 
 sub destroy($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_INTERFACE_DESTROY,
-        { iface => $self->{id}, flags => $flags // 0 } );
-;
+        { iface => $self->{id}, flags => $flags // 0 }, empty => 1 );
 }
 
 async sub get_xml_desc($self, $flags = 0) {
     return await $self->{client}->_call(
         $remote->PROC_INTERFACE_GET_XML_DESC,
         { iface => $self->{id}, flags => $flags // 0 }, unwrap => 'xml' );
-;
 }
 
 async sub is_active($self) {
     return await $self->{client}->_call(
         $remote->PROC_INTERFACE_IS_ACTIVE,
         { iface => $self->{id} }, unwrap => 'active' );
-;
 }
 
 sub undefine($self) {
     return $self->{client}->_call(
         $remote->PROC_INTERFACE_UNDEFINE,
-        { iface => $self->{id} } );
-;
+        { iface => $self->{id} }, empty => 1 );
 }
 
 

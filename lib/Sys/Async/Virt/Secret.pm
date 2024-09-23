@@ -41,21 +41,18 @@ async sub get_xml_desc($self, $flags = 0) {
     return await $self->{client}->_call(
         $remote->PROC_SECRET_GET_XML_DESC,
         { secret => $self->{id}, flags => $flags // 0 }, unwrap => 'xml' );
-;
 }
 
 sub set_value($self, $value, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_SECRET_SET_VALUE,
-        { secret => $self->{id}, value => $value, flags => $flags // 0 } );
-;
+        { secret => $self->{id}, value => $value, flags => $flags // 0 }, empty => 1 );
 }
 
 sub undefine($self) {
     return $self->{client}->_call(
         $remote->PROC_SECRET_UNDEFINE,
-        { secret => $self->{id} } );
-;
+        { secret => $self->{id} }, empty => 1 );
 }
 
 
