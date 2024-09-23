@@ -6,7 +6,7 @@ requires 'Future::AsyncAwait';
 requires 'Future::Queue';
 requires 'IO::Async::Notifier';
 requires 'Log::Any';
-requires 'Protocol::Sys::Virt' => '10.3.7';
+requires 'Protocol::Sys::Virt' => '10.3.8';
 
 
 on test => sub {

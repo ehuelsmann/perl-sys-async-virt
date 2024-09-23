@@ -85,7 +85,7 @@ my %module = (
     );
 
 my $main_module = 'Client';
-my @other_modules = qw( Callback );
+my @other_modules = qw( Callback Stream );
 
 my %prefix_strip_xdr = (
     Client => qr/^connect_/,
@@ -200,7 +200,32 @@ sub ep_pod($mod, $ep, $c_api_defs) {
     if (length $retstr > 50) {
         $retstr =~ s/, /,\n  #      /g;
     }
-    if (not $ep->{ret_unwrap}) {
+    if (@{$ep->{ret}} == 0 and $ep->{retstream}) {
+        return <<~POD;
+          =head2 $ep->{name}
+
+            \$stream = await \$$varname{$mod}->$ep->{name}$argstr;
+          $doc_url
+          POD
+    }
+    elsif (@{$ep->{ret}} == 1 and $ep->{retstream} and $ep->{ret_unwrap}) {
+        return <<~POD;
+          =head2 $ep->{name}
+
+            ( \$$ep->{ret_unwrap}, \$stream ) = await \$$varname{$mod}->$ep->{name}$argstr;
+          $doc_url
+          POD
+    }
+    elsif ($ep->{retstream}) {
+        return <<~POD;
+          =head2 $ep->{name}
+
+            await \$$varname{$mod}->$ep->{name}$argstr;
+            # -> ( $retstr, \$stream )
+          $doc_url
+          POD
+    }
+    elsif (not $ep->{ret_unwrap}) {
         return <<~POD;
           =head2 $ep->{name}
 
@@ -324,6 +349,23 @@ sub proc_annotation($proc) {
                 @{ $proc->{comments} } );
 }
 
+sub proc_call_retstr($retstream, $ret_unwrap, @retvals) {
+    if ($retstream and @retvals == 0) {
+        return '$stream';
+    }
+    elsif ($retstream) {
+        return '( ' . proc_call_retstr('', $ret_unwrap, @retvals) . ', $stream )';
+    }
+    elsif (not $ret_unwrap) {
+        return ('{ ' . join(', ',
+                            map { $_ . ' => $' . $_ }
+                            sort map { $_->{name} }  @retvals) . ' }');
+    }
+    else {
+        return "\$$ret_unwrap";
+    }
+}
+
 sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $struct_basename, $c_api_defs) {
     my $proc_annotation = proc_annotation($proc);
     if ($proc_annotation !~ m/\@generate:\s*(both|client|server|none)/) {
@@ -359,18 +401,10 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
             return;
         }
     }
-    elsif ($proc_annotation =~ m/(\@(read|write)stream):/) {
-        $module_returns->[$proc_value] = '\&_no_translation';
-        push @skipped_entrypoints, {
-            name => $proc->{name}->{content},
-            reason => $1,
-        };
-        return;
-    }
     my $func = ($struct_basename =~ s/^remote_//r);
     my $retstruct_name = $struct_basename . '_ret';
     my $retstruct = find_toplevel_definition($ast, $retstruct_name);
-    my $retstream = ($proc_annotation =~ m/@(read|write)stream:/);
+    my ($retstream) = ($proc_annotation =~ m/@(read|write)stream:/);
     my $into_module = $main_module;
 
     my @retvals  = _retvals( $retstruct );
@@ -392,8 +426,7 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
     $entrypoint = '_' . $entrypoint
         if $header =~ m/internal/i;
     my $pod_remarks = '';
-    if (scalar(@retvals) > 1
-        and any { $_->{name} eq 'ret' } @retvals) {
+    if (any { $_->{name} eq 'ret' } @retvals) {
         # list functions have a 'ret' and an array; simply return the array,
         # Perl *knows* how long the array is...
         @retvals = grep { $_->{name} ne 'ret' } @retvals;
@@ -431,11 +464,7 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
         args => \@callargs,
         ret  => \@retvals,
         retstream => $retstream,
-        retstr => ((not $ret_unwrap)
-                   ? ('{ ' . join(', ',
-                                  map { $_ . ' => $' . $_ }
-                                  sort map { $_->{name} }  @retvals) . ' }')
-                   : "\$$ret_unwrap"),
+        retstr => proc_call_retstr($retstream, $ret_unwrap, @retvals),
         ret_unwrap => $ret_unwrap,
     };
     my %mapped_retvals;
@@ -639,6 +668,10 @@ sub proc_entrypoint($module, $entrypoint) {
         ? ('async ', 'await ')
         : ('', '');
     my $call = $is_main ? '$self->_call' : '$self->{client}->_call';
+    my $stream =
+        $entrypoint->{retstream} ? ", stream => '$entrypoint->{retstream}'" : '';
+    my $empty =
+        (@{ $entrypoint->{ret} } == 0) ? ", empty => 1" : '';
 
     $entrypoint->{argstr} = $argstr;
     $ret_unwrap = ", unwrap => '$ret_unwrap'"
@@ -660,8 +693,9 @@ sub proc_entrypoint($module, $entrypoint) {
     my $return = <<~RETURN;
          ${await}$call(
                  \$remote->$entrypoint->{const},
-                 { $argsmap }$ret_unwrap );
+                 { $argsmap }$ret_unwrap$stream$empty )
          RETURN
+    chomp $return;
     $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
         ${async}sub $entrypoint->{name}($argstr) {
             $modify_flags

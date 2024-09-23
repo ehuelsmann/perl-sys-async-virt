@@ -44,6 +44,7 @@ use Sys::Async::Virt::NodeDevice __VERSION__;
 use Sys::Async::Virt::Secret __VERSION__;
 
 use Sys::Async::Virt::Callback __VERSION__;
+use Sys::Async::Virt::Stream __VERSION__;
 
 __CONSTANTS__
 
@@ -214,6 +215,8 @@ sub new {
         storage_vol_factory       => \&_storage_vol_factory,
         node_device_factory       => \&_node_device_factory,
         secret_factory            => \&_secret_factory,
+
+        on_stream => $args{on_stream},
     }, $class;
 
     $self->register( $args{remote} ) if $args{remote};
@@ -328,7 +331,32 @@ extended async sub _call($self, $proc, $args = {}, :$unwrap = '', :$stream = '',
     ### Return a stream somehow...
     my @rv = await $f;
     $rv[0] = $rv[0]->{$unwrap} if $unwrap;
+    shift @rv if $empty;
+    if ($stream) {
+        my $s = Sys::Async::Virt::Stream->new(
+            id => $serial,
+            proc => $proc,
+            client => $self,
+            direction => ($stream eq 'write' ? 'send' : 'receive'),
+            );
+        $self->{_streams}->{$serial} = $s;
+        weaken $self->{_streams}->{$serial};
+        $self->add_child( $s );
+
+        push @rv, $s;
+    }
     return @rv;
+}
+
+async sub _send($self, $proc, $serial, %args) {
+    await $self->{remote}->stream(
+        $proc, $serial,
+        data => $args{data},
+        hole => $args{hole});
+}
+
+async sub _send_finish($self, $proc, $serial, $abort) {
+    await $self->{remote}->stream_end($proc, $serial, $abort);
 }
 
 async sub _typed_param_string_okay($self) {
@@ -391,10 +419,15 @@ sub _dispatch_stream {
     my %args = @_;
 
     if (my $stream = $self->{_streams}->{$args{header}->{serial}}) {
-       $stream->process_protocol_message( @_ );
+        if ($args{error}) {
+            return $stream->_dispatch_error($args{error});
+        }
+        else {
+            return $stream->_dispatch_receive($args{data}, $args{final});
+        }
     }
     else {
-        $self->{on_stream}->( @_ );
+        return $self->{on_stream}->( @_ );
     }
 }
 
@@ -786,7 +819,12 @@ __CONSTANTS_POD__
 =head2 _call
 
 This method forwards protocol "calls" to the C<remote> instance.  Using this
-wrapper allows for tracking all calls allowing to set up handling of the replies.
+wrapper allows for tracking all calls allowing to set up handling of the
+replies.
+
+=head2 _send
+
+=head2 _send_end
 
 =head2 _dispatch_message
 
