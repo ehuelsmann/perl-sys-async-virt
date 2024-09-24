@@ -15,12 +15,12 @@ use warnings;
 use experimental 'signatures';
 use Future::AsyncAwait;
 
-package Sys::Async::Virt::NodeDevice v0.0.4;
+package Sys::Async::Virt::NodeDevice v0.0.5;
 
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v0.0.4;
+use Protocol::Sys::Virt::Remote::XDR v0.0.5;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use constant {
@@ -152,7 +152,7 @@ Sys::Async::Virt::NodeDevice - Client side proxy to remote LibVirt host device
 
 =head1 VERSION
 
-v0.0.4
+v0.0.5
 
 =head1 SYNOPSIS
 
