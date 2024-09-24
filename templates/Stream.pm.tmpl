@@ -123,8 +123,9 @@ async sub abort($self) {
     delete $self->{_streams}->{$self->{id}};
     $self->remove_from_parent;
     $self->{queue} = undef;
-    unless ($self->{pending_error}) {
-        $self->{pending_error} = $error;
+    if (my $e = $self->{pending_error}) {
+        $self->{pending_error} = undef;
+        die $e;
     }
     return;
 }
@@ -135,8 +136,9 @@ async sub finish($self) {
     delete $self->{_streams}->{$self->{id}};
     $self->remove_from_parent;
     $self->{queue} = undef;
-    unless ($self->{pending_error}) {
-        $self->{pending_error} = $error;
+    if (my $e = $self->{pending_error}) {
+        $self->{pending_error} = undef;
+        die $e;
     }
     return;
 }
