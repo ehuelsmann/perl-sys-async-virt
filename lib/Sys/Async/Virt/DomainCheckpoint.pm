@@ -87,13 +87,25 @@ v0.0.4
 
 =head1 SYNOPSIS
 
+  use Future::AsyncAwait;
+
+  my $domain = await $virt->domain_lookup_by_name( 'domain' );
+  my $checkp = await $domain->checkpoint_lookup_by_name( 'checkpoint' );
+  my $children = await $checkp->list_all_children();
+
 =head1 DESCRIPTION
 
+Provides access to checkpoints.
+
 =head1 EVENTS
+
+No (LibVirt) events available for domain checkpoints.
 
 =head1 CONSTRUCTOR
 
 =head2 new
+
+Not to be called directly. Various APIs return instances of this type.
 
 =head1 METHODS
 

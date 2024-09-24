@@ -1577,13 +1577,30 @@ v0.0.4
 
 =head1 SYNOPSIS
 
+  use Future::AsyncAwait;
+
+  my $dom = await $virt->lookup_domain_by_name( 'domain' );
+  await $dom->create;        # -> start domain
+  say await $dom->get_state; # "1" ("running")
+  await $dom->shutdown;      # -> gracefully shut down domain
+  say await $dom->get_state; # "4" ("shutting down")
+
 =head1 DESCRIPTION
 
+Provides access to a domain and its related resources on the server.
+The domain may or may not be running.
+
 =head1 EVENTS
+
+Event callbacks can be acquired through
+L<Sys::Async::Virt/domain_event_register_any>.
 
 =head1 CONSTRUCTOR
 
 =head2 new
+
+Not to be called directly. Instances are returned from calls
+in L<Sys::Async::Virt>.
 
 =head1 METHODS
 

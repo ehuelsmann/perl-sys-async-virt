@@ -51,13 +51,23 @@ __VERSION__
 
 =head1 SYNOPSIS
 
+  use Future::AsyncAwait;
+
+  my $domain = await $virt->domain_lookup_by_name( 'domain' );
+  my $snap   = await $domain->snapshot_lookup_by_name( 'snap' );
+  say await $snap->num_children;
+
 =head1 DESCRIPTION
 
 =head1 EVENTS
 
+There are no (LibVirt) events available for snapshots.
+
 =head1 CONSTRUCTOR
 
 =head2 new
+
+Not to be called directly. Various API calls return instances of this type.
 
 =head1 METHODS
 

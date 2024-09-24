@@ -543,18 +543,6 @@ async sub secret_event_register_any($self, $eventID, $secret = undef) {
     return $cb;
 }
 
-sub register_stream {
-    my ($self, $serial, $stream) = @_;
-    $self->{_streams}->{$serial} = $stream;
-    weaken $self->{_streams}->{$serial};
-    $stream->configure( parent => $self );
-}
-
-sub unregister_stream {
-    my ($self, $serial) = @_;
-    delete $self->{_streams}->{$serial};
-}
-
 # ENTRYPOINT: REMOTE_PROC_AUTH_LIST
 # ENTRYPOINT: REMOTE_PROC_AUTH_POLKIT
 # ENTRYPOINT: REMOTE_PROC_AUTH_SASL_INIT
@@ -677,6 +665,24 @@ description from which most of the code is generated, changes are anticipated
 to be minimal.  The more feedback the project receives, the sooner the project
 will be able to commit to the API as it is.
 
+=head2 ASYNCHRONOUS INVOCATIONS
+
+The API calls in these modules invoke remote procedure calls (RPC) on a
+LibVirt server (which may run locally). The return values are L<Future>s
+which can be C<await>ed using L<Future::AsyncAwait>.  Many calls start a
+process on the server without awaiting the result.  One example is the
+C<$domain->shutdown()> invocation: it returns when shut down has been
+initiated, not when the domain is actually shut off. Other calls query
+the server for state (such as C<$domain->get_state()>) and return the
+state when the server replies to the invocation.
+
+The LibVirt protocol and server support concurrent requests: requests
+issued before earlier requests have finished. The server responds as soon
+as the result is available. This means that server replies may come back
+out-of-order, resolving futures as results become available. The use of
+C<async> and C<await> help to await results from the server and continue
+processing as soon as results become available.
+
 =head1 CLIENT EVENTS
 
 =head2 on_message
@@ -692,8 +698,9 @@ registration functions.
 
   $on_stream->( @@@TODO );
 
-Receives all messages for which no stream has been registered through
-L</register_stream>.
+Receives all messages for which no stream has been instantiated and returned
+through the relevant API calls.
+
 
 =head2 on_close
 
@@ -770,20 +777,12 @@ Creates a new client instance.  The constructor supports the following arguments
 
   $client->register( $remote );
 
-=head2 register_stream
-
-  $client->register_stream( $serial, $stream );
-
-=head2 unregister_stream
-
-  $client->unregister_stream( $serial );
-
 =head2 auth
 
-  await $client->auth( $auth_type, $on_completed );
+  await $client->auth( $auth_type );
   # -> (* no data *)
 
-Authenticates the client with the server.
+Authenticates against the server.
 
 =head2 open
 
@@ -855,6 +854,14 @@ __PRIVATE_EPS__
 =head2 TODO
 
 =over 8
+
+=item * Update the cached proxy instances (e.g. domains) after creation
+to include 'id' (e.g. domain 'id')
+
+Although this doesn't seem a prerequisite for the API to work correctly,
+it seems sloppy that there's no update of the domain 'id' when one becomes
+available when the domain is started. (Looking at the sources of LibVirt,
+the 'id' doesn't get cleared when the domain is destroyed???)
 
 =item * KeepAlive support
 
