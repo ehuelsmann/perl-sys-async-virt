@@ -18,7 +18,7 @@ use Feature::Compat::Try;
 use Future::AsyncAwait;
 use Sublike::Extended; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
-package Sys::Async::Virt v0.0.5;
+package Sys::Async::Virt v0.0.6;
 
 use parent qw(IO::Async::Notifier);
 
@@ -33,22 +33,22 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 use Protocol::Sys::Virt::Remote v10.3.7;
 use Protocol::Sys::Virt::Transport v10.3.7;
 
-use Sys::Async::Virt::Connection::Factory v0.0.5;
-use Sys::Async::Virt::Domain v0.0.5;
-use Sys::Async::Virt::DomainCheckpoint v0.0.5;
-use Sys::Async::Virt::DomainSnapshot v0.0.5;
-use Sys::Async::Virt::Network v0.0.5;
-use Sys::Async::Virt::NetworkPort v0.0.5;
-use Sys::Async::Virt::NwFilter v0.0.5;
-use Sys::Async::Virt::NwFilterBinding v0.0.5;
-use Sys::Async::Virt::Interface v0.0.5;
-use Sys::Async::Virt::StoragePool v0.0.5;
-use Sys::Async::Virt::StorageVol v0.0.5;
-use Sys::Async::Virt::NodeDevice v0.0.5;
-use Sys::Async::Virt::Secret v0.0.5;
+use Sys::Async::Virt::Connection::Factory v0.0.6;
+use Sys::Async::Virt::Domain v0.0.6;
+use Sys::Async::Virt::DomainCheckpoint v0.0.6;
+use Sys::Async::Virt::DomainSnapshot v0.0.6;
+use Sys::Async::Virt::Network v0.0.6;
+use Sys::Async::Virt::NetworkPort v0.0.6;
+use Sys::Async::Virt::NwFilter v0.0.6;
+use Sys::Async::Virt::NwFilterBinding v0.0.6;
+use Sys::Async::Virt::Interface v0.0.6;
+use Sys::Async::Virt::StoragePool v0.0.6;
+use Sys::Async::Virt::StorageVol v0.0.6;
+use Sys::Async::Virt::NodeDevice v0.0.6;
+use Sys::Async::Virt::Secret v0.0.6;
 
-use Sys::Async::Virt::Callback v0.0.5;
-use Sys::Async::Virt::Stream v0.0.5;
+use Sys::Async::Virt::Callback v0.0.6;
+use Sys::Async::Virt::Stream v0.0.6;
 
 use constant {
     CLOSE_REASON_ERROR                                 => 0,
@@ -1963,7 +1963,7 @@ Sys::Async::Virt - LibVirt protocol implementation for clients
 
 =head1 VERSION
 
-v0.0.5
+v0.0.6
 
 Based on LibVirt tag v10.3.0
 
@@ -3346,8 +3346,8 @@ replies.
 
 =over 8
 
-=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature (v1.3.3)
-  is not - currently - supported
+=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature
+ (v1.3.3 - 2016-04-06) is not - currently - supported
 
 =begin fill-templates
 
