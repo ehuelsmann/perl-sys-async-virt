@@ -30,6 +30,10 @@ use Scalar::Util qw(reftype weaken);
 use Protocol::Sys::Virt::Remote::XDR v10.3.7;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
+use Protocol::Sys::Virt::Remote v10.3.7;
+use Protocol::Sys::Virt::Transport v10.3.7;
+
+use Sys::Async::Virt::Connection::Factory v0.0.5;
 use Sys::Async::Virt::Domain v0.0.5;
 use Sys::Async::Virt::DomainCheckpoint v0.0.5;
 use Sys::Async::Virt::DomainSnapshot v0.0.5;
@@ -894,10 +898,11 @@ sub new {
         node_device_factory       => \&_node_device_factory,
         secret_factory            => \&_secret_factory,
 
+        url       => $args{url},
+        factory   => $args{factory},
         on_stream => $args{on_stream},
     }, $class;
 
-    $self->register( $args{remote} ) if $args{remote};
     return $self;
 }
 
@@ -1004,7 +1009,7 @@ sub _secret_instance {
 extended async sub _call($self, $proc, $args = {}, :$unwrap = '', :$stream = '', :$empty = '') {
     my $serial = await $self->{remote}->call( $proc, $args );
     my $f = $self->loop->new_future;
-    $log->trace( "Setting serial $serial future" );
+    $log->trace( "Setting serial $serial future (proc: $proc)" );
     $self->{_replies}->{$serial} = $f;
     ### Return a stream somehow...
     my @rv = await $f;
@@ -1076,6 +1081,7 @@ sub _dispatch_message($self, %args) {
 
 sub _dispatch_reply {
     my ($self, %args) = @_;
+    $log->trace( "Dispatching serial $args{header}->{serial}" );
     my $f = delete $self->{_replies}->{$args{header}->{serial}};
 
     if (exists $args{data}) {
@@ -1129,6 +1135,52 @@ sub register {
         );
     $self->{remote} = $r;
 }
+
+
+async sub _pump($conn, $transport) {
+    my $eof;
+    my $data;
+    while (not $eof) {
+        my ($len, $type) = $transport->need;
+        $log->trace( "Reading data from connection: initiated (len: $len)" );
+        ($data, $eof) = await $conn->read( $type, $len );
+        $log->trace( 'Reading data from connection: completed' );
+
+        await Future->wait_all( $transport->receive($data) );
+        $log->trace( 'Processed input data from connection' );
+    }
+}
+
+extended async sub connect($self, :$pump = undef) {
+    unless ($self->{connection}) {
+        my $factory =
+            $self->{factory} //= Sys::Async::Virt::Connection::Factory->new;
+        my $conn = $factory->create_connection( $self->{url} );
+        $self->add_child( $conn );
+        $self->{connection} = $conn;
+    }
+
+    unless ($self->{transport}) {
+        my $conn      = $self->{connection};
+        my $transport = Protocol::Sys::Virt::Transport->new(
+            role => 'client',
+            on_send => async sub($opaque, @data) {
+                await $conn->write( @data );
+                return $opaque;
+            });
+        $self->{transport} = $transport;
+    }
+
+    $self->{remote} //= Protocol::Sys::Virt::Remote->new(role => 'client');
+    $self->{remote}->register($self->{transport});
+    $self->register( $self->{remote} );
+
+    await $self->{connection}->connect;
+
+    $pump //= \&_pump;
+    $self->adopt_future( $pump->( $self->{connection}, $self->{transport} ) );
+}
+
 
 # ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_CALLBACK_REGISTER_ANY
 # ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_CALLBACK_DEREGISTER_ANY
@@ -1913,25 +1965,14 @@ Based on LibVirt tag v10.3.0
 
 =head1 SYNOPSIS
 
+  use IO::Async::Loop;
   use Sys::Async::Virt;
-  use Protocol::Sys::Virt::Remote;
-  use Protocol::Sys::Virt::Transport;
 
-  open my $fh, 'rw', '/run/libvirt/libvirt.sock';
-  my $transport = Protocol::Sys::Virt::Transport->new(
-       role => 'client',
-       on_send => sub { syswrite( $fh, $_ ) for @_ }
-  );
+  my $loop = IO::Async::Loop->new;
+  my $client = Sys::Async::Virt->new(url => 'qemu:///system');
 
-  my $remote = Protocol::Sys::Virt::Remote->new(
-       role => 'client',
-       on_reply => sub { say 'Reply handled!'; },
-  );
-  $remote->register( $transport );
-
-  my $client = Sys::Async::Virt->new();
-  $client->register( $remote );
-
+  $loop->add( $client );
+  await $client->connect;
   await $client->auth( $remote->AUTH_NONE );
   await $client->open( 'qemu:///system' );
 
@@ -2073,6 +2114,12 @@ Creates a new client instance.  The constructor supports the following arguments
 =head2 register
 
   $client->register( $remote );
+
+=head2 connect
+
+  await $client->connect( $url );
+
+Sets up the transport connection to the server indicated by C<url>.
 
 =head2 auth
 

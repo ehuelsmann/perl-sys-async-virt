@@ -69,13 +69,13 @@ async sub read($self, $type, $len) {
     await $self->{in}->read_exactly( $len );
 }
 
-async sub write($self, $opaque, @data) {
+async sub write($self, @data) {
     while (@data) {
         my $data = shift @data;
         next unless length($data) > 0;
         await $self->{out}->write($data);
     }
-    return $opaque;
+    return;
 }
 
 
