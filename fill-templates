@@ -686,7 +686,7 @@ sub proc_entrypoint($module, $entrypoint) {
         $nparams = <<~PROC;
             my \$nparams = await $call(
                     \$remote->$entrypoint->{const},
-                    { $nparams_argsmap }, 'nparams' );
+                    { $nparams_argsmap }, unwrap => 'nparams' );
             PROC
     }
     my $result = '';

@@ -52,7 +52,7 @@ async sub get_parameters($self, $flags = 0) {
     $flags |= await $self->{client}->_typed_param_string_okay();
     my $nparams = await $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_GET_PARAMETERS,
-        { port => $self->{id}, nparams => 0, flags => $flags // 0 }, 'nparams' );
+        { port => $self->{id}, nparams => 0, flags => $flags // 0 }, unwrap => 'nparams' );
     return await $self->{client}->_call(
         $remote->PROC_NETWORK_PORT_GET_PARAMETERS,
         { port => $self->{id}, nparams => $nparams, flags => $flags // 0 }, unwrap => 'params' );

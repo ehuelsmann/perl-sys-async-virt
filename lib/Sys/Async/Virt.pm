@@ -1658,7 +1658,7 @@ async sub network_lookup_by_uuid($self, $uuid) {
 async sub node_get_cpu_stats($self, $cpuNum, $flags = 0) {
     my $nparams = await $self->_call(
         $remote->PROC_NODE_GET_CPU_STATS,
-        { cpuNum => $cpuNum, nparams => 0, flags => $flags // 0 }, 'nparams' );
+        { cpuNum => $cpuNum, nparams => 0, flags => $flags // 0 }, unwrap => 'nparams' );
     return await $self->_call(
         $remote->PROC_NODE_GET_CPU_STATS,
         { cpuNum => $cpuNum, nparams => $nparams, flags => $flags // 0 }, unwrap => 'params' );
@@ -1680,7 +1680,7 @@ async sub node_get_memory_parameters($self, $flags = 0) {
     $flags |= await $self->_typed_param_string_okay();
     my $nparams = await $self->_call(
         $remote->PROC_NODE_GET_MEMORY_PARAMETERS,
-        { nparams => 0, flags => $flags // 0 }, 'nparams' );
+        { nparams => 0, flags => $flags // 0 }, unwrap => 'nparams' );
     return await $self->_call(
         $remote->PROC_NODE_GET_MEMORY_PARAMETERS,
         { nparams => $nparams, flags => $flags // 0 }, unwrap => 'params' );
@@ -1689,7 +1689,7 @@ async sub node_get_memory_parameters($self, $flags = 0) {
 async sub node_get_memory_stats($self, $cellNum, $flags = 0) {
     my $nparams = await $self->_call(
         $remote->PROC_NODE_GET_MEMORY_STATS,
-        { nparams => 0, cellNum => $cellNum, flags => $flags // 0 }, 'nparams' );
+        { nparams => 0, cellNum => $cellNum, flags => $flags // 0 }, unwrap => 'nparams' );
     return await $self->_call(
         $remote->PROC_NODE_GET_MEMORY_STATS,
         { nparams => $nparams, cellNum => $cellNum, flags => $flags // 0 }, unwrap => 'params' );
@@ -1699,7 +1699,7 @@ async sub node_get_sev_info($self, $flags = 0) {
     $flags |= await $self->_typed_param_string_okay();
     my $nparams = await $self->_call(
         $remote->PROC_NODE_GET_SEV_INFO,
-        { nparams => 0, flags => $flags // 0 }, 'nparams' );
+        { nparams => 0, flags => $flags // 0 }, unwrap => 'nparams' );
     return await $self->_call(
         $remote->PROC_NODE_GET_SEV_INFO,
         { nparams => $nparams, flags => $flags // 0 }, unwrap => 'params' );
