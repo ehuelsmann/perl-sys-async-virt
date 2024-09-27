@@ -1271,6 +1271,9 @@ async sub open {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK
 async sub close {
     my ($self) = @_;
+    for my $cb (values %{ $self->{_callbacks} }) {
+        await $cb->cancel;
+    }
     await $self->_call( $remote->PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK );
     await $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
 }

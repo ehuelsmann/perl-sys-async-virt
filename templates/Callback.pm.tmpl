@@ -43,12 +43,14 @@ async sub next_event($self) {
 }
 
 async sub cancel($self) {
-    return if $self->{cancelled};
+    return if ($self->{cancelled}
+               and $self->{cancelled}->is_ready);
+    return await $self->{cancelled} if $self->{cancelled};
 
-    $self->{cancelled} = 1;
-    await $self->{client}->_call(
+    $self->{cancelled} = $self->{client}->_call(
         $self->{deregister_call},
         { callbackID => $self->{id} });
+    await $self->{cancelled};
 
     $self->{queue}->finish;
     delete $self->{client}->{_callbacks}->{$self->{id}};
