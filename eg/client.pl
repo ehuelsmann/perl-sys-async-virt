@@ -14,21 +14,17 @@ use Log::Any::Adapter::Stdout;
 use Protocol::Sys::Virt::Transport;
 use Protocol::Sys::Virt::Remote;
 use Sys::Async::Virt;
+use Sys::Async::Virt::Connection::Factory;
 
 Log::Any::Adapter->set('Stdout', log_level => 'trace');
 my $loop = IO::Async::Loop->new;
 my $prot = 'Protocol::Sys::Virt::Remote::XDR';
-my $sock = await $loop->connect(
-    addr => {
-        family => 'unix',
-        socktype => 'stream',
-        path => '/run/libvirt/libvirt-sock'
-    });
-my $stream = IO::Async::Stream->new(
-    handle => $sock,
-    on_read => sub { 0 } # don't consume data; we'll use 'read_exactly'
-    );
-$loop->add( $stream );
+
+my $factory = Sys::Async::Virt::Connection::Factory->new;
+my $conn = $factory->create_connection( 'qemu:///system' );
+$loop->add( $conn );
+
+await $conn->connect;
 $log->trace( 'Created libvirt connection socket' );
 
 async sub data_pump($stream, $transport) {
@@ -37,7 +33,7 @@ async sub data_pump($stream, $transport) {
     while (not $eof) {
         my ($len, $type) = $transport->need;
         $log->trace( "Reading data from stream: initiated (len: $len)" );
-        ($data, $eof) = await $stream->read_exactly( $len );
+        ($data, $eof) = await $conn->read( $type, $len );
         $log->trace( 'Reading data from stream: completed' );
 
         await Future->wait_all( $transport->receive($data) );
@@ -50,13 +46,7 @@ my $transport = Protocol::Sys::Virt::Transport->new(
     on_send => async sub($opaque, @data) {
         $log->trace( "on_send called with opaque value $opaque" );
         $log->trace( 'on_send called with ' . scalar(@data) . ' arguments');
-        while (@data) {
-            my $data = shift @data;
-            next unless length($data) > 0;
-            $log->trace("Writing data... " . length($data));
-            $log->trace(unpack("H*", $data));
-            await $stream->write($data);
-        }
+        await $conn->write( $opaque, @data );
 
         $log->trace( 'Finished sending data' );
         return $opaque;
@@ -75,7 +65,7 @@ my $virt = Sys::Async::Virt->new(
 $loop->add( $virt );
 $log->trace( 'Created libvirt client application layer' );
 
-data_pump( $stream, $transport )->retain;
+data_pump( $conn, $transport )->retain;
 $log->trace( 'Started data pump' );
 
 

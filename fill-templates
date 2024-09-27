@@ -85,7 +85,8 @@ my %module = (
     );
 
 my $main_module = 'Client';
-my @other_modules = qw( Callback Stream );
+my @other_modules = qw(
+    Callback Stream Connection ConnectionFactory ConnectionLocal );
 
 my %prefix_strip_xdr = (
     Client => qr/^connect_/,
@@ -317,8 +318,14 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
     $tmpl =~ s/__CONSTANTS_POD__/$constants_pod/;
     $tmpl =~ s/__UNIMPLEMENTED__/$skipped_pod/;
 
-    my $out = ($mod ne $main_module) ?
-        "lib/Sys/Async/Virt/$mod.pm" : 'lib/Sys/Async/Virt.pm';
+    my $out;
+    if ($mod eq $main_module) {
+        $out = 'lib/Sys/Async/Virt.pm';
+    }
+    else {
+        $mod =~ s#^Connection(?!(\.|$))#Connection/#;
+        $out = "lib/Sys/Async/Virt/$mod.pm";
+    }
     open my $fh, '>', $out
         or die "$!";
     print $fh $tmpl;
