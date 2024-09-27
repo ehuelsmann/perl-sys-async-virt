@@ -898,9 +898,13 @@ sub new {
         node_device_factory       => \&_node_device_factory,
         secret_factory            => \&_secret_factory,
 
-        url       => $args{url},
-        factory   => $args{factory},
-        on_stream => $args{on_stream},
+        url        => $args{url},
+        connection => $args{connection},
+        transport  => $args{transport},
+        remote     => $args{remote},
+        factory    => $args{factory},
+        keepalive  => $args{keepalive},
+        on_stream  => $args{on_stream},
     }, $class;
 
     return $self;
@@ -1171,8 +1175,8 @@ extended async sub connect($self, :$pump = undef) {
         $self->{transport} = $transport;
     }
 
-    $self->{remote} //= Protocol::Sys::Virt::Remote->new(role => 'client');
-    $self->{remote}->register($self->{transport});
+    $self->{remote} //= Protocol::Sys::Virt::Remote->new( role => 'client' );
+    $self->{remote}->register( $self->{transport} );
     $self->register( $self->{remote} );
 
     await $self->{connection}->connect;
@@ -2097,13 +2101,23 @@ Returns a L<Sys::Async::Virt::Callback> instance.
 
   $client = Sys::Async::Virt->new( remote => $remote, ... );
 
-Creates a new client instance.  The constructor supports the following arguments:
+Creates a new client instance.  The constructor supports these parameters:
 
 =over 8
+
+=item * C<factory> (optional)
+
+=item * C<connection> (optional)
+
+=item * C<transport> (optional)
 
 =item * C<remote> (optional)
 
 =item * C<keepalive> (optional)
+
+=item * C<url> (optional)
+
+=item * C<on_stream> (optional)
 
 =back
 

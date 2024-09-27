@@ -134,8 +134,8 @@ requested to read file descriptors).
 
 =head2 write
 
-  my $opaque = await $conn->write( $opaque, 'data1', 'data2', ... );
-  my $opaque = await $conn->write( $opaque, [ $fd1, $fd2, ... ] );
+  await $conn->write( 'data1', 'data2', ... );
+  await $conn->write( [ $fd1, $fd2, ... ] );
 
 Writes data (passed as strings) and file descriptors (passed as arrays of
 descriptors) to the connection.
