@@ -23,38 +23,6 @@ use Carp qw(croak);
 use Log::Any qw($log);
 
 
-sub _parse_url($self, $url) {
-    my ($base, $query) = split( /\?/, $url, 2 );
-    $query //= '';
-    my %args = map {
-        s/%([0-9a-z]{2})/chr(hex($1))/gie;
-        # Encode::decode ascii -> Perl-internal????
-        $_;
-    }
-    map {
-        my ($key, $val) = split( /=/, $_, 2 );
-        $val //= '';
-        ($key, $val);
-    }
-    split( /&/, $query );
-
-    if ($base =~ m#^
-                (?<hypervisor>[a-z0-9_]+)
-                (?:\+(?<transport>[a-z0-9_]+))?
-                ://
-                (?:(?<username>[^@]*)
-                   @
-                   (?<password>.*)?)?
-                /
-                (?<type>system|session)
-                $
-                #xi) {
-        return (base => $base, %+, query => \%args);
-    }
-
-    die "Malformed hypervisor URI $url";
-}
-
 async sub connect($self) {
     die $log->fatal(
         "The 'connect' method must be implemented by concrete sub-classes");
@@ -139,32 +107,6 @@ requested to read file descriptors).
 
 Writes data (passed as strings) and file descriptors (passed as arrays of
 descriptors) to the connection.
-
-=head1 INTERNAL METHODS
-
-=head2 _parse_url
-
-  my %components = $self->_parse_url($url);
-
-Returns a list of key/value pairs, with the following keys:
-
-=over 8
-
-=item * base
-
-=item * hypervisor
-
-=item * password
-
-=item * query
-
-=item * transport
-
-=item * type
-
-=item * username
-
-=back
 
 =head1 SEE ALSO
 

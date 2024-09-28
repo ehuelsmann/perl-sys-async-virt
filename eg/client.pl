@@ -26,7 +26,7 @@ $log->trace( 'Created libvirt client application layer' );
 await $virt->auth( $prot->AUTH_NONE );
 $log->trace( 'Authenticated' );
 
-await $virt->open( 'qemu:///system' );
+await $virt->open;
 
 try {
     my $es = await $virt->domain_event_register_any(

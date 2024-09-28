@@ -32,6 +32,7 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use Protocol::Sys::Virt::Remote __P::S::V::VERSION__;
 use Protocol::Sys::Virt::Transport __P::S::V::VERSION__;
+use Protocol::Sys::Virt::URI __P::S::V::VERSION__; # imports parse_url
 
 use Sys::Async::Virt::Connection::Factory __VERSION__;
 use Sys::Async::Virt::Domain __VERSION__;
@@ -605,9 +606,10 @@ async sub auth($self, $auth_type) {
 
 # ENTRYPOINT: REMOTE_PROC_CONNECT_OPEN
 # ENTRYPOINT: REMOTE_PROC_CONNECT_REGISTER_CLOSE_CALLBACK
-async sub open($self, $url, $flags) {
+async sub open($self, $flags = undef) {
+    my %parsed_url = parse_url( $self->{url} );
     await $self->_call( $remote->PROC_CONNECT_OPEN,
-                        { name => $url, flags => $flags // 0 } );
+                        { name => $parsed_url{name}, flags => $flags // 0 } );
     if (await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_REMOTE_CLOSE_CALLBACK )) {
         await $self->_call( $remote->PROC_CONNECT_REGISTER_CLOSE_CALLBACK );
