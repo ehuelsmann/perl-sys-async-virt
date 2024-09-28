@@ -26,8 +26,7 @@ use Log::Any qw($log);
 use Protocol::Sys::Virt::Remote::XDR v0.0.6;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-sub new {
-    my ($class, %args) = @_;
+sub new($class, %args) {
     return bless {
         id => $args{id},
         proc => $args{proc},

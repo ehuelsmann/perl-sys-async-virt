@@ -23,8 +23,7 @@ use Carp qw(croak);
 use Log::Any qw($log);
 use IO::Async::Stream;
 
-sub new {
-    my ($class, $url, %args) = @_;
+sub new($class, $url, %args) {
     return bless {
         url => $url,
         %args{ qw( socket ) }

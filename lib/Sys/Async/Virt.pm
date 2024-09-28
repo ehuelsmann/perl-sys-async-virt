@@ -865,8 +865,7 @@ sub _secret_factory {
     return Sys::Async::Virt::Secret->new( @_ );
 }
 
-sub new {
-    my ($class, %args) = @_;
+sub new($class, %args) {
     my $self = bless {
         _domains => {},
         _domain_checkpoints => {},
@@ -910,16 +909,14 @@ sub new {
     return $self;
 }
 
-sub _domain_instance {
-    my ($self, $id) = @_;
+sub _domain_instance($self, $id) {
     my $c = $self->{_domains}->{$id->{uuid}}
        //= $self->{domain_factory}->( client => $self, remote => $self->{remote}, id => $id );
     weaken $self->{_domains}->{$id->{uuid}};
     return $c;
 }
 
-sub _domain_checkpoint_instance {
-    my ($self, $id) = @_;
+sub _domain_checkpoint_instance($self, $id) {
     my $key = "$id->{dom}->{uuid}/$id->{name}";
     my $c = $self->{_domain_checkpoints}->{$key}
        //= $self->{domain_checkpoint_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -927,8 +924,7 @@ sub _domain_checkpoint_instance {
     return $c;
 }
 
-sub _domain_snapshot_instance {
-    my ($self, $id) = @_;
+sub _domain_snapshot_instance($self, $id) {
     my $key = "$id->{dom}->{uuid}/$id->{name}";
     my $c = $self->{_domain_snapshots}->{$id->{uuid}}
        //= $self->{domain_snapshot_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -936,32 +932,28 @@ sub _domain_snapshot_instance {
     return $c;
 }
 
-sub _network_instance {
-    my ($self, $id) = @_;
+sub _network_instance($self, $id) {
     my $c = $self->{_networks}->{$id->{uuid}}
        //= $self->{network_factory}->( client => $self, remote => $self->{remote}, id => $id );
     weaken $self->{_networks}->{$id->{uuid}};
     return $c;
 }
 
-sub _network_port_instance {
-    my ($self, $id) = @_;
+sub _network_port_instance($self, $id) {
     my $c = $self->{_network_ports}->{$id->{uuid}}
        //= $self->{network_port_factory}->( client => $self, remote => $self->{remote}, id => $id );
     weaken $self->{_network_ports}->{$id->{uuid}};
     return $c;
 }
 
-sub _nwfilter_instance {
-    my ($self, $id) = @_;
+sub _nwfilter_instance($self, $id) {
     my $c = $self->{_nwfilters}->{$id->{uuid}}
        //= $self->{nwfilter_factory}->( client => $self, remote => $self->{remote}, id => $id );
     weaken $self->{_nwfilters}->{$id->{uuid}};
     return $c;
 }
 
-sub _nwfilter_binding_instance {
-    my ($self, $id) = @_;
+sub _nwfilter_binding_instance($self, $id) {
     my $key = "$id->{portdev}/$id->{filtername}";
     my $c = $self->{_nwfilter_bindings}->{$key}
        //= $self->{nwfilter_binding_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -969,8 +961,7 @@ sub _nwfilter_binding_instance {
     return $c;
 }
 
-sub _interface_instance {
-    my ($self, $id) = @_;
+sub _interface_instance($self, $id) {
     my $key = "$id->{mac}/$id->{name}";
     my $c = $self->{_interfaces}->{$key}
        //= $self->{interface_factory}->( client => $self, remote => $self->{remote}, id => $id );
@@ -978,32 +969,28 @@ sub _interface_instance {
     return $c;
 }
 
-sub _storage_pool_instance {
-    my ($self, $id) = @_;
+sub _storage_pool_instance($self, $id) {
     my $c = $self->{_storage_pools}->{$id->{uuid}}
        //= $self->{storage_pool_factory}->( client => $self, remote => $self->{remote}, id => $id );
     weaken $self->{_storage_pools}->{$id->{uuid}};
     return $c;
 }
 
-sub _storage_vol_instance {
-    my ($self, $id) = @_;
+sub _storage_vol_instance($self, $id) {
     my $c = $self->{_storage_vols}->{$id->{key}}
        //= $self->{storage_vol_factory}->( client => $self, remote => $self->{remote}, id => $id );
     weaken $self->{_storage_vols}->{$id->{key}};
     return $c;
 }
 
-sub _node_device_instance {
-    my ($self, $id) = @_;
+sub _node_device_instance($self, $id) {
     my $c = $self->{_node_devices}->{$id->{name}}
        //= $self->{node_device_factory}->( client => $self, remote => $self->{remote}, id => $id );
     weaken $self->{_node_devices}->{$id->{name}};
     return $c;
 }
 
-sub _secret_instance {
-    my ($self, $id) = @_;
+sub _secret_instance($self, $id) {
     my $c = $self->{_secrets}->{$id->{uuid}}
        //= $self->{secret_factory}->( client => $self, remote => $self->{remote}, id => $id );
     weaken $self->{_secrets}->{$id->{uuid}};
@@ -1061,10 +1048,8 @@ async sub _filter_typed_param_string($self, $params) {
             } @$params ];
 }
 
-sub _dispatch_closed {
-    my $self = shift;
-
-    $self->{on_closed}->( @_ );
+sub _dispatch_closed($self, @args) {
+    $self->{on_closed}->( $self, @args );
 }
 
 sub _dispatch_message($self, %args) {
@@ -1083,13 +1068,12 @@ sub _dispatch_message($self, %args) {
     }
 }
 
-sub _dispatch_reply {
-    my ($self, %args) = @_;
+sub _dispatch_reply($self, %args) {
     $log->trace( "Dispatching serial $args{header}->{serial}" );
     my $f = delete $self->{_replies}->{$args{header}->{serial}};
 
     if (exists $args{data}) {
-        my %cbargs = $reply_translators[$args{header}->{proc}]->( @_ );
+        my %cbargs = $reply_translators[$args{header}->{proc}]->( $self, %args );
         $f->done( $cbargs{data} );
     }
     elsif (exists $args{error}) {
@@ -1102,10 +1086,7 @@ sub _dispatch_reply {
     return;
 }
 
-sub _dispatch_stream {
-    my $self = shift;
-    my %args = @_;
-
+sub _dispatch_stream($self, %args) {
     if (my $stream = $self->{_streams}->{$args{header}->{serial}}) {
         if ($args{error}) {
             return $stream->_dispatch_error($args{error});
@@ -1115,22 +1096,17 @@ sub _dispatch_stream {
         }
     }
     else {
-        return $self->{on_stream}->( @_ );
+        return $self->{on_stream}->( $self, %args );
     }
 }
 
-sub configure {
-    my $self = shift;
-    my %args = @_;
+sub configure($self, %args) {
     for my $key (keys %args) {
         $self->{$key} = $args{$key} // sub {};
     }
 }
 
-sub register {
-    my $self = shift;
-    my $r = shift;
-
+sub register($self, $r) {
     $r->configure(
         on_closed  => sub { $self->_dispatch_closed( @_ ) },
         on_message => sub { $self->_dispatch_message( @_ ) },
@@ -1280,9 +1256,7 @@ async sub secret_event_register_any($self, $eventID, $secret = undef) {
 # ENTRYPOINT: REMOTE_PROC_AUTH_LIST
 # ENTRYPOINT: REMOTE_PROC_AUTH_POLKIT
 # ENTRYPOINT: REMOTE_PROC_AUTH_SASL_INIT
-async sub auth {
-    my ($self, $auth_type) = @_;
-
+async sub auth($self, $auth_type) {
     my $rv = await $self->_call( $remote->PROC_AUTH_LIST );
     my $auth_types = $rv->{types};
     my $selected = $remote->AUTH_NONE;
@@ -1309,8 +1283,7 @@ async sub auth {
 
 # ENTRYPOINT: REMOTE_PROC_CONNECT_OPEN
 # ENTRYPOINT: REMOTE_PROC_CONNECT_REGISTER_CLOSE_CALLBACK
-async sub open {
-    my ($self, $url, $flags) = @_;
+async sub open($self, $url, $flags) {
     await $self->_call( $remote->PROC_CONNECT_OPEN,
                         { name => $url, flags => $flags // 0 } );
     if (await $self->_supports_feature(
@@ -1325,8 +1298,7 @@ async sub open {
 
 # ENTRYPOINT: REMOTE_PROC_CONNECT_CLOSE
 # ENTRYPOINT: REMOTE_PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK
-async sub close {
-    my ($self) = @_;
+async sub close($self) {
     for my $cb (values %{ $self->{_callbacks} }) {
         await $cb->cancel;
     }

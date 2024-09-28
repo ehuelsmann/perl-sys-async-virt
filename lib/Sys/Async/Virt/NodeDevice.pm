@@ -35,8 +35,7 @@ use constant {
 };
 
 
-sub new {
-    my ($class, %args) = @_;
+sub new($class, %args) {
     return bless {
         id => $args{id},
         client => $args{client},
