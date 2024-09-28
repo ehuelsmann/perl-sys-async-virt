@@ -616,7 +616,7 @@ async sub open($self, $flags = undef) {
     }
     if (not await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_REMOTE_EVENT_CALLBACK )) {
-        die "Remote not supported: REMOTE_EVENT_CALLBACK feature not available";
+        die "Remote does not support REMOTE_EVENT_CALLBACK feature";
     }
 }
 
