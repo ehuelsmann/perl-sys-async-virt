@@ -27,12 +27,13 @@ use Future::Queue;
 use Log::Any qw($log);
 use Scalar::Util qw(reftype weaken);
 
-use Protocol::Sys::Virt::Remote::XDR v10.3.7;
+use Protocol::Sys::Virt::Remote::XDR v10.3.11;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-use Protocol::Sys::Virt::Remote v10.3.7;
-use Protocol::Sys::Virt::Transport v10.3.7;
-use Protocol::Sys::Virt::URI v10.3.7; # imports parse_url
+use Protocol::Sys::Virt::KeepAlive v10.3.11;
+use Protocol::Sys::Virt::Remote v10.3.11;
+use Protocol::Sys::Virt::Transport v10.3.11;
+use Protocol::Sys::Virt::URI v10.3.11; # imports parse_url
 
 use Sys::Async::Virt::Connection::Factory v0.0.6;
 use Sys::Async::Virt::Domain v0.0.6;
@@ -1160,6 +1161,30 @@ extended async sub connect($self, :$pump = undef) {
 
     $pump //= \&_pump;
     $self->adopt_future( $pump->( $self->{connection}, $self->{transport} ) );
+
+    if (await $self->_supports_feature(
+            $self->{remote}->DRV_FEATURE_PROGRAM_KEEPALIVE )) {
+        $self->{keepalive} //= Protocol::Sys::Virt::KeepAlive->new(
+            max_unacked => 5,
+            on_ack      => sub { $log->trace('KeepAlive PING ACK'); return; },
+            on_fail     => sub {
+                $log->fatal('KeepAlive time out - closing connection');
+                $self->{on_close}->( $self->CLOSE_REASON_KEEPALIVE );
+                $self->{connection}->close;
+                return;
+            });
+
+        $self->{keepalive}->register( $self->{transport} );
+        my $keep_pump = async sub {
+            while (1) {
+                await $self->loop->delay_future( after => 60 );
+                $self->adopt_future( $self->{keepalive}->ping );
+            }
+        };
+        $self->adopt_future( $keep_pump->() );
+    }
+
+    return;
 }
 
 
@@ -3380,8 +3405,6 @@ Although this doesn't seem a prerequisite for the API to work correctly,
 it seems sloppy that there's no update of the domain 'id' when one becomes
 available when the domain is started. (Looking at the sources of LibVirt,
 the 'id' doesn't get cleared when the domain is destroyed???)
-
-=item * KeepAlive support
 
 =item * Modules implementing connections for various protocols (unix, tcp, tls, etc)
 

@@ -22,6 +22,10 @@ use parent qw(IO::Async::Notifier);
 use Carp qw(croak);
 use Log::Any qw($log);
 
+sub close($self) {
+    die $log->fatal(
+        "The 'close' method must be implemented by concrete sub-classes");
+}
 
 async sub connect($self) {
     die $log->fatal(

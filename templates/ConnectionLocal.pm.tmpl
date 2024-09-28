@@ -30,6 +30,10 @@ sub new($class, $url, %args) {
     }, $class;
 }
 
+sub close($self) {
+    $self->{in}->close;
+}
+
 async sub connect($self) {
     # disect URL
     $self->{socket} //= '/run/libvirt/libvirt-sock';
