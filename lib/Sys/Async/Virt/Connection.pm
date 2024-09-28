@@ -42,14 +42,24 @@ async sub read($self, $type, $len) {
 }
 
 async sub write($self, @data) {
+    return if @data == 0;
+
+    # use the first data element as backpressure
+    # but don't await it here: we want to send
+    # all data into the send queue at once, so
+    # other write calls can't mix their data
+    # with ours
+    my $f = $self->{out}->write( shift @data );
+
     while (@data) {
         my $data = shift @data;
-        next unless length($data) > 0;
-        await $self->{out}->write($data);
-    }
-    return;
-}
+        next unless $data;
 
+        $self->{out}->write( $data );
+    }
+
+    return await $f;
+}
 
 1;
 

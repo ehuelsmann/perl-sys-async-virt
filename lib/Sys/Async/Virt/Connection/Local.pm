@@ -20,8 +20,8 @@ package Sys::Async::Virt::Connection::Local v0.0.6;
 use parent qw(Sys::Async::Virt::Connection);
 
 use Carp qw(croak);
-use Log::Any qw($log);
 use IO::Async::Stream;
+use Log::Any qw($log);
 
 sub new($class, $url, %args) {
     return bless {

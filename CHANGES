@@ -3,6 +3,9 @@
 0.0.7    to be released
     [Added]
        * Minimal testing (correct loading of source code)
+    [Fixed]
+       * Possible out-of-order data transfer to the server
+         due to missing sychronization points
 
 0.0.6    2024-09-27
     [Added]
