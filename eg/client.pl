@@ -16,14 +16,13 @@ use Sys::Async::Virt;
 
 Log::Any::Adapter->set('Stdout', log_level => 'trace');
 my $loop = IO::Async::Loop->new;
-my $prot = 'Protocol::Sys::Virt::Remote::XDR';
 
 my $virt = Sys::Async::Virt->new(url => 'qemu:///system');
 $loop->add( $virt );
 await $virt->connect;
 $log->trace( 'Created libvirt client application layer' );
 
-await $virt->auth( $prot->AUTH_NONE );
+await $virt->auth();
 $log->trace( 'Authenticated' );
 
 await $virt->open;

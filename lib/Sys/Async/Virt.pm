@@ -1257,15 +1257,37 @@ async sub secret_event_register_any($self, $eventID, $secret = undef) {
 # ENTRYPOINT: REMOTE_PROC_AUTH_LIST
 # ENTRYPOINT: REMOTE_PROC_AUTH_POLKIT
 # ENTRYPOINT: REMOTE_PROC_AUTH_SASL_INIT
-async sub auth($self, $auth_type) {
-    my $rv = await $self->_call( $remote->PROC_AUTH_LIST );
-    my $auth_types = $rv->{types};
-    my $selected = $remote->AUTH_NONE;
-    for my $type ( @{ $auth_types } ) {
-        if ($auth_type == $type) {
-            $selected = $type;
-            last;
+async sub auth($self, $auth_type = undef) {
+    my $auth_types = await $self->_call( $remote->PROC_AUTH_LIST, {},
+                                         unwrap => 'types' );
+
+    my $selected;
+    if (defined $auth_type) {
+        my $want;
+        if ($auth_type eq 'sasl') {
+            $want = $remote->AUTH_SASL;
         }
+        elsif ($auth_type eq 'polkit') {
+            $want = $remote->AUTH_POLKIT;
+        }
+        elsif ($auth_type eq 'none') {
+            $want = $remote->AUTH_NONE;
+        }
+        else {
+            die "Unknown authentication method $auth_type requested";
+        }
+
+        for my $type ( @{ $auth_types } ) {
+            if ($want == $type) {
+                $selected = $type;
+                last;
+            }
+        }
+        die "Requested authentication method $auth_type not supported by the server"
+            if not defined $selected;
+    }
+    else {
+        $selected = shift @{ $auth_types };
     }
     return if $selected == $remote->AUTH_NONE;
 
@@ -1274,8 +1296,8 @@ async sub auth($self, $auth_type) {
         return;
     }
     if ($selected == $remote->AUTH_SASL) {
-        $rv = await $self->_call( $remote->PROC_AUTH_SASL_INIT );
-        my $mechs = $rv->{mechlist};
+        my $mechs = await $self->_call( $remote->PROC_AUTH_SASL_INIT, {},
+                                        unwrap => 'mechlist' );
         ...
     }
     return;
@@ -2111,10 +2133,23 @@ Sets up the transport connection to the server indicated by C<url>.
 
 =head2 auth
 
-  await $client->auth( $auth_type );
+  await $client->auth( $auth_type = undef );
   # -> (* no data *)
 
-Authenticates against the server.
+Authenticates against the server. C<$auth_type> can be any of:
+
+=over 8
+
+=item * C<none>
+
+=item * C<sasl>
+
+=item * C<polkit>
+
+=back
+
+When no C<$auth_type> is passed, the first authentication method announced
+by the server, is used.
 
 =head2 open
 
