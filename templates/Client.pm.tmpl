@@ -746,6 +746,21 @@ C<INPUT> and C<INPUT|OUTPUT (as input)> arguments for its functions.  The
 C<OUTPUT> and C<INPUT|OUTPUT (as output)> arguments will be returned in the
 C<on_reply> event.
 
+=head2 RUNNING AGAINST OLDER SERVERS
+
+The reference LibVirt version of this module is __LIBVIRT_TAG__. This means
+all API entry points have been implemented as they are declared in the
+protocol of that version (except for the ones listed in the section
+L</UNIMPLEMENTED ENTRYPOINTS>).  The consequence of a server being of a lower
+version is that some entry points will throw errors when being used, if not
+supported by the server.
+
+=head2 RUNNING AGAINST NEWER SERVERS
+
+The module can run against any version of LibVirt newer than __LIBVIRT_TAG__;
+any new entry points in the API will not be available, but all existing APIs
+can be used as per the stability guarantees.
+
 =head2 STABILITY GUARANTEES
 
 The modules in this distribution are considered B<experimental>, meaning that
