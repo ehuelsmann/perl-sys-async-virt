@@ -10,7 +10,7 @@
 ####################################################################
 
 
-use v5.20;
+use v5.26;
 use warnings;
 use experimental 'signatures';
 use Future::AsyncAwait;
@@ -47,7 +47,7 @@ sub create_connection( $self, $url, %args ) {
     my $transport = $components{transport} // '';
     my $host = $components{host} // '';
 
-    for my $driver (@{ $self->{drivers} }) {
+    for my $driver ($self->{drivers}->@*) {
         if ($transport eq $driver->{transport}) {
             if (defined $driver->{host}) {
                 if (($driver->{host} and $host)

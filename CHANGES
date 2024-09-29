@@ -1,6 +1,10 @@
 -----
 
 0.0.7    to be released
+    [Breaking]
+       * Minimum Perl increased from 5.20 to 5.26 due to the combination
+         of signatures with Future::AsyncAwait.  Incidentally also allows
+         the use of postfix deref.
     [Added]
        * Support for KeepAlive messages when the server
          advertizes support for it

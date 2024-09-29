@@ -1,6 +1,6 @@
 #!perl
 
-requires 'perl' => '5.20.0';
+requires 'perl' => '5.26.0'; # combination of Future::AsyncAwait and signatures
 requires 'Feature::Compat::Try';
 requires 'Future::AsyncAwait';
 requires 'Future::Queue';

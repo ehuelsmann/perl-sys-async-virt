@@ -10,7 +10,7 @@
 ####################################################################
 
 
-use v5.20;
+use v5.26;
 use warnings;
 no warnings qw(void);
 use experimental 'signatures';
@@ -792,14 +792,15 @@ my @reply_translators = (
 
 
 sub _map( $client, $unwrap, $argmap, $data) {
-    for my $key (keys %{ $argmap }) {
+    for my $key (keys $argmap->%*) {
         my $val = $data->{$key};
 
         if (ref $argmap->{$key} and reftype $argmap->{$key} eq 'HASH') {
             $data->{$key} = _map( $client, undef, $argmap->{$key}, $val );
         }
         elsif (ref $val and reftype $val eq 'ARRAY') {
-            $data->{$key} = [ map { $argmap->{$key}->( $client, $_ ) } @{ $val } ];
+            $data->{$key} = [
+                map { $argmap->{$key}->( $client, $_ ) } $val->@* ];
         }
         else {
             $data->{$key} = $argmap->{$key}->( $client, $val );
@@ -1321,7 +1322,7 @@ async sub auth($self, $auth_type = undef) {
             die "Unknown authentication method $auth_type requested";
         }
 
-        for my $type ( @{ $auth_types } ) {
+        for my $type ( $auth_types->@* ) {
             if ($want == $type) {
                 $selected = $type;
                 last;
@@ -1331,7 +1332,7 @@ async sub auth($self, $auth_type = undef) {
             if not defined $selected;
     }
     else {
-        $selected = shift @{ $auth_types };
+        $selected = shift $auth_types->@*;
     }
     return if $selected == $remote->AUTH_NONE;
 
@@ -1367,7 +1368,7 @@ async sub open($self, $flags = undef) {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_CLOSE
 # ENTRYPOINT: REMOTE_PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK
 async sub close($self) {
-    for my $cb (values %{ $self->{_callbacks} }) {
+    for my $cb (values $self->{_callbacks}->%*) {
         await $cb->cancel;
     }
     await $self->_call( $remote->PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK );
@@ -3425,7 +3426,7 @@ it seems sloppy that there's no update of the domain 'id' when one becomes
 available when the domain is started. (Looking at the sources of LibVirt,
 the 'id' doesn't get cleared when the domain is destroyed???)
 
-=item * Modules implementing connections for various protocols (unix, tcp, tls, etc)
+=item * Modules implementing connections for various protocols (tcp, tls, etc)
 
 =item * C<@generate: none> entrypoints review (and implement relevant ones)
 
