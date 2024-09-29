@@ -2,6 +2,8 @@
 
 0.0.7    to be released
     [Added]
+       * Support for KeepAlive messages when the server
+         advertizes support for it
        * Minimal testing (correct loading of source code)
     [Fixed]
        * Possible out-of-order data transfer to the server

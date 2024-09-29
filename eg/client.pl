@@ -44,4 +44,5 @@ catch ($e) {
     say 'abc: ' . Dumper($e);
 }
 
+await $loop->delay_future( after => 8*60 );
 await $virt->close;

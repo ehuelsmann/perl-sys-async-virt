@@ -905,6 +905,8 @@ sub new($class, %args) {
         remote     => $args{remote},
         factory    => $args{factory},
         keepalive  => $args{keepalive},
+
+        on_close   => $args{on_close} // sub {},
         on_stream  => $args{on_stream},
     }, $class;
 
@@ -1055,6 +1057,9 @@ sub _dispatch_closed($self, @args) {
 }
 
 sub _dispatch_message($self, %args) {
+    if (my $k = $self->{keepalive}) {
+        $k->mark_active;
+    }
     if ($args{data}
         and defined $args{data}->{callbackID}
         and my $cb = $self->{_callbacks}->{$args{data}->{callbackID}}) {
@@ -1072,6 +1077,9 @@ sub _dispatch_message($self, %args) {
 
 sub _dispatch_reply($self, %args) {
     $log->trace( "Dispatching serial $args{header}->{serial}" );
+    if (my $k = $self->{keepalive}) {
+        $k->mark_active;
+    }
     my $f = delete $self->{_replies}->{$args{header}->{serial}};
 
     if (exists $args{data}) {
@@ -1089,6 +1097,9 @@ sub _dispatch_reply($self, %args) {
 }
 
 sub _dispatch_stream($self, %args) {
+    if (my $k = $self->{keepalive}) {
+        $k->mark_active;
+    }
     if (my $stream = $self->{_streams}->{$args{header}->{serial}}) {
         if ($args{error}) {
             return $stream->_dispatch_error($args{error});
@@ -1165,9 +1176,14 @@ extended async sub connect($self, :$pump = undef) {
     if (await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_PROGRAM_KEEPALIVE )) {
         $self->{keepalive} //= Protocol::Sys::Virt::KeepAlive->new(
-            max_unacked => 5,
-            on_ack      => sub { $log->trace('KeepAlive PING ACK'); return; },
-            on_fail     => sub {
+            max_inactive => 5,
+            on_ack       => sub { $log->trace('KeepAlive PING ACK'); return; },
+            on_ping      => sub {
+                $log->trace('KeepAlive ACK-ing PING');
+                $self->adopt_future( $_[0]->pong );
+                return;
+            },
+            on_fail      => sub {
                 $log->fatal('KeepAlive time out - closing connection');
                 $self->{on_close}->( $self->CLOSE_REASON_KEEPALIVE );
                 $self->{connection}->close;
@@ -1177,8 +1193,11 @@ extended async sub connect($self, :$pump = undef) {
         $self->{keepalive}->register( $self->{transport} );
         my $keep_pump = async sub {
             while (1) {
-                await $self->loop->delay_future( after => 60 );
-                $self->adopt_future( $self->{keepalive}->ping );
+                await $self->loop->delay_future( after => 10 );
+                $log->trace('Sending PING');
+                if (my $f = $self->{keepalive}->ping ) {
+                    $self->adopt_future( $f );
+                }
             }
         };
         $self->adopt_future( $keep_pump->() );
