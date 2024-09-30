@@ -22,6 +22,5 @@ on develop => sub {
 };
 
 feature 'examples', 'Dependencies for examples' => sub {
-    requires 'Feature::Compat::Try';
     requires 'IO::Async::Loop';
 };
