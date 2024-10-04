@@ -3,6 +3,7 @@
 0.0.8    to be released
     [Fixed]
        * Completeness 'cpanfile' dependency listing
+       * Error reporting on Connection module load failure
 
 0.0.7    2024-09-29
     [Breaking]
