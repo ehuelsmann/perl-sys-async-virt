@@ -29,7 +29,7 @@ use Protocol::Sys::Virt::URI v10.3.13; # imports parse_url
 sub new($class, $url, %args) {
     return bless {
         url => $url,
-        %args{ socket readonly }
+        %args{ qw(socket readonly) }
     }, $class;
 }
 
