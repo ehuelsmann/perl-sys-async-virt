@@ -3,6 +3,9 @@
 0.0.8    to be released
     [Added]
        * Run read-only connections through '*-ro' sockets
+    [Changed]
+       * Calls to auth() and open() are now part of the
+         connect() function
     [Fixed]
        * Completeness 'cpanfile' dependency listing
        * Error reporting on Connection module load failure

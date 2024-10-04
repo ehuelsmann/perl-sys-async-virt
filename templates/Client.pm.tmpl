@@ -498,6 +498,13 @@ extended async sub connect($self, :$pump = undef) {
     $pump //= \&_pump;
     $self->adopt_future( $pump->( $self->{connection}, $self->{transport} ) );
 
+    await $self->auth();
+    # auth( $auth_type )
+    #  --> clients take the selected auth mechanism from the
+    #      connection URL: auth='sasl[.<mech>]" / auth='none' / auth='polkit'
+    # in order to be able to handle SASL AUTH, we'll need an Authen::SASL
+    # authentication parameter to be passed in though...
+
     if (await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_PROGRAM_KEEPALIVE )) {
         $self->{keepalive} //= Protocol::Sys::Virt::KeepAlive->new(
@@ -527,6 +534,8 @@ extended async sub connect($self, :$pump = undef) {
         };
         $self->adopt_future( $keep_pump->() );
     }
+
+    await $self->open();
 
     return;
 }
@@ -658,8 +667,8 @@ async sub auth($self, $auth_type = undef) {
     else {
         $selected = shift $auth_types->@*;
     }
-    return if $selected == $remote->AUTH_NONE;
 
+    $log->trace( "Selected auth method: $selected" );
     if ($selected == $remote->AUTH_POLKIT) {
         await $self->_call( $remote->PROC_AUTH_POLKIT );
         return;
