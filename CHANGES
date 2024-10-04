@@ -2,6 +2,7 @@
 
 0.0.8    to be released
     [Added]
+       * Support for SSH-transport ('...+ssh://') connection URLs
        * Run read-only connections through '*-ro' sockets
     [Changed]
        * Calls to auth() and open() are now part of the
