@@ -119,9 +119,8 @@ async sub send_hole($self, $length, $flags = 0) {
 async sub abort($self) {
     await $self->{client}->_send_finish( $self->{proc}, $self->{id}, 1 );
     await $self->{finished};
-    delete $self->{_streams}->{$self->{id}};
-    $self->remove_from_parent;
-    $self->{queue} = undef;
+
+    $self->cleanup;
     if (my $e = $self->{pending_error}) {
         $self->{pending_error} = undef;
         die $e;
@@ -129,12 +128,21 @@ async sub abort($self) {
     return;
 }
 
-async sub finish($self) {
-    await $self->{client}->_send_finish( $self->{proc}, $self->{id}, 0 );
-    await $self->{finished};
+sub cleanup($self) {
     delete $self->{_streams}->{$self->{id}};
     $self->remove_from_parent;
     $self->{queue} = undef;
+    $self->{finished}->done
+        unless $self->{finished}->is_ready;
+
+    return;
+}
+
+async sub finish($self) {
+    await $self->{client}->_send_finish( $self->{proc}, $self->{id}, 0 );
+    await $self->{finished};
+
+    $self->cleanup;
     if (my $e = $self->{pending_error}) {
         $self->{pending_error} = undef;
         die $e;

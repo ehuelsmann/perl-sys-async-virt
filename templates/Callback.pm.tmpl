@@ -38,6 +38,7 @@ sub new($class, %args) {
 }
 
 async sub next_event($self) {
+    return unless $self->{queue}; # simulate an empty queue
     return await $self->{queue}->shift;
 }
 
@@ -51,7 +52,13 @@ async sub cancel($self) {
         { callbackID => $self->{id} });
     await $self->{cancelled};
 
+    $self->cleanup;
+    return;
+}
+
+sub cleanup($self) {
     $self->{queue}->finish;
+    $self->{queue} = undef;
     delete $self->{client}->{_callbacks}->{$self->{id}};
     return;
 }
