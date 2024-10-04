@@ -1,6 +1,10 @@
 -----
 
-0.0.7    to be released
+0.0.8    to be released
+    [Fixed]
+       * Completeness 'cpanfile' dependency listing
+
+0.0.7    2024-09-29
     [Breaking]
        * Minimum Perl increased from 5.20 to 5.26 due to the combination
          of signatures with Future::AsyncAwait.  Incidentally also allows
