@@ -1,6 +1,6 @@
 -----
 
-0.0.8    to be released
+0.0.8    2024-10-04
     [Added]
        * Support for SSH-transport ('...+ssh://') connection URLs
        * Run read-only connections through '*-ro' sockets
