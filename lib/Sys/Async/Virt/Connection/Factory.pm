@@ -31,7 +31,7 @@ sub new {
             # { transport => 'tls', class => 'TCP' },
             # { transport => 'tcp', class => 'TCP' },
             # { transport => 'ext', class => 'Process' },
-            # { transport => 'ssh', class => 'SSH' },
+            { transport => 'ssh', class => 'SSH' },
             ],
     }, $class;
 }
@@ -61,14 +61,15 @@ sub create_connection( $self, $url, %args ) {
             }
             else { # "host" not defined, so not required
                 my $c = _cls_name( $driver->{class} );
-                eval "require $c";
+                if (not eval "require $c; 1") {
+                    die @!;
+                }
                 return $c->new( $url, %args );
             }
         }
     }
 
-    $log->trace( "URL not matched: $url" );
-    return;
+    die $log->fatal( "No handler for: $url" );
 }
 
 1;

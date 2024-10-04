@@ -26,7 +26,7 @@ use Log::Any qw($log);
 sub new($class, $url, %args) {
     return bless {
         url => $url,
-        %args{ qw( socket ) }
+        %args{ qw( readonly socket ) }
     }, $class;
 }
 
@@ -36,7 +36,8 @@ sub close($self) {
 
 async sub connect($self) {
     # disect URL
-    $self->{socket} //= '/run/libvirt/libvirt-sock';
+    $self->{socket} //=
+        '/run/libvirt/libvirt-sock' . ($self->{readonly} ? '-ro' : '');
     my $sock = await $self->loop->connect(
         addr => {
             family => 'unix',

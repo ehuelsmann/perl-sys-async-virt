@@ -27,13 +27,13 @@ use Future::Queue;
 use Log::Any qw($log);
 use Scalar::Util qw(reftype weaken);
 
-use Protocol::Sys::Virt::Remote::XDR v10.3.12;
+use Protocol::Sys::Virt::Remote::XDR v10.3.13;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-use Protocol::Sys::Virt::KeepAlive v10.3.12;
-use Protocol::Sys::Virt::Remote v10.3.12;
-use Protocol::Sys::Virt::Transport v10.3.12;
-use Protocol::Sys::Virt::URI v10.3.12; # imports parse_url
+use Protocol::Sys::Virt::KeepAlive v10.3.13;
+use Protocol::Sys::Virt::Remote v10.3.13;
+use Protocol::Sys::Virt::Transport v10.3.13;
+use Protocol::Sys::Virt::URI v10.3.13; # imports parse_url
 
 use Sys::Async::Virt::Connection::Factory v0.0.7;
 use Sys::Async::Virt::Domain v0.0.7;
@@ -901,6 +901,7 @@ sub new($class, %args) {
         secret_factory            => \&_secret_factory,
 
         url        => $args{url},
+        readonly   => $args{readonly},
         connection => $args{connection},
         transport  => $args{transport},
         remote     => $args{remote},
@@ -1149,7 +1150,8 @@ extended async sub connect($self, :$pump = undef) {
     unless ($self->{connection}) {
         my $factory =
             $self->{factory} //= Sys::Async::Virt::Connection::Factory->new;
-        my $conn = $factory->create_connection( $self->{url} );
+        my $conn = $factory->create_connection( $self->{url},
+                                                readonly => $self->{readonly} );
         $self->add_child( $conn );
         $self->{connection} = $conn;
     }
@@ -1173,6 +1175,13 @@ extended async sub connect($self, :$pump = undef) {
 
     $pump //= \&_pump;
     $self->adopt_future( $pump->( $self->{connection}, $self->{transport} ) );
+
+    await $self->auth();
+    # auth( $auth_type )
+    #  --> clients take the selected auth mechanism from the
+    #      connection URL: auth='sasl[.<mech>]" / auth='none' / auth='polkit'
+    # in order to be able to handle SASL AUTH, we'll need an Authen::SASL
+    # authentication parameter to be passed in though...
 
     if (await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_PROGRAM_KEEPALIVE )) {
@@ -1203,6 +1212,8 @@ extended async sub connect($self, :$pump = undef) {
         };
         $self->adopt_future( $keep_pump->() );
     }
+
+    await $self->open();
 
     return;
 }
@@ -1334,8 +1345,8 @@ async sub auth($self, $auth_type = undef) {
     else {
         $selected = shift $auth_types->@*;
     }
-    return if $selected == $remote->AUTH_NONE;
 
+    $log->trace( "Selected auth method: $selected" );
     if ($selected == $remote->AUTH_POLKIT) {
         await $self->_call( $remote->PROC_AUTH_POLKIT );
         return;
@@ -1351,10 +1362,11 @@ async sub auth($self, $auth_type = undef) {
 
 # ENTRYPOINT: REMOTE_PROC_CONNECT_OPEN
 # ENTRYPOINT: REMOTE_PROC_CONNECT_REGISTER_CLOSE_CALLBACK
-async sub open($self, $flags = undef) {
+async sub open($self) {
     my %parsed_url = parse_url( $self->{url} );
+    my $flags = $self->{readonly} ? RO : 0;
     await $self->_call( $remote->PROC_CONNECT_OPEN,
-                        { name => $parsed_url{name}, flags => $flags // 0 } );
+                        { name => $parsed_url{name}, flags => $flags } );
     if (await $self->_supports_feature(
             $self->{remote}->DRV_FEATURE_REMOTE_CLOSE_CALLBACK )) {
         await $self->_call( $remote->PROC_CONNECT_REGISTER_CLOSE_CALLBACK );
@@ -3446,6 +3458,8 @@ the 'id' doesn't get cleared when the domain is destroyed???)
 =item * C<@generate: none> entrypoints review (and implement relevant ones)
 
 =item * C<@generate: server> entrypoints review (and implement relevant ones)
+
+=item * libvirt client configuration (C</etc/libvirt/libvirt.conf>)
 
 =back
 
