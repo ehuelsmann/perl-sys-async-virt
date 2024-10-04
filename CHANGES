@@ -1,6 +1,8 @@
 -----
 
 0.0.8    to be released
+    [Added]
+       * Run read-only connections through '*-ro' sockets
     [Fixed]
        * Completeness 'cpanfile' dependency listing
        * Error reporting on Connection module load failure
