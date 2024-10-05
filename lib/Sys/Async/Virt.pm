@@ -1141,11 +1141,13 @@ async sub _pump($conn, $transport) {
         my ($len, $type) = $transport->need;
         $log->trace( "Reading data from connection: initiated (len: $len)" );
         ($data, $eof) = await $conn->read( $type, $len );
+        last if length($data) == 0 and $eof;
         $log->trace( 'Reading data from connection: completed' );
 
         await Future->wait_all( $transport->receive($data) );
         $log->trace( 'Processed input data from connection' );
     }
+    $log->info( "EOF EOF" );
 }
 
 extended async sub connect($self, :$pump = undef) {
