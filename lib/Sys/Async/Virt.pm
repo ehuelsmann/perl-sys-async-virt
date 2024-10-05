@@ -1056,6 +1056,8 @@ async sub _filter_typed_param_string($self, $params) {
 
 sub _dispatch_closed($self, @args) {
     $self->{on_closed}->( $self, @args );
+    # dispatch only once, on first-come-first-serve basis:
+    $self->{on_closed} = sub { };
 }
 
 sub _dispatch_message($self, %args) {
