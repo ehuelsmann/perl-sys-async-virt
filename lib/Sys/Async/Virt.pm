@@ -23,6 +23,7 @@ package Sys::Async::Virt v0.0.8;
 use parent qw(IO::Async::Notifier);
 
 use Carp qw(croak);
+use Future;
 use Future::Queue;
 use Log::Any qw($log);
 use Scalar::Util qw(reftype weaken);
@@ -884,8 +885,10 @@ sub new($class, %args) {
         _secrets => {},
         _callbacks => {},
 
-        _replies => {},
-        _streams => {},
+        _state    => 'DISCONNECTED', # state machine
+        _substate => '', # when _state=='CONNECTED'
+        _replies  => {},
+        _streams  => {},
 
         domain_factory            => \&_domain_factory,
         domain_checkpoint_factory => \&_domain_checkpoint_factory,
@@ -1004,6 +1007,8 @@ sub _secret_instance($self, $id) {
 }
 
 extended async sub _call($self, $proc, $args = {}, :$unwrap = '', :$stream = '', :$empty = '') {
+    die 'RPC call without remote connection'
+        unless $self->is_connected;
     my $serial = await $self->{remote}->call( $proc, $args );
     my $f = $self->loop->new_future;
     $log->trace( "Setting serial $serial future (proc: $proc)" );
@@ -1055,9 +1060,9 @@ async sub _filter_typed_param_string($self, $params) {
 }
 
 sub _dispatch_closed($self, @args) {
-    $self->{on_closed}->( $self, @args );
+    $self->{on_close}->( $self, @args );
     # dispatch only once, on first-come-first-serve basis:
-    $self->{on_closed} = sub { };
+    $self->{on_close} = sub { };
 }
 
 sub _dispatch_message($self, %args) {
@@ -1147,10 +1152,21 @@ async sub _pump($conn, $transport) {
         await Future->wait_all( $transport->receive($data) );
         $log->trace( 'Processed input data from connection' );
     }
-    $log->info( "EOF EOF" );
+    $log->info( 'EOF' );
+}
+
+sub is_connected($self) {
+    return $self->{_state} eq 'CONNECTED';
+}
+
+sub is_opened($self) {
+    return ($self->{_state} eq 'CONNECTED'
+            and $self->{_substate} eq 'OPENED');
 }
 
 extended async sub connect($self, :$pump = undef) {
+    return if $self->{_state} ne 'DISCONNECTED';
+
     unless ($self->{connection}) {
         my $factory =
             $self->{factory} //= Sys::Async::Virt::Connection::Factory->new;
@@ -1175,12 +1191,28 @@ extended async sub connect($self, :$pump = undef) {
     $self->{remote}->register( $self->{transport} );
     $self->register( $self->{remote} );
 
+    $self->{_state} = 'CONNECTING';
     await $self->{connection}->connect;
+    $self->{_state} = 'CONNECTED';
+    $self->{_substate} = 'NONE';
+    $log->trace( "Connected" );
 
     $pump //= \&_pump;
-    $self->adopt_future( $pump->( $self->{connection}, $self->{transport} ) );
+    my $f = $pump->( $self->{connection}, $self->{transport} );
+    $self->adopt_future( $f );
+    $f->on_done(
+        sub {
+            $self->_close( $self->CLOSE_REASON_EOF );
+        });
+    $f->on_fail(
+        sub {
+            $self->_close( $self->CLOSE_REASON_ERROR );
+        });
 
+    $self->{_substate} = 'AUTHENTICATING';
     await $self->auth();
+    $self->{_substate} = 'AUTHENTICATED';
+    $log->trace( "Authenticated" );
     # auth( $auth_type )
     #  --> clients take the selected auth mechanism from the
     #      connection URL: auth='sasl[.<mech>]" / auth='none' / auth='polkit'
@@ -1199,8 +1231,8 @@ extended async sub connect($self, :$pump = undef) {
             },
             on_fail      => sub {
                 $log->fatal('KeepAlive time out - closing connection');
-                $self->{on_close}->( $self->CLOSE_REASON_KEEPALIVE );
-                $self->{connection}->close;
+                $self->adopt_future(
+                    $self->_close( $self->CLOSE_REASON_KEEPALIVE ) );
                 return;
             });
 
@@ -1217,7 +1249,9 @@ extended async sub connect($self, :$pump = undef) {
         $self->adopt_future( $keep_pump->() );
     }
 
+    $self->{_substate} = 'OPENING';
     await $self->open();
+    $self->{_substate} = 'OPENED';
 
     return;
 }
@@ -1383,14 +1417,70 @@ async sub open($self) {
 
 # ENTRYPOINT: REMOTE_PROC_CONNECT_CLOSE
 # ENTRYPOINT: REMOTE_PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK
-async sub close($self) {
-    for my $cb (values $self->{_callbacks}->%*) {
-        await $cb->cancel;
+async sub _close($self, $reason) {
+    return unless $self->{_state} eq 'CONNECTED';
+
+    $self->{_state} = 'CLEANING UP';
+    unless ($self->{connection}->is_read_eof
+            or $self->{connection}->is_write_eof) {
+        # when orderly connected both for reading and writing,
+        # clean up all resources the server allocated for us
+        try {
+            await Future->wait_all(
+                (map { $_->cancel }
+                 values $self->{_callbacks}->%*),
+                (map { $_->abort }
+                 values $self->{_streams}->%*)
+                );
+            await $self->_call(
+                $remote->PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK );
+
+            $self->{_state} = 'CLOSING';
+            await $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
+
+            $self->{connection}->close;
+        }
+        catch ($e) {
+            $log->error( "Error during release of server resources: $e" );
+        }
     }
-    await $self->_call( $remote->PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK );
-    await $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
+
+    # These *should* have been de-allocated above; however,
+    # when the connection to the server doesn't work properly
+    # anymore, we want to simply discard the client side resources
+    # ... the server is on its own
+    if (my @callbacks = values $self->{_callbacks}->%*) {
+        $log->debug( 'Cleaning up callbacks not deregistered from the server' );
+        for my $cb (@callbacks) {
+            # 'cleanup' cleans the items from the array
+            $cb->cleanup;
+        }
+    }
+    if (my @streams = values $self->{_streams}->%*) {
+        $log->debug( 'Cleaning up streams not deregistered from the server' );
+        for my $stream (@streams) {
+            # 'cleanup' cleans the items from the array
+            $stream->cleanup;
+        }
+    }
+    if (my @replies = keys $self->{_replies}->%*) {
+        $log->debug( 'Cleaning up (failing) on-going RPC calls' );
+        for my $serial (@replies) {
+            my $reply = delete $self->{_replies}->{$serial};
+            $reply->fail( 'Closed before reply received' );
+        }
+    }
+
+    $self->{_state} = 'DISCONNECTED';
+    $self->{_substate} = '';
+    $self->_dispatch_closed( $reason );
+    return;
 }
 
+async sub close($self) {
+    return if $self->{_state} ne 'CONNECTED';
+    await $self->_close( $self->CLOSE_REASON_CLIENT );
+}
 
 async sub _domain_migrate_finish($self, $dname, $cookie, $uri, $flags = 0) {
     return await $self->_call(
@@ -2118,7 +2208,7 @@ through the relevant API calls.
 
 =head2 on_close
 
-  $on_close->();
+  $on_close->( $client, $reason );
 
 =head1 LIBVIRT EVENTS
 
@@ -3448,6 +3538,10 @@ replies.
 =head2 TODO
 
 =over 8
+
+=item * Updated SYNOPSIS
+
+=item * Update C<new> and C<connect> parameters documentation
 
 =item * Update the cached proxy instances (e.g. domains) after creation
 to include 'id' (e.g. domain 'id')
