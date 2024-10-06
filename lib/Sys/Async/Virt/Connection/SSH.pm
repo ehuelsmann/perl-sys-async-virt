@@ -116,10 +116,7 @@ async sub connect($self) {
         stdin => {
             via => 'pipe_write'
         },
-        on_finish => sub {
-            $self->{in}->close;
-            $self->{out}->close;
-        }, # on_finish is mandatory
+        on_finish => sub { }, # on_finish is mandatory
         );
 
     $self->{process} = $process;
