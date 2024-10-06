@@ -2317,12 +2317,23 @@ Authenticates against the server. C<$auth_type> can be any of:
 When no C<$auth_type> is passed, the first authentication method announced
 by the server, is used.
 
+=head2 is_connected
+
+  my $bool = $client->is_connected;
+
+
+=head2 is_opened
+
+  my $bool = $client->is_opened;
+
+
 =head2 open
 
-  await $client->open( $url, $flags = 0 );
+  await $client->open();
   # -> (* no data *)
 
-This function opens the connection to the remote driver C<$url> as documented in
+This function opens the connection to the remote driver C<< $client->{url} >>
+as passed to C< new > and documented in
 L<LibVirt's Connection URIs|https://libvirt.org/uri.html>.  Note that the value
 is to be the B<local> hypervisor URI as applicable to the remote end of the
 connection.
