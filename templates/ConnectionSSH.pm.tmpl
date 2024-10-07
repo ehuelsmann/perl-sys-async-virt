@@ -164,6 +164,20 @@ of the URL:
 
 =over 8
 
+=item * command
+
+=item * keyfile
+
+=item * mode
+
+=item * netcat
+
+=item * no_tty
+
+=item * no_verify
+
+=item * proxy
+
 =item * socket
 
 The path of the socket to be connected to.

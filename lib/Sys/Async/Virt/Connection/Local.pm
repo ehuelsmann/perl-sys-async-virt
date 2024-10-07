@@ -93,6 +93,8 @@ of the URL:
 
 =over 8
 
+=item * mode (todo)
+
 =item * socket
 
 The path of the socket to be connected to.
