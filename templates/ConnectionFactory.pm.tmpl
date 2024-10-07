@@ -30,7 +30,7 @@ sub new {
             # { transport => '', class => 'TCP', host => 1 },
             # { transport => 'tls', class => 'TCP' },
             # { transport => 'tcp', class => 'TCP' },
-            # { transport => 'ext', class => 'Process' },
+            { transport => 'ext', class => 'Process' },
             { transport => 'ssh', class => 'SSH' },
             ],
     }, $class;

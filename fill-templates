@@ -87,7 +87,7 @@ my %module = (
 my $main_module = 'Client';
 my @other_modules = qw(
     Callback Stream Connection ConnectionFactory
-    ConnectionLocal ConnectionSSH );
+    ConnectionLocal ConnectionProcess ConnectionSSH );
 
 my %prefix_strip_xdr = (
     Client => qr/^connect_/,
