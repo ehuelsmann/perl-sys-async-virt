@@ -1,5 +1,10 @@
 -----
 
+0.0.10   to be released
+    [Added]
+       * Support for external process transport ('...+ext://')
+       * More documentation on supported URL parameters
+
 0.0.9    2024-10-06
     [Added]
        * Detection of end-of-stream or stream-read-failure
