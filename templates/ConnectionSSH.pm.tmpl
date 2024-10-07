@@ -160,7 +160,7 @@ the system PATH.
 =head1 URL PARAMETERS
 
 This connection driver supports these parameters in the query string
-of the URL:
+of the URL, as per L<LibVirt's documentation|https://libvirt.org/uri.html#ssh-transport>:
 
 =over 8
 

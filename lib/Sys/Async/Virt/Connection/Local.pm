@@ -89,7 +89,7 @@ socket.
 =head1 URL PARAMETERS
 
 This connection driver supports these parameters in the query string
-of the URL:
+of the URL, as per L<LibVirt's documentation|https://libvirt.org/uri.html#unix-transport>:
 
 =over 8
 
