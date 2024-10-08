@@ -688,6 +688,18 @@ sub new($class, %args) {
     }, $class;
 }
 
+# @@@TODO: ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_VCPU_PIN_INFO
+#
+# Check out Sys::Virt::Domain::get_vcpu_info
+#
+# async sub get_vcpu_pin_info($self, $flags = 0) {
+#     my $maplen = await $self->{client}->_maplen;
+#     return $self->{client}->_call(
+#         $remote->PROC_DOMAIN_GET_VCPU_INFO,
+#         { dom => $self->{id}, ncpumaps => ...,
+#           maplen => $maplen, flags => $flags // 0 });
+# }
+
 sub _migrate_perform($self, $cookie, $uri, $flags, $dname, $resource) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_MIGRATE_PERFORM,

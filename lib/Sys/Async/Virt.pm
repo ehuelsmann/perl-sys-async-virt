@@ -1033,6 +1033,14 @@ extended async sub _call($self, $proc, $args = {}, :$unwrap = '', :$stream = '',
     return @rv;
 }
 
+async sub _maplen($self) {
+    return $self->{_maplen} if $self->{_maplen};
+
+    my $info = await $self->node_get_info;
+    return ($self->{_maplen} =
+            $info->{nodes}*$info->{sockets}*$info->{cores}*$info->{threads});
+}
+
 async sub _send($self, $proc, $serial, %args) {
     await $self->{remote}->stream(
         $proc, $serial,
@@ -1162,6 +1170,14 @@ sub is_connected($self) {
 sub is_opened($self) {
     return ($self->{_state} eq 'CONNECTED'
             and $self->{_substate} eq 'OPENED');
+}
+
+# ENTRYPOINT: REMOTE_PROC_CONNECT_IS_SECURE
+async sub is_secure($self) {
+    return ($self->is_opened
+        and $self->{connection}->is_secure
+        and await $self->_call( $remote->PROC_CONNECT_IS_SECURE,
+                                {}, unwrap => 'secure' ));
 }
 
 extended async sub connect($self, :$pump = undef) {
@@ -2325,6 +2341,11 @@ by the server, is used.
 =head2 is_opened
 
   my $bool = $client->is_opened;
+
+
+=head2 is_secure
+
+  my $bool = await $client->is_secure;
 
 
 =head2 open
@@ -3700,8 +3721,6 @@ towards implementation are greatly appreciated.
 =item * @generate: server (include/libvirt/libvirt-host.h)
 
 =over 8
-
-=item * REMOTE_PROC_CONNECT_IS_SECURE
 
 =item * REMOTE_PROC_NODE_GET_CELLS_FREE_MEMORY
 
