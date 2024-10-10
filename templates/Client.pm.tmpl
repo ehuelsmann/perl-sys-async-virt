@@ -766,9 +766,9 @@ async sub _close($self, $reason) {
         try {
             await Future->wait_all(
                 (map { $_->cancel }
-                 values $self->{_callbacks}->%*),
+                 grep values $self->{_callbacks}->%*),
                 (map { $_->abort }
-                 values $self->{_streams}->%*)
+                 grep values $self->{_streams}->%*)
                 );
             await $self->_call(
                 $remote->PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK );
@@ -794,14 +794,14 @@ async sub _close($self, $reason) {
             $cb->cleanup;
         }
     }
-    if (my @streams = values $self->{_streams}->%*) {
+    if (my @streams = grep values $self->{_streams}->%*) {
         $log->debug( 'Cleaning up streams not deregistered from the server' );
         for my $stream (@streams) {
             # 'cleanup' cleans the items from the array
             $stream->cleanup;
         }
     }
-    if (my @replies = keys $self->{_replies}->%*) {
+    if (my @replies = grep keys $self->{_replies}->%*) {
         $log->debug( 'Cleaning up (failing) on-going RPC calls' );
         for my $serial (@replies) {
             my $reply = delete $self->{_replies}->{$serial};
