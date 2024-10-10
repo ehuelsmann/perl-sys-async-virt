@@ -903,7 +903,7 @@ sub new($class, %args) {
         node_device_factory       => \&_node_device_factory,
         secret_factory            => \&_secret_factory,
 
-        url        => $args{url},
+        url        => $args{url} // $ENV{LIBVIRT_DEFAULT_URI},
         readonly   => $args{readonly},
         connection => $args{connection},
         transport  => $args{transport},
@@ -2153,8 +2153,7 @@ Based on LibVirt tag v10.3.0
 
   $loop->add( $client );
   await $client->connect;
-  await $client->auth( $remote->AUTH_NONE );
-  await $client->open( 'qemu:///system' );
+  my $domains = await $client->list_all_domains;
 
 
 =head1 DESCRIPTION
@@ -2227,14 +2226,6 @@ Receives all messages which either don't classify as a callback invocation
 for which no callback has been registered through one of the callback
 registration functions.
 
-=head2 on_stream
-
-  $on_stream->( @@@TODO );
-
-Receives all messages for which no stream has been instantiated and returned
-through the relevant API calls.
-
-
 =head2 on_close
 
   $on_close->( $client, $reason );
@@ -2290,7 +2281,7 @@ Returns a L<Sys::Async::Virt::Callback> instance.
 
 =head2 new
 
-  $client = Sys::Async::Virt->new( remote => $remote, ... );
+  $client = Sys::Async::Virt->new( url => $url, ... );
 
 Creates a new client instance.  The constructor supports these parameters:
 
@@ -2298,17 +2289,36 @@ Creates a new client instance.  The constructor supports these parameters:
 
 =item * C<factory> (optional)
 
+An instance of L<Sys::Async::Virt::Connection::Factory> or derived class. Not
+required when the C<connection> parameter is supplied.
+
 =item * C<connection> (optional)
+
+An instance of L<Sys::Async::Virt::Connection> or derived class.  The
+C<connect> method will be called to establish the actual connection.
 
 =item * C<transport> (optional)
 
+An instance of L<Protocol::Sys::Virt::Transport> or derived class configured
+to send the output through the C<connection> passed in.
+
 =item * C<remote> (optional)
+
+An instance of L<Protocol::Sys::Virt::Remote> or derived class configured
+in a C<client> role.  The C<remote> will be registered with the C<tranport>
+as part of the C<connect> procedure.
 
 =item * C<keepalive> (optional)
 
+An instance of L<Protocol::Sys::Virt::KeepAlive> or derived class configured
+to reply to PING messages using a PONG message as well as closing the
+C<connection> when the keepalive threshold is exceeded.
+
 =item * C<url> (optional)
 
-=item * C<on_stream> (optional)
+The URL of the hypervisor to connect to as per L<https://libvirt.org/uri.html>.
+
+When not supplied, defaults to the environment variable C<LIBVIRT_DEFAULT_URI>.
 
 =back
 
@@ -2322,9 +2332,14 @@ Creates a new client instance.  The constructor supports these parameters:
 
 =head2 connect
 
-  await $client->connect( $url );
+  await $client->connect( async sub pump($connection, $transport) { ... } );
 
-Sets up the transport connection to the server indicated by C<url>.
+Sets up the transport connection to the server, including authentication
+keep alive monitoring and close callback registration.
+
+Calls C<pump> to receive data from the C<$connection>, sending the received
+data into C<$transport>. The function should throw an exception in case of
+error or return in case of an C<End-Of-File (EOF)> condition.
 
 =head2 auth
 
@@ -3583,10 +3598,6 @@ replies.
 =head2 TODO
 
 =over 8
-
-=item * Updated SYNOPSIS
-
-=item * Update C<new> and C<connect> parameters documentation
 
 =item * Update the cached proxy instances (e.g. domains) after creation
 to include 'id' (e.g. domain 'id')
