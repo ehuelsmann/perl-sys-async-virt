@@ -1,6 +1,6 @@
 -----
 
-0.0.10   to be released
+0.0.10   2024-10-10
     [Added]
        * Support for external process transport ('...+ext://')
        * More documentation on supported URL parameters
