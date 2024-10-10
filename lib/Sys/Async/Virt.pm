@@ -919,9 +919,19 @@ sub new($class, %args) {
 }
 
 sub _domain_instance($self, $id) {
-    my $c = $self->{_domains}->{$id->{uuid}}
+    # Use $id->{id} as part of the cache key so we return a different domain
+    # instance between the cases where the server includes an 'id' and where
+    # it does not, such as:
+    #   my ($off_dom) = $virt->list_all_domains->@*;
+    #   my $on_dom = $off_dom->create;
+    #
+    # Here, $off_dom does not have an 'id' value. $on_dom has been assigned
+    # an 'id' because it's running.
+    my $dom_id = $id->{id} // '';
+    my $key = "$dom_id/$id->{uuid}";
+    my $c = $self->{_domains}->{$key}
        //= $self->{domain_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_domains}->{$id->{uuid}};
+    weaken $self->{_domains}->{$key};
     return $c;
 }
 
@@ -3599,21 +3609,14 @@ replies.
 
 =over 8
 
-=item * Update the cached proxy instances (e.g. domains) after creation
-to include 'id' (e.g. domain 'id')
-
-Although this doesn't seem a prerequisite for the API to work correctly,
-it seems sloppy that there's no update of the domain 'id' when one becomes
-available when the domain is started. (Looking at the sources of LibVirt,
-the 'id' doesn't get cleared when the domain is destroyed???)
-
 =item * Modules implementing connections for various protocols (tcp, tls, etc)
 
 =item * C<@generate: none> entrypoints review (and implement relevant ones)
 
 =item * C<@generate: server> entrypoints review (and implement relevant ones)
 
-=item * libvirt client configuration (C</etc/libvirt/libvirt.conf>)
+=item * libvirt client configuration (C</etc/libvirt/libvirt.conf> (for C<root>
+ or C<$XDG_CONFIG_HOME/libvirt/libvirt.conf> (for other users))
 
 =back
 
