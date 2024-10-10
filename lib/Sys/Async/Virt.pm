@@ -1007,7 +1007,7 @@ sub _secret_instance($self, $id) {
 }
 
 extended async sub _call($self, $proc, $args = {}, :$unwrap = '', :$stream = '', :$empty = '') {
-    die 'RPC call without remote connection'
+    die $log->fatal( "RPC call without remote connection (proc: $proc)" )
         unless $self->is_connected;
     my $serial = await $self->{remote}->call( $proc, $args );
     my $f = $self->loop->new_future;
@@ -1436,7 +1436,7 @@ async sub open($self) {
 async sub _close($self, $reason) {
     return unless $self->{_state} eq 'CONNECTED';
 
-    $self->{_state} = 'CLEANING UP';
+    $self->{_substate} = 'CLEANING UP';
     unless ($self->{connection}->is_read_eof
             or $self->{connection}->is_write_eof) {
         # when orderly connected both for reading and writing,
@@ -1448,10 +1448,12 @@ async sub _close($self, $reason) {
                 (map { $_->abort }
                  grep values $self->{_streams}->%*)
                 );
+            $log->debug( 'Unregistering CLOSE CALLBACK' );
             await $self->_call(
                 $remote->PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK );
 
-            $self->{_state} = 'CLOSING';
+            $log->debug( 'Closing session' );
+            $self->{_substate} = 'CLOSING';
             await $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
 
             $self->{connection}->close;
