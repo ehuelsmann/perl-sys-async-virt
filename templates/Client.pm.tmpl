@@ -779,7 +779,7 @@ async sub _close($self, $reason) {
 
             $log->debug( 'Closing session' );
             $self->{_substate} = 'CLOSING';
-            await $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
+            await $self->_call( $remote->PROC_CONNECT_CLOSE );
 
             # stop loops reading from and writing to the connection
             $self->{_input_pump_future}->cancel;
