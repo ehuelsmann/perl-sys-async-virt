@@ -8,6 +8,8 @@
     [Fixed]
        * Connection factory's "new" method ignores "drivers" argument
        * Callback registration on a single domain/network/pool/device/secret
+       * References to discarded weak references (accessing 'undef' values)
+       * Cancel I/O processing routines before closing low level connection
 
 0.0.9    2024-10-06
     [Added]
