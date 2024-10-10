@@ -546,6 +546,7 @@ extended async sub connect($self, :$pump = undef) {
         sub {
             $self->_close( $self->CLOSE_REASON_ERROR );
         });
+    $self->{_input_pump_future} = $f;
 
     $self->{_substate} = 'AUTHENTICATING';
     await $self->auth();
@@ -584,7 +585,9 @@ extended async sub connect($self, :$pump = undef) {
                 }
             }
         };
-        $self->adopt_future( $keep_pump->() );
+        my $f = $keep_pump->();
+        $self->adopt_future( $f );
+        $self->{_keepalive_pump_future} = $f;
     }
 
     $self->{_substate} = 'OPENING';
@@ -778,11 +781,19 @@ async sub _close($self, $reason) {
             $self->{_substate} = 'CLOSING';
             await $self->_call( $remote->PROC_CONNECT_CLOSE, {} );
 
+            # stop loops reading from and writing to the connection
+            $self->{_input_pump_future}->cancel;
+            $self->{_keepalive_pump_future}->cancel;
             $self->{connection}->close;
         }
         catch ($e) {
             $log->error( "Error during release of server resources: $e" );
         }
+    }
+    else {
+        # stop loops reading from and writing to the connection
+        $self->{_input_pump_future}->cancel;
+        $self->{_keepalive_pump_future}->cancel;
     }
 
     # These *should* have been de-allocated above; however,
