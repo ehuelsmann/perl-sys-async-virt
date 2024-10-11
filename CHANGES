@@ -1,5 +1,16 @@
 -----
 
+0.0.11   to be released
+    [Breaking]
+       * Callback event futures resolved data no longer includes
+         'callbackID'
+       * Callback event data has the elements from the 'msg' element
+         flattened into the toplevel (this mirrors the C API)
+    [Added]
+       * Documentation for events and event callbacks
+    [Fixed]
+       * Warning 'reference is already weak' triggered by event callbacks
+
 0.0.10   2024-10-10
     [Added]
        * Support for external process transport ('...+ext://')
