@@ -955,82 +955,148 @@ sub _domain_instance($self, $id) {
 
 sub _domain_checkpoint_instance($self, $id) {
     my $key = "$id->{dom}->{uuid}/$id->{name}";
-    my $c = $self->{_domain_checkpoints}->{$key}
-       //= $self->{domain_checkpoint_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_domain_checkpoints}->{$key};
+    my $c = $self->{_domain_checkpoints}->{$key};
+    unless ($c) {
+        $c = $self->{_domain_checkpoints}->{$key} =
+            $self->{domain_checkpoint_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_domain_checkpoints}->{$key};
+    }
     return $c;
 }
 
 sub _domain_snapshot_instance($self, $id) {
     my $key = "$id->{dom}->{uuid}/$id->{name}";
-    my $c = $self->{_domain_snapshots}->{$id->{uuid}}
-       //= $self->{domain_snapshot_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_domain_snapshots}->{$id->{uuid}};
+    my $c = $self->{_domain_snapshots}->{$id->{uuid}};
+    unless ($c) {
+        $c = $self->{_domain_snapshots}->{$id->{uuid}} =
+            $self->{domain_snapshot_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_domain_snapshots}->{$id->{uuid}};
+    }
     return $c;
 }
 
 sub _network_instance($self, $id) {
-    my $c = $self->{_networks}->{$id->{uuid}}
-       //= $self->{network_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_networks}->{$id->{uuid}};
+    my $c = $self->{_networks}->{$id->{uuid}};
+    unless ($c) {
+        $c = $self->{_networks}->{$id->{uuid}} =
+            $self->{network_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_networks}->{$id->{uuid}};
+    }
     return $c;
 }
 
 sub _network_port_instance($self, $id) {
-    my $c = $self->{_network_ports}->{$id->{uuid}}
-       //= $self->{network_port_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_network_ports}->{$id->{uuid}};
+    my $c = $self->{_network_ports}->{$id->{uuid}};
+    unless ($c) {
+        $c = $self->{_network_ports}->{$id->{uuid}} =
+            $self->{network_port_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_network_ports}->{$id->{uuid}};
+    }
     return $c;
 }
 
 sub _nwfilter_instance($self, $id) {
-    my $c = $self->{_nwfilters}->{$id->{uuid}}
-       //= $self->{nwfilter_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_nwfilters}->{$id->{uuid}};
+    my $c = $self->{_nwfilters}->{$id->{uuid}};
+    unless ($c) {
+        $c = $self->{_nwfilters}->{$id->{uuid}} =
+            $self->{nwfilter_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_nwfilters}->{$id->{uuid}};
+    }
     return $c;
 }
 
 sub _nwfilter_binding_instance($self, $id) {
     my $key = "$id->{portdev}/$id->{filtername}";
-    my $c = $self->{_nwfilter_bindings}->{$key}
-       //= $self->{nwfilter_binding_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_nwfilter_bindings}->{$key};
+    my $c = $self->{_nwfilter_bindings}->{$key};
+    unless ($c) {
+        $c = $self->{_nwfilter_bindings}->{$key} =
+            $self->{nwfilter_binding_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_nwfilter_bindings}->{$key};
+    }
     return $c;
 }
 
 sub _interface_instance($self, $id) {
     my $key = "$id->{mac}/$id->{name}";
-    my $c = $self->{_interfaces}->{$key}
-       //= $self->{interface_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_interfaces}->{$key};
+    my $c = $self->{_interfaces}->{$key};
+    unless ($c) {
+        $c = $self->{_interfaces}->{$key} =
+            $self->{interface_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_interfaces}->{$key};
+    }
     return $c;
 }
 
 sub _storage_pool_instance($self, $id) {
-    my $c = $self->{_storage_pools}->{$id->{uuid}}
-       //= $self->{storage_pool_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_storage_pools}->{$id->{uuid}};
+    my $c = $self->{_storage_pools}->{$id->{uuid}};
+    unless ($c) {
+        $c = $self->{_storage_pools}->{$id->{uuid}} =
+            $self->{storage_pool_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_storage_pools}->{$id->{uuid}};
+    }
     return $c;
 }
 
 sub _storage_vol_instance($self, $id) {
-    my $c = $self->{_storage_vols}->{$id->{key}}
-       //= $self->{storage_vol_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_storage_vols}->{$id->{key}};
+    my $c = $self->{_storage_vols}->{$id->{key}};
+    unless ($c) {
+        $c = $self->{_storage_vols}->{$id->{key}} =
+            $self->{storage_vol_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_storage_vols}->{$id->{key}};
+    }
     return $c;
 }
 
 sub _node_device_instance($self, $id) {
-    my $c = $self->{_node_devices}->{$id->{name}}
-       //= $self->{node_device_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_node_devices}->{$id->{name}};
+    my $c = $self->{_node_devices}->{$id->{name}};
+    unless ($c) {
+        $c = $self->{_node_devices}->{$id->{name}} =
+            $self->{node_device_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_node_devices}->{$id->{name}};
+    }
     return $c;
 }
 
 sub _secret_instance($self, $id) {
-    my $c = $self->{_secrets}->{$id->{uuid}}
-       //= $self->{secret_factory}->( client => $self, remote => $self->{remote}, id => $id );
-    weaken $self->{_secrets}->{$id->{uuid}};
+    my $c = $self->{_secrets}->{$id->{uuid}};
+    unless ($c) {
+        $c = $self->{_secrets}->{$id->{uuid}} =
+            $self->{secret_factory}->(
+                client => $self,
+                remote => $self->{remote},
+                id => $id );
+        weaken $self->{_secrets}->{$id->{uuid}};
+    }
     return $c;
 }
 
