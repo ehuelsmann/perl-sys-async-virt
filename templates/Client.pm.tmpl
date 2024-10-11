@@ -1037,16 +1037,36 @@ registration functions.
   $cb = await $client->domain_event_register_any( $event_id, $dom = undef );
 
 Subscribes to events of type C<$event_id>. Restricts events to a specific
-domain by passing a value into C<$dom>.
+domain by passing a value into C<$dom>. Please refer to the LibVirt
+documentation for the L<list of available domain related
+events|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainEventID>.
 
 Returns a L<Sys::Async::Virt::Callback> instance.
+
+Example:
+
+  my $cb = $client->domain_event_register_any(
+              $client->DOMAIN_EVENT_ID_LIFECYCLE );
+  my $event_data = await $cb->next_event;
+  # { dom => $dom, event => $event, detail => $detail }
+
+The domain event id documentation refers to various callbacks, which are
+called (in the C API) with a list of arguments. The C<$event_data> value
+will generally contain the same values, except the C<conn> (which is
+available through the C<dom>) and the C<opaque> parameters. Refer to
+L<virConnectDomainEventGenericCallback|https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectDomainEventGenericCallback>
+to compare the definition of the callback function and the returned
+C<$event_data> above.
 
 =head2 network_event_register_any
 
   $cb = await $client->network_event_register_any( $event_id, $net = undef );
 
 Subscribes to events of type C<$event_id>. Restricts events to a specific
-network by passing a value into C<$net>.
+network by passing a value into C<$net>. Similar to
+C<domain_event_register_any>; please refer to the LibVirt
+documentation for the L<list of available network related
+events|https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkEventID>.
 
 Returns a L<Sys::Async::Virt::Callback> instance.
 
@@ -1055,7 +1075,10 @@ Returns a L<Sys::Async::Virt::Callback> instance.
   $cb = await $client->node_device_event_register_any( $event_id, $dev = undef );
 
 Subscribes to events of type C<$event_id>. Restricts events to a specific
-device by passing a value into C<$dev>.
+device by passing a value into C<$dev>. Similar to
+C<domain_event_register_any>; please refer to the LibVirt
+documentation for the L<list of available node device related
+events|https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceEventID>.
 
 Returns a L<Sys::Async::Virt::Callback> instance.
 
@@ -1064,7 +1087,10 @@ Returns a L<Sys::Async::Virt::Callback> instance.
   $cb = await $client->secret_event_register_any( $event_id, $secret = undef);
 
 Subscribes to events of type C<$event_id>. Restricts events to a specific
-secret by passing a value into C<$secret>.
+secret by passing a value into C<$secret>. Similar to
+C<domain_event_register_any>; please refer to the LibVirt
+documentation for the L<list of available secret related
+events|https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretEventID>.
 
 Returns a L<Sys::Async::Virt::Callback> instance.
 
@@ -1073,7 +1099,10 @@ Returns a L<Sys::Async::Virt::Callback> instance.
   $cb = await $client->storage_pool_event_register_any( $event_id, $pool = undef );
 
 Subscribes to events of type C<$event_id>. Restricts events to a specific
-storage pool by passing a value into C<$pool>.
+storage pool by passing a value into C<$pool>. Similar to
+C<domain_event_register_any>; please refer to the LibVirt
+documentation for the L<list of available storage (pool) related
+events|https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolEventID>.
 
 Returns a L<Sys::Async::Virt::Callback> instance.
 
