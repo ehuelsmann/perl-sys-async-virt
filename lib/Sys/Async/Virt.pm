@@ -2339,15 +2339,14 @@ Returns a L<Sys::Async::Virt::Callback> instance.
 
 Example:
 
-  my $cb = $client->domain_event_register_any(
-              $client->DOMAIN_EVENT_ID_LIFECYCLE );
+  my $cb = $client->domain_event_register_any( $client->DOMAIN_EVENT_ID_LIFECYCLE );
   my $event_data = await $cb->next_event;
   # { dom => $dom, event => $event, detail => $detail }
 
 The domain event id documentation refers to various callbacks, which are
-called (in the C API) with a list of arguments. The C<$event_data> value
-will generally contain the same values, except the C<conn> (which is
-available through the C<dom>) and the C<opaque> parameters. Refer to
+called (in the C API) with a list of arguments. C<$event_data> will generally
+contain the same values, except the C<conn> (which is
+available through C<dom>) and the C<opaque> parameters. Refer to
 L<virConnectDomainEventGenericCallback|https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectDomainEventGenericCallback>
 to compare the definition of the callback function and the returned
 C<$event_data> above.
@@ -3721,6 +3720,11 @@ replies.
 =head2 TODO
 
 =over 8
+
+=item * Sort interaction between C<connect> and C<auth> methods
+
+Currently, C<connect> always calls C<auth>, which makes having a public
+C<auth> method rather pointless.
 
 =item * Modules implementing connections for various protocols (tcp, tls, etc)
 
