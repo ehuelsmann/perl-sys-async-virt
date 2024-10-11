@@ -1,6 +1,6 @@
 -----
 
-0.0.11   to be released
+0.0.11   2024-10-11
     [Breaking]
        * Callback event futures resolved data no longer includes
          'callbackID'

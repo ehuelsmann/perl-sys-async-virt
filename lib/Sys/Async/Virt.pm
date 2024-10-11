@@ -18,7 +18,7 @@ use Feature::Compat::Try;
 use Future::AsyncAwait;
 use Sublike::Extended; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
-package Sys::Async::Virt v0.0.10;
+package Sys::Async::Virt v0.0.11;
 
 use parent qw(IO::Async::Notifier);
 
@@ -36,22 +36,22 @@ use Protocol::Sys::Virt::Remote v10.3.13;
 use Protocol::Sys::Virt::Transport v10.3.13;
 use Protocol::Sys::Virt::URI v10.3.13; # imports parse_url
 
-use Sys::Async::Virt::Connection::Factory v0.0.10;
-use Sys::Async::Virt::Domain v0.0.10;
-use Sys::Async::Virt::DomainCheckpoint v0.0.10;
-use Sys::Async::Virt::DomainSnapshot v0.0.10;
-use Sys::Async::Virt::Network v0.0.10;
-use Sys::Async::Virt::NetworkPort v0.0.10;
-use Sys::Async::Virt::NwFilter v0.0.10;
-use Sys::Async::Virt::NwFilterBinding v0.0.10;
-use Sys::Async::Virt::Interface v0.0.10;
-use Sys::Async::Virt::StoragePool v0.0.10;
-use Sys::Async::Virt::StorageVol v0.0.10;
-use Sys::Async::Virt::NodeDevice v0.0.10;
-use Sys::Async::Virt::Secret v0.0.10;
+use Sys::Async::Virt::Connection::Factory v0.0.11;
+use Sys::Async::Virt::Domain v0.0.11;
+use Sys::Async::Virt::DomainCheckpoint v0.0.11;
+use Sys::Async::Virt::DomainSnapshot v0.0.11;
+use Sys::Async::Virt::Network v0.0.11;
+use Sys::Async::Virt::NetworkPort v0.0.11;
+use Sys::Async::Virt::NwFilter v0.0.11;
+use Sys::Async::Virt::NwFilterBinding v0.0.11;
+use Sys::Async::Virt::Interface v0.0.11;
+use Sys::Async::Virt::StoragePool v0.0.11;
+use Sys::Async::Virt::StorageVol v0.0.11;
+use Sys::Async::Virt::NodeDevice v0.0.11;
+use Sys::Async::Virt::Secret v0.0.11;
 
-use Sys::Async::Virt::Callback v0.0.10;
-use Sys::Async::Virt::Stream v0.0.10;
+use Sys::Async::Virt::Callback v0.0.11;
+use Sys::Async::Virt::Stream v0.0.11;
 
 use constant {
     CLOSE_REASON_ERROR                                 => 0,
@@ -2233,7 +2233,7 @@ Sys::Async::Virt - LibVirt protocol implementation for clients
 
 =head1 VERSION
 
-v0.0.10
+v0.0.11
 
 Based on LibVirt tag v10.3.0
 
