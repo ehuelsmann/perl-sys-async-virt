@@ -133,7 +133,20 @@ sub _map( $client, $unwrap, $argmap, $data) {
     return $data;
 }
 
-sub _translated($client, $unwrap, $argmap, %args) {
+sub _translated_msg($client, $argsmap, %args) {
+    return (%args, ) unless $args{data};
+    my $data = _map($client, undef, $argsmap, $args{data});
+    my $msg = delete $data->{msg};
+    delete $data->{callbackID};
+    if ($msg) {
+        $args{data} = {
+            $data->%*, $msg->%*
+        };
+    }
+    return (%args, );
+}
+
+sub _translated_reply($client, $unwrap, $argmap, %args) {
     return (%args, ) unless $args{data};
     my $data = $args{data};
     $args{data} = _map($client, $unwrap, $argmap, $data);

@@ -98,7 +98,7 @@ v0.0.10
      $client->DOMAIN_EVENT_ID_LIFECYCLE );
 
   while (my $event = await $cb->next_event) {
-     my $dom = $event->{msg}->{dom};
+     my $dom = $event->{dom};
 
      # process the event
      if ($event->{event} == $dom->EVENT_STOPPED) {
