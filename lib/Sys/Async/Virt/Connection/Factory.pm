@@ -89,7 +89,7 @@ v0.0.10
 
 =head1 SYNOPSIS
 
-  use v5.20;
+  use v5.26;
   use Future::AsyncAwait;
 
   use Sys::Async::Virt::Connection::Factory;

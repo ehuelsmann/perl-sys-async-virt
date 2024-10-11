@@ -10,6 +10,7 @@
        * Documentation for events and event callbacks
     [Fixed]
        * Warning 'reference is already weak' triggered by event callbacks
+       * Replace 'use v5.20;' with 'use v5.26' everywhere
 
 0.0.10   2024-10-10
     [Added]
