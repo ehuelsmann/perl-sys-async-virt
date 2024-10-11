@@ -8,6 +8,7 @@
          flattened into the toplevel (this mirrors the C API)
     [Added]
        * Documentation for events and event callbacks
+       * Example demonstrating event consumption (eg/wait-domain-state.pl)
     [Fixed]
        * Warning 'reference is already weak' triggered by event callbacks
        * Replace 'use v5.20;' with 'use v5.26' everywhere
