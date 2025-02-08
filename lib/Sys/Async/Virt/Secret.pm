@@ -36,6 +36,13 @@ sub new($class, %args) {
     }, $class;
 }
 
+
+async sub get_value($self, $flags = 0) {
+    return await $self->{client}->_call(
+        $remote->PROC_SECRET_GET_VALUE,
+        { secret => $self->{id}, flags => $flags // 0 }, unwrap => 'value' );
+}
+
 async sub get_xml_desc($self, $flags = 0) {
     return await $self->{client}->_call(
         $remote->PROC_SECRET_GET_XML_DESC,
@@ -80,6 +87,13 @@ v0.0.14
 =head2 new
 
 =head1 METHODS
+
+=head2 get_value
+
+  $value = await $secret->get_value( $flags = 0 );
+
+See documentation of L<virSecretGetValue|https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretGetValue>.
+
 
 =head2 get_xml_desc
 

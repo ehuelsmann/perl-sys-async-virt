@@ -691,17 +691,110 @@ sub new($class, %args) {
     }, $class;
 }
 
-# @@@TODO: ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_VCPU_PIN_INFO
-#
-# Check out Sys::Virt::Domain::get_vcpu_info
-#
-# async sub get_vcpu_pin_info($self, $flags = 0) {
-#     my $maplen = await $self->{client}->_maplen;
-#     return $self->{client}->_call(
-#         $remote->PROC_DOMAIN_GET_VCPU_INFO,
-#         { dom => $self->{id}, ncpumaps => ...,
-#           maplen => $maplen, flags => $flags // 0 });
-# }
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_BLOCK_JOB_INFO
+async sub get_block_job_info( $self, $disk, $flags = 0 ) {
+    my $rv = await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_BLOCK_JOB_INFO,
+        { dom => $self->{id}, path => $disk, flags => $flags // 0 } );
+
+    if ($rv->{found}) {
+        return $rv;
+    }
+    else {
+        return undef;
+    }
+}
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_EMULATOR_PIN_INFO
+async sub get_emulator_pin_info($self, $flags = 0) {
+    my $maplen = await $self->{client}->_maplen;
+    my $rv = await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_EMULATOR_PIN_INFO,
+        { dom => $self->{id}, maplen => $maplen,
+          flags => $flags // 0 } );
+
+    if ($rv->{ret} == 0) {
+        return undef;
+    }
+    else {
+        return await $self->{client}->_from_cpumap( $rv->{cpumaps} );
+    }
+}
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_IOTHREAD_INFO
+async sub get_iothread_info( $self, $flags = 0 ) {
+    my $client = $self->{client};
+    my $rv = await $client->_call(
+        $remote->PROC_DOMAIN_GET_IOTHREAD_INFO,
+        { dom => $self->{id}, flags => $flags // 0 } );
+
+    my @rv;
+    for my $thread ($rv->{info}->@*) {
+        push @rv, {
+            iothread_id => $thread->{iothread_id},
+            cpumap => await $client->_from_cpumap( $thread->{cpumap} )
+        };
+    }
+
+    return \@rv;
+}
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_TIME
+async sub get_time( $self, $flags = 0 ) {
+    my $rv = await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_TIME,
+        { dom => $self->{id}, flags => $flags // 0 } );
+
+    return ( $rv->{seconds}, $rv->{nseconds} );
+}
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_VCPU_PIN_INFO
+async sub get_vcpu_pin_info($self, $flags = 0 ) {
+    my $vcpus  = await $self->get_vcpus_flags( $flags // 0 );
+    my $cpus   = await $self->{client}->{totcpus};
+    my $maplen = await $self->{client}->{maplen};
+    my $rv = await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_VCPU_PIN_INFO,
+        { dom => $self->{id}, ncpumaps => $vcpus,
+          maplen => $maplen, flags => $flags });
+
+    my $client = $self->{client};
+    my $maps = $rv->{cpumaps};
+    my @rv;
+    foreach my $vcpu_idx (0 .. ($rv->{num} - 1)) {
+        push @rv, await $client->_from_cpumap( $vcpu_idx*$maplen );
+    }
+
+    return \@rv;
+}
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_VCPUS
+async sub get_vcpus($self) {
+    my $client = $self->{client};
+    my $vcpus  = await $self->get_vcpus_flags;
+    my $maplen = await $self->{client}->_maplen;
+    my $rv = await $client->_call(
+        $remote->PROC_DOMAIN_GET_VCPUS,
+        { dom => $self->{id}, maxinfo => $vcpus, maplen => $maplen } );
+
+    my @rv;
+    foreach my $vcpu_idx (0 .. ($vcpus - 1)) {
+        push @rv, {
+            $rv->{info}->[$vcpu_idx]->%*,
+            affinity => await $client->_from_cpumap( $rv->{cpumaps},
+                                                     $vcpu_idx*$maplen ) };
+    }
+
+    return \@rv;
+}
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_PIN_EMULATOR
+async sub pin_emulator($self, $cpumap, $flags = 0) {
+    await $self->_call(
+        $remote->PROC_DOMAIN_PIN_EMULATOR,
+        { dom => $self->{id}, cpumap => $cpumap,
+          flags => $flags // 0 } );
+}
 
 sub _migrate_perform($self, $cookie, $uri, $flags, $dname, $resource) {
     return $self->{client}->_call(
@@ -792,6 +885,12 @@ sub block_job_set_speed($self, $path, $bandwidth, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_BLOCK_JOB_SET_SPEED,
         { dom => $self->{id}, path => $path, bandwidth => $bandwidth, flags => $flags // 0 }, empty => 1 );
+}
+
+async sub block_peek($self, $path, $offset, $size, $flags = 0) {
+    return await $self->{client}->_call(
+        $remote->PROC_DOMAIN_BLOCK_PEEK,
+        { dom => $self->{id}, path => $path, offset => $offset, size => $size, flags => $flags // 0 }, unwrap => 'buffer' );
 }
 
 sub block_pull($self, $path, $bandwidth, $flags = 0) {
@@ -1070,6 +1169,13 @@ async sub get_os_type($self) {
         { dom => $self->{id} }, unwrap => 'type' );
 }
 
+async sub get_perf_events($self, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    return await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_PERF_EVENTS,
+        { dom => $self->{id}, flags => $flags // 0 }, unwrap => 'params' );
+}
+
 async sub get_scheduler_parameters($self) {
     return await $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_SCHEDULER_PARAMETERS,
@@ -1195,6 +1301,12 @@ sub managed_save_remove($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_MANAGED_SAVE_REMOVE,
         { dom => $self->{id}, flags => $flags // 0 }, empty => 1 );
+}
+
+async sub memory_peek($self, $offset, $size, $flags = 0) {
+    return await $self->{client}->_call(
+        $remote->PROC_DOMAIN_MEMORY_PEEK,
+        { dom => $self->{id}, offset => $offset, size => $size, flags => $flags // 0 }, unwrap => 'buffer' );
 }
 
 async sub memory_stats($self, $flags = 0) {
@@ -1618,6 +1730,85 @@ in L<Sys::Async::Virt>.
 
 =head1 METHODS
 
+=head2 get_block_job_info
+
+  $job_info = await $dom->get_block_job_info( $disk );
+
+Returns undef when no job associated with the named block device was found;
+otherwise returns a reference to a hash with the fields as documented in the
+L<virDomainBlockJobInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockJobInfo>
+structure.
+
+See also documentation of L<virDomainGetBlockJobInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetBlockJobInfo>.
+
+=head2 get_emulator_pin_info
+
+  $pins = await $dom->get_emulator_pin_info( $flags );
+
+Returns an array reference with elements being booleans indicating pinning of
+the emulator threads to the associated CPU, or C<undef> in case no emulator
+threads are pinned.
+
+See also the documentation of L<virDomainGetEmulatorPinInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetEmulatorPinInfo>.
+
+=head2 get_iothread_info
+
+  $iothreads = await $dom->get_iothread_info;
+
+Returns an array of hashes. Each hash has the keys C<iothread_id> and
+C<cpumap>. The CPU map is returned as an array of boolean values.
+
+See also documentation of L<virDomainGetIOThreadInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetIOThreadInfo>.
+
+=head2 get_perf_events
+
+  $perf_events = await $dom->get_perf_events;
+
+Returns an array reference where each element in the array is a
+L<typed parameter value|Sys::Async::Virt/Typed parameter values>.
+
+=head2 get_time
+
+  ($secs, $nanos) = await $dom->get_time;
+
+Return time extracted from the domain.
+
+See also the documentation of L<virDomainGetTime|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetTime>.
+
+=head2 get_vcpu_pin_info
+
+  $vcpu_pins = await $dom->get_vcpu_pin_info( $flags = 0 );
+
+Returns a reference to an array holding one entry for each vCPU. Each entry is
+a reference to an array holding a boolean value for each physical CPU. The
+boolean indicates whether the vCPU is allowed to run on that physical CPU
+(affinity).
+
+See also the documentation of L<virDomainGetVcpuPinInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetVcpuPinInfo>.
+
+=head2 get_vcpus
+
+  $vcpus = await $dom->get_vcpus;
+
+Returns a reference to an array holding one entry for each vCPU. Each entry is
+a reference to a hash with the keys as described in
+L<virVcpuInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virVcpuInfo>,
+with one extra key C<affinity>, an array of booleans where each element
+indicates whether the vCPU is allowed to run on that physical CPU (affinity).
+
+See also the documentation of L<virDomainGetVcpus|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetVcpus>.
+
+=head2 pin_emulator
+
+  await $dom->pin_emulator( $cpumap, $flags )
+  # -> (* no data *)
+
+Sets emulator threads to those indicated in C<$cpumap> -- a reference to an array
+with boolean values, indicating a true value for each CPU the emulator is allowed
+to be scheduled on.
+
+See also the documentation of L<virDomainPinEmulator|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPinEmulator>.
+
 =head2 abort_job
 
   await $dom->abort_job;
@@ -1725,6 +1916,13 @@ See documentation of L<virDomainBlockJobAbort|https://libvirt.org/html/libvirt-l
   # -> (* no data *)
 
 See documentation of L<virDomainBlockJobSetSpeed|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockJobSetSpeed>.
+
+
+=head2 block_peek
+
+  $buffer = await $dom->block_peek( $path, $offset, $size, $flags = 0 );
+
+See documentation of L<virDomainBlockPeek|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainBlockPeek>.
 
 
 =head2 block_pull
@@ -2055,6 +2253,13 @@ See documentation of L<virDomainGetNumaParameters|https://libvirt.org/html/libvi
 See documentation of L<virDomainGetOSType|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetOSType>.
 
 
+=head2 get_perf_events
+
+  $params = await $dom->get_perf_events( $flags = 0 );
+
+See documentation of L<virDomainGetPerfEvents|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetPerfEvents>.
+
+
 =head2 get_scheduler_parameters
 
   $params = await $dom->get_scheduler_parameters;
@@ -2214,6 +2419,13 @@ See documentation of L<virDomainManagedSaveGetXMLDesc|https://libvirt.org/html/l
   # -> (* no data *)
 
 See documentation of L<virDomainManagedSaveRemove|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSaveRemove>.
+
+
+=head2 memory_peek
+
+  $buffer = await $dom->memory_peek( $offset, $size, $flags = 0 );
+
+See documentation of L<virDomainMemoryPeek|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMemoryPeek>.
 
 
 =head2 memory_stats

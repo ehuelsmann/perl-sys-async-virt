@@ -444,8 +444,8 @@ my @reply_translators = (
     sub { 100; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 102; my $client = shift; _translated_reply($client, undef, {  }, @_) },
-    \&_no_translation,
-    \&_no_translation,
+    sub { 103; my $client = shift; _translated_reply($client, undef, {  }, @_) },
+    sub { 104; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     \&_no_translation,
     \&_no_translation,
     sub { 107; my $client = shift; _translated_msg($client, { dom => \&_translate_remote_nonnull_domain }, @_) },
@@ -486,7 +486,7 @@ my @reply_translators = (
     sub { 142; my $client = shift; _translated_reply($client, undef, { secret => \&_translate_remote_nonnull_secret }, @_) },
     sub { 143; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     \&_no_translation,
-    \&_no_translation,
+    sub { 145; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 147; my $client = shift; _translated_reply($client, undef, { secret => \&_translate_remote_nonnull_secret }, @_) },
     \&_no_translation,
@@ -706,7 +706,7 @@ my @reply_translators = (
     undef,
     sub { 363; my $client = shift; _translated_msg($client, { dom => \&_translate_remote_nonnull_domain }, @_) },
     \&_no_translation,
-    \&_no_translation,
+    sub { 365; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     \&_no_translation,
     sub { 367; my $client = shift; _translated_msg($client, { dom => \&_translate_remote_nonnull_domain }, @_) },
     \&_no_translation,
@@ -903,6 +903,10 @@ sub new($class, %args) {
         _substate => '', # when _state=='CONNECTED'
         _replies  => {},
         _streams  => {},
+
+        # cached host data:
+        _maplen   => 0, # length of the cpu map in bytes
+        _cpus     => 0, # number of cpus in the hypervisor
 
         domain_factory            => \&_domain_factory,
         domain_checkpoint_factory => \&_domain_checkpoint_factory,
@@ -1128,12 +1132,32 @@ extended async sub _call($self, $proc, $args = {}, :$unwrap = '', :$stream = '',
     return @rv;
 }
 
+async sub _from_cpumap($self, $cpumap, $offset = 0) {
+    my $cpus = await $self->_cpus;
+    return [ map { vec( $cpumap, $offset+$_, 1 ) } 0 .. ($cpus - 1) ];
+}
+
+async sub _to_cpumap($self, $cpuarray) {
+    my $maplen = await $self->_maplen;
+    my $map = "\0" x $maplen;
+    vec( $map, $cpuarray->[$_] ? 1 : 0, 1 )
+        for ( 0 .. scalar($cpuarray->@*) );
+
+    return $map
+}
+
+async sub _cpus($self) {
+    return $self->{_cpus} if $self->{_cpus};
+
+    await $self->get_cpu_map;
+    return $self->{_cpus};
+}
+
 async sub _maplen($self) {
     return $self->{_maplen} if $self->{_maplen};
 
-    my $info = await $self->node_get_info;
-    return ($self->{_maplen} =
-            $info->{nodes}*$info->{sockets}*$info->{cores}*$info->{threads});
+    await $self->get_cpu_map;
+    return $self->{_maplen};
 }
 
 async sub _send($self, $proc, $serial, %args) {
@@ -1604,6 +1628,57 @@ async sub _close($self, $reason) {
 async sub close($self) {
     return if $self->{_state} ne 'CONNECTED';
     await $self->_close( $self->CLOSE_REASON_CLIENT );
+}
+
+# ENTRYPOINT: REMOTE_PROC_NODE_GET_CELLS_FREE_MEMORY
+async sub get_cells_free_memory($self, $start_cell, $max_cells) {
+    my $rv = await $self->_call(
+        $remote->PROC_NODE_GET_CELLS_FREE_MEMORY,
+        { startCell => $start_cell, maxcells => $max_cells } );
+
+    return $rv->{cells};
+}
+
+# ENTRYPOINT: REMOTE_PROC_NODE_GET_CPU_MAP
+async sub get_cpu_map($self) {
+    my $rv = await $self->_call(
+        $remote->PROC_NODE_GET_CPU_MAP,
+        { need_map => 1, need_online => 1, flags => 0 } );
+
+    $self->{_cpus} = $rv->{ret};
+    $self->{_maplen} = length($rv->{cpumap});
+
+    return {
+        totcpus => $rv->{ret},
+        totonline => $rv->{online},
+        maplen    => length($rv->{cpumap}),
+        onlinemap => $self->_from_cpumap( $rv->{cpumap} )
+    };
+}
+
+# ENTRYPOINT: REMOTE_PROC_NODE_GET_FREE_PAGES
+async sub get_free_pages($self, $pages, $start_cell, $cell_count, $flags = 0) {
+    my $rv = await $self->_call(
+        $remote->PROC_NODE_GET_FREE_PAGES,
+        { pages => $pages, startCell => $start_cell,
+          cellCount => $cell_count, flags => $flags // 0 } );
+
+    my @rv;
+    my $cell_counts = [];
+    while (1) {
+        my $count = shift $rv->{counts}->@*;
+        push $cell_counts->@*, $count;
+
+        if (scalar($cell_counts->@*) == scalar($pages->@*)) {
+            push @rv, $cell_counts;
+            $cell_counts = [];
+        }
+        if (scalar($rv->{counts}->@*) == 0) {
+            last;
+        }
+    }
+
+    return \@rv;
 }
 
 async sub _domain_migrate_finish($self, $dname, $cookie, $uri, $flags = 0) {
@@ -2269,6 +2344,28 @@ C<INPUT> and C<INPUT|OUTPUT (as input)> arguments for its functions.  The
 C<OUTPUT> and C<INPUT|OUTPUT (as output)> arguments will be returned in the
 C<on_reply> event.
 
+=head2 Data type differences between C and Perl API
+
+=head3 cpumap
+
+In the C API, C<cpumap> and C<cpumaps> parameters are bitmap fields. In the
+Perl API, these bitmap fields are converted to arrays of booleans:
+
+  # use:
+  $cpumap->[$cpu_index]
+
+  # to achieve this from the C API:
+  cpumap & (1 << cpu_index)
+
+=head3 Typed parameter values
+
+The C API returns (arrays of) typed parameters in several places. The Perl API
+represents typed parameters as a hash with two keys: C<field> (a string, the
+name of the parameter) and C<value>. The C<value> is itself a hash with two
+keys: C<type> (indicating the type, from L<virTypedParameterType|https://libvirt.org/html/libvirt-libvirt-common.html#virTypedParameterType>)
+and one of C<i>, C<ui>, C<l>, C<ul>, C<d>, C<b> or C<s>, the actual typed
+value.
+
 =head2 RUNNING AGAINST OLDER SERVERS
 
 The reference LibVirt version of this module is v11.0.0. This means
@@ -2518,6 +2615,39 @@ connection.
 Announces to the remote the intent to close the connection. The client will
 receive a confirmation message from the server after which the server will
 close the connection.
+
+=head2 get_cells_free_memory
+
+  $cell_free_mem = await $client->get_cells_free_memory( $start_cell_no, $max_cells );
+
+Returns an array of available memory per NUMA cell starting at number C<$start_cell_no>;
+returns data of at most C<$max_cells> NUMA cells.
+
+Also see documentation of L<virNodeGetCellsFreeMemory|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetCellsFreeMemory>.
+
+=head2 get_cpu_map
+
+  await $client->get_cpu_map;
+  # -> { maplen => $numbytes, totcpus => $cpu_count, totonline => $onl_count, onlinemap => \@online }
+
+Returns the total number of CPUs C<$cpu_count> in the hypervisor, where the number of online
+CPUs is C<$onl_count>. C<@online> is an array of length C<$cpu_count>, indicating for each CPU number
+whether or not it is online.
+
+In addition to the LibVirt and Sys::Virt APIs, this API returns C<maplen>: the length (in bytes) of CPU
+maps on this hypervisor.
+
+Also see documentation of L<virNodeGetCPUMap|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetCPUMap>.
+
+=head2 get_free_pages
+
+  $pages = [ 4, 2048 ];
+  $free_cell_pages = await $client->get_free_pages( $pages, $start_cell, $cell_count );
+
+Returns a reference to an array (one element per NUMA cell) of arrays with the number of
+free pages of the sizes listed in C<$pages>.
+
+Also see documentation of L<virNodeGetFreePages|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetFreePages>.
 
 =head2 baseline_cpu
 
@@ -3765,41 +3895,21 @@ towards implementation are greatly appreciated.
 
 =over 8
 
-=item * REMOTE_PROC_DOMAIN_BLOCK_PEEK
-
 =item * REMOTE_PROC_DOMAIN_CREATE_WITH_FILES
 
 =item * REMOTE_PROC_DOMAIN_CREATE_XML_WITH_FILES
 
 =item * REMOTE_PROC_DOMAIN_FD_ASSOCIATE
 
-=item * REMOTE_PROC_DOMAIN_GET_BLOCK_JOB_INFO
-
-=item * REMOTE_PROC_DOMAIN_GET_EMULATOR_PIN_INFO
-
-=item * REMOTE_PROC_DOMAIN_GET_IOTHREAD_INFO
-
 =item * REMOTE_PROC_DOMAIN_GET_LAUNCH_SECURITY_INFO
-
-=item * REMOTE_PROC_DOMAIN_GET_PERF_EVENTS
 
 =item * REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL
 
 =item * REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL_LIST
 
-=item * REMOTE_PROC_DOMAIN_GET_TIME
-
-=item * REMOTE_PROC_DOMAIN_GET_VCPUS
-
-=item * REMOTE_PROC_DOMAIN_GET_VCPU_PIN_INFO
-
-=item * REMOTE_PROC_DOMAIN_MEMORY_PEEK
-
 =item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS
 
 =item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS_FD
-
-=item * REMOTE_PROC_DOMAIN_PIN_EMULATOR
 
 =back
 
@@ -3811,21 +3921,7 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_NODE_ALLOC_PAGES
 
-=item * REMOTE_PROC_NODE_GET_CPU_MAP
-
-=item * REMOTE_PROC_NODE_GET_FREE_PAGES
-
 =item * REMOTE_PROC_NODE_GET_SECURITY_MODEL
-
-=back
-
-
-
-=item * @generate: none (include/libvirt/libvirt-secret.h)
-
-=over 8
-
-=item * REMOTE_PROC_SECRET_GET_VALUE
 
 =back
 
@@ -3860,32 +3956,6 @@ towards implementation are greatly appreciated.
 =item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3_PARAMS
 
 =item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL3_PARAMS
-
-=back
-
-
-
-=item * @generate: server (include/libvirt/libvirt-host.h)
-
-=over 8
-
-=item * REMOTE_PROC_NODE_GET_CELLS_FREE_MEMORY
-
-=back
-
-
-
-=item * @generate: server (include/libvirt/libvirt-nodedev.h)
-
-=over 8
-
-=item * REMOTE_PROC_NODE_DEVICE_DETACH_FLAGS
-
-=item * REMOTE_PROC_NODE_DEVICE_DETTACH
-
-=item * REMOTE_PROC_NODE_DEVICE_RESET
-
-=item * REMOTE_PROC_NODE_DEVICE_RE_ATTACH
 
 =back
 
