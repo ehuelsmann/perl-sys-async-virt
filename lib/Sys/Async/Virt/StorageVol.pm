@@ -78,6 +78,12 @@ sub get_info($self) {
         { vol => $self->{id} } );
 }
 
+sub get_info_flags($self, $flags = 0) {
+    return $self->{client}->_call(
+        $remote->PROC_STORAGE_VOL_GET_INFO_FLAGS,
+        { vol => $self->{id}, flags => $flags // 0 } );
+}
+
 async sub get_path($self) {
     return await $self->{client}->_call(
         $remote->PROC_STORAGE_VOL_GET_PATH,
@@ -170,6 +176,16 @@ See documentation of L<virStorageVolDownload|https://libvirt.org/html/libvirt-li
   #      type => $type }
 
 See documentation of L<virStorageVolGetInfo|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolGetInfo>.
+
+
+=head2 get_info_flags
+
+  await $vol->get_info_flags( $flags = 0 );
+  # -> { allocation => $allocation,
+  #      capacity => $capacity,
+  #      type => $type }
+
+See documentation of L<virStorageVolGetInfoFlags|https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolGetInfoFlags>.
 
 
 =head2 get_path

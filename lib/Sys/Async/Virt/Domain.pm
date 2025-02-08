@@ -739,6 +739,36 @@ async sub get_iothread_info( $self, $flags = 0 ) {
     return \@rv;
 }
 
+sub _patch_security_label( $sec ) {
+    my $label = $sec->{label};
+    $label = join('', map { chr($_) } $label->@* );
+    chop $label; # eliminate terminating ascii \0-char
+    $sec->{label} = $label;
+}
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL
+async sub get_security_label( $self ) {
+    my $rv = await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_SECURITY_LABEL,
+        { dom => $self->{id} } );
+
+    _patch_security_label( $rv );
+    return $rv;
+}
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL_LIST
+async sub get_security_label_list( $self ) {
+    my $rv = await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_SECURITY_LABEL_LIST,
+        { dom => $self->{id} } );
+
+    for my $label ($rv->{labels}->@*) {
+        _patch_security_label( $label );
+    }
+
+    return $rv->{labels};
+}
+
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_TIME
 async sub get_time( $self, $flags = 0 ) {
     my $rv = await $self->{client}->_call(
@@ -1117,6 +1147,13 @@ sub get_job_stats($self, $flags = 0) {
     return $self->{client}->_call(
         $remote->PROC_DOMAIN_GET_JOB_STATS,
         { dom => $self->{id}, flags => $flags // 0 } );
+}
+
+async sub get_launch_security_info($self, $flags = 0) {
+    $flags |= await $self->{client}->_typed_param_string_okay();
+    return await $self->{client}->_call(
+        $remote->PROC_DOMAIN_GET_LAUNCH_SECURITY_INFO,
+        { dom => $self->{id}, flags => $flags // 0 }, unwrap => 'params' );
 }
 
 async sub get_max_memory($self) {
@@ -2202,6 +2239,13 @@ See documentation of L<virDomainGetJobInfo|https://libvirt.org/html/libvirt-libv
   # -> { params => $params, type => $type }
 
 See documentation of L<virDomainGetJobStats|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetJobStats>.
+
+
+=head2 get_launch_security_info
+
+  $params = await $dom->get_launch_security_info( $flags = 0 );
+
+See documentation of L<virDomainGetLaunchSecurityInfo|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetLaunchSecurityInfo>.
 
 
 =head2 get_max_memory

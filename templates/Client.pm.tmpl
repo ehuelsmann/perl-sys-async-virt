@@ -951,6 +951,19 @@ async sub close($self) {
     await $self->_close( $self->CLOSE_REASON_CLIENT );
 }
 
+# ENTRYPOINT: REMOTE_PROC_NODE_ALLOC_PAGES
+async sub alloc_pages($self, $page_counts, $start_cell, $cell_count, $flags ) {
+    my $rv = await $self->_call(
+        $remote->PROC_NODE_ALLOC_PAGES,
+        { pageSizes  => [ map { $_->{size} } $page_counts->@* ],
+          pageCounts => [ map { $_->{count} } $page_counts->@* ],
+          startCell  => $start_cell,
+          cellCount  => $cell_count,
+          flags      => $flags } );
+
+    return $rv->{ret};
+}
+
 # ENTRYPOINT: REMOTE_PROC_NODE_GET_CELLS_FREE_MEMORY
 async sub get_cells_free_memory($self, $start_cell, $max_cells) {
     my $rv = await $self->_call(
@@ -1320,6 +1333,18 @@ connection.
 Announces to the remote the intent to close the connection. The client will
 receive a confirmation message from the server after which the server will
 close the connection.
+
+=head2 alloc_pages
+
+  $adjusted_cells = await $client->alloc_pages( $page_counts, $start_cell, $cell_count, $flags );
+
+The C<pageSizes> and C<pageCounts> parameters of the C API have been combined into the C<$page_counts>
+parameter, which is an array of hashes with a C<size> and C<count> key:
+
+  $page_counts = [ { size => 4,    count => 800 },
+                   { size => 2048, count => 400 } ];
+
+Also see documentation of L<virNodeAllocPages|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeAllocPages>.
 
 =head2 get_cells_free_memory
 

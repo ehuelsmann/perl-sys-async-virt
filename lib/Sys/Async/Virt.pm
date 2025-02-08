@@ -416,7 +416,7 @@ my @reply_translators = (
     sub { 72; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     sub { 73; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     sub { 74; my $client = shift; _translated_reply($client, undef, {  }, @_) },
-    \&_no_translation,
+    sub { 75; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     sub { 76; my $client = shift; _translated_reply($client, undef, { pool => \&_translate_remote_nonnull_storage_pool }, @_) },
     sub { 77; my $client = shift; _translated_reply($client, undef, { pool => \&_translate_remote_nonnull_storage_pool }, @_) },
     \&_no_translation,
@@ -737,7 +737,7 @@ my @reply_translators = (
     sub { 393; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     sub { 394; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     sub { 395; my $client = shift; _translated_reply($client, undef, {  }, @_) },
-    \&_no_translation,
+    sub { 396; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     sub { 397; my $client = shift; _translated_reply($client, undef, { nwfilter => \&_translate_remote_nonnull_nwfilter_binding }, @_) },
     sub { 398; my $client = shift; _translated_reply($client, undef, {  }, @_) },
     sub { 399; my $client = shift; _translated_reply($client, undef, { nwfilter => \&_translate_remote_nonnull_nwfilter_binding }, @_) },
@@ -1630,6 +1630,19 @@ async sub close($self) {
     await $self->_close( $self->CLOSE_REASON_CLIENT );
 }
 
+# ENTRYPOINT: REMOTE_PROC_NODE_ALLOC_PAGES
+async sub alloc_pages($self, $page_counts, $start_cell, $cell_count, $flags ) {
+    my $rv = await $self->_call(
+        $remote->PROC_NODE_ALLOC_PAGES,
+        { pageSizes  => [ map { $_->{size} } $page_counts->@* ],
+          pageCounts => [ map { $_->{count} } $page_counts->@* ],
+          startCell  => $start_cell,
+          cellCount  => $cell_count,
+          flags      => $flags } );
+
+    return $rv->{ret};
+}
+
 # ENTRYPOINT: REMOTE_PROC_NODE_GET_CELLS_FREE_MEMORY
 async sub get_cells_free_memory($self, $start_cell, $max_cells) {
     my $rv = await $self->_call(
@@ -1806,6 +1819,12 @@ async sub domain_xml_to_native($self, $nativeFormat, $domainXml, $flags = 0) {
     return await $self->_call(
         $remote->PROC_CONNECT_DOMAIN_XML_TO_NATIVE,
         { nativeFormat => $nativeFormat, domainXml => $domainXml, flags => $flags // 0 }, unwrap => 'nativeConfig' );
+}
+
+async sub find_storage_pool_sources($self, $type, $srcSpec, $flags = 0) {
+    return await $self->_call(
+        $remote->PROC_CONNECT_FIND_STORAGE_POOL_SOURCES,
+        { type => $type, srcSpec => $srcSpec, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 async sub get_all_domain_stats($self, $doms, $stats, $flags = 0) {
@@ -2098,6 +2117,12 @@ async sub node_get_memory_stats($self, $cellNum, $flags = 0) {
     return await $self->_call(
         $remote->PROC_NODE_GET_MEMORY_STATS,
         { nparams => $nparams, cellNum => $cellNum, flags => $flags // 0 }, unwrap => 'params' );
+}
+
+sub node_get_security_model($self) {
+    return $self->_call(
+        $remote->PROC_NODE_GET_SECURITY_MODEL,
+        {  } );
 }
 
 async sub node_get_sev_info($self, $flags = 0) {
@@ -2616,6 +2641,18 @@ Announces to the remote the intent to close the connection. The client will
 receive a confirmation message from the server after which the server will
 close the connection.
 
+=head2 alloc_pages
+
+  $adjusted_cells = await $client->alloc_pages( $page_counts, $start_cell, $cell_count, $flags );
+
+The C<pageSizes> and C<pageCounts> parameters of the C API have been combined into the C<$page_counts>
+parameter, which is an array of hashes with a C<size> and C<count> key:
+
+  $page_counts = [ { size => 4,    count => 800 },
+                   { size => 2048, count => 400 } ];
+
+Also see documentation of L<virNodeAllocPages|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeAllocPages>.
+
 =head2 get_cells_free_memory
 
   $cell_free_mem = await $client->get_cells_free_memory( $start_cell_no, $max_cells );
@@ -2770,6 +2807,13 @@ See documentation of L<virConnectDomainXMLFromNative|https://libvirt.org/html/li
   $nativeConfig = await $client->domain_xml_to_native( $nativeFormat, $domainXml, $flags = 0 );
 
 See documentation of L<virConnectDomainXMLToNative|https://libvirt.org/html/libvirt-libvirt-domain.html#virConnectDomainXMLToNative>.
+
+
+=head2 find_storage_pool_sources
+
+  $xml = await $client->find_storage_pool_sources( $type, $srcSpec, $flags = 0 );
+
+See documentation of L<virConnectFindStoragePoolSources|https://libvirt.org/html/libvirt-libvirt-storage.html#virConnectFindStoragePoolSources>.
 
 
 =head2 get_all_domain_stats
@@ -3110,6 +3154,14 @@ See documentation of L<virNodeGetMemoryParameters|https://libvirt.org/html/libvi
   $params = await $client->node_get_memory_stats( $cellNum, $flags = 0 );
 
 See documentation of L<virNodeGetMemoryStats|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetMemoryStats>.
+
+
+=head2 node_get_security_model
+
+  await $client->node_get_security_model;
+  # -> { doi => $doi, model => $model }
+
+See documentation of L<virNodeGetSecurityModel|https://libvirt.org/html/libvirt-libvirt-host.html#virNodeGetSecurityModel>.
 
 
 =head2 node_get_sev_info
@@ -3901,27 +3953,9 @@ towards implementation are greatly appreciated.
 
 =item * REMOTE_PROC_DOMAIN_FD_ASSOCIATE
 
-=item * REMOTE_PROC_DOMAIN_GET_LAUNCH_SECURITY_INFO
-
-=item * REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL
-
-=item * REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL_LIST
-
 =item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS
 
 =item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS_FD
-
-=back
-
-
-
-=item * @generate: none (include/libvirt/libvirt-host.h)
-
-=over 8
-
-=item * REMOTE_PROC_NODE_ALLOC_PAGES
-
-=item * REMOTE_PROC_NODE_GET_SECURITY_MODEL
 
 =back
 
@@ -3956,18 +3990,6 @@ towards implementation are greatly appreciated.
 =item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3_PARAMS
 
 =item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL3_PARAMS
-
-=back
-
-
-
-=item * @generate: server (include/libvirt/libvirt-storage.h)
-
-=over 8
-
-=item * REMOTE_PROC_CONNECT_FIND_STORAGE_POOL_SOURCES
-
-=item * REMOTE_PROC_STORAGE_VOL_GET_INFO_FLAGS
 
 =back
 
