@@ -15,12 +15,12 @@ use warnings;
 use experimental 'signatures';
 use Future::AsyncAwait;
 
-package Sys::Async::Virt::StorageVol v0.0.14;
+package Sys::Async::Virt::StorageVol v0.0.15;
 
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v0.0.14;
+use Protocol::Sys::Virt::Remote::XDR v0.0.15;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use constant {
@@ -139,7 +139,7 @@ Sys::Async::Virt::StorageVol - Client side proxy to remote LibVirt storage volum
 
 =head1 VERSION
 
-v0.0.14
+v0.0.15
 
 =head1 SYNOPSIS
 
