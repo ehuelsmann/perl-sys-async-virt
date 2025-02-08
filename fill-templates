@@ -428,6 +428,10 @@ sub proc_call($ast, $proc, $module_functions, $module_returns, $proc_value, $str
     }
 
     my $entrypoint = ($func =~ s/$prefix_strip_xdr{$into_module}//r);
+
+    ## NodeDeviceReAttach -> $dev->reattach() instead of ->re_attach()
+    $entrypoint =~ s/^re_attach$/reattach/;
+
     $entrypoint = '_' . $entrypoint
         if $header =~ m/internal/i;
     my $pod_remarks = '';

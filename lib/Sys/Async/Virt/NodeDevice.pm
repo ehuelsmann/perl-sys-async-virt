@@ -132,7 +132,7 @@ async sub num_of_caps($self) {
         { name => $self->{id} }, unwrap => 'num' );
 }
 
-sub re_attach($self) {
+sub reattach($self) {
     return $self->{client}->_call(
         $remote->PROC_NODE_DEVICE_RE_ATTACH,
         { name => $self->{id} }, empty => 1 );
@@ -298,9 +298,9 @@ See documentation of L<virNodeDeviceLookupSCSIHostByWWN|https://libvirt.org/html
 See documentation of L<virNodeDeviceNumOfCaps|https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceNumOfCaps>.
 
 
-=head2 re_attach
+=head2 reattach
 
-  await $dev->re_attach;
+  await $dev->reattach;
   # -> (* no data *)
 
 See documentation of L<virNodeDeviceReAttach|https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceReAttach>.
