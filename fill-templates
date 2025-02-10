@@ -21,8 +21,13 @@ my $tag             = $ARGV[0];
 my $version         = $ARGV[1];
 my $dep_psv_version = $ARGV[2];
 
+
+# Skip the server-to-server tunneling API; it's not actually manual
+# but we're implementing a client; not a server...
+my @manual_entrypoints = qw(
+        REMOTE_PROC_DOMAIN_MIGRATE_PREPARE_TUNNEL3_PARAMS
+    );
 my @skipped_entrypoints;
-my @manual_entrypoints;
 my @whitelisted_entrypoints = qw(
     REMOTE_PROC_CONNECT_FIND_STORAGE_POOL_SOURCES
     REMOTE_PROC_CONNECT_GET_ALL_DOMAIN_STATS
