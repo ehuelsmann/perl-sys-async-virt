@@ -242,13 +242,14 @@ sub new($class, %args) {
         node_device_factory       => \&_node_device_factory,
         secret_factory            => \&_secret_factory,
 
-        url        => $args{url} // $ENV{LIBVIRT_DEFAULT_URI},
-        readonly   => $args{readonly},
-        connection => $args{connection},
-        transport  => $args{transport},
-        remote     => $args{remote},
-        factory    => $args{factory},
-        keepalive  => $args{keepalive},
+        url           => $args{url} // $ENV{LIBVIRT_DEFAULT_URI},
+        readonly      => $args{readonly},
+        connection    => $args{connection},
+        transport     => $args{transport},
+        remote        => $args{remote},
+        factory       => $args{factory},
+        keepalive     => $args{keepalive},
+        ping_interval => $args{ping_interval} // 60,
 
         on_close   => $args{on_close} // sub {},
         on_stream  => $args{on_stream},
@@ -696,7 +697,9 @@ async sub connect($self, :$pump = undef) {
         $self->{keepalive}->register( $self->{transport} );
         my $keep_pump = async sub {
             while (1) {
-                await $self->loop->delay_future( after => 10 );
+                await $self->loop->delay_future(
+                    after => $self->{ping_interval}
+                    );
                 $log->trace('Sending PING');
                 if (my $f = $self->{keepalive}->ping ) {
                     $self->adopt_future( $f );
@@ -878,6 +881,8 @@ async sub open($self) {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK
 async sub _close($self, $reason) {
     return unless $self->{_state} eq 'CONNECTED';
+    return if ($self->{_substate} eq 'CLOSING'
+               or $self->{_substate} eq 'CLEANING UP');
 
     $self->{_substate} = 'CLEANING UP';
     unless ($self->{connection}->is_read_eof
@@ -900,8 +905,14 @@ async sub _close($self, $reason) {
             await $self->_call( $remote->PROC_CONNECT_CLOSE );
 
             # stop loops reading from and writing to the connection
-            $self->{_input_pump_future}->cancel;
             $self->{_keepalive_pump_future}->cancel;
+            my $timeout = $self->loop->delay_future( at => 60 ); # 60s timeout
+            $timeout->on_done(
+                sub {
+                    $log->info( 'Server failed to close connection timely; '
+                                . 'forcibly closing client socket' );
+                });
+            await Future->await_any( $timeout, $self->{_input_pump_future};
             $self->{connection}->close;
         }
         catch ($e) {
@@ -910,8 +921,15 @@ async sub _close($self, $reason) {
     }
     else {
         # stop loops reading from and writing to the connection
-        $self->{_input_pump_future}->cancel;
         $self->{_keepalive_pump_future}->cancel;
+        my $timeout = $self->loop->delay_future( at => 60 ); # 60s timeout
+        $timeout->on_done(
+            sub {
+                $log->info( 'Server failed to close connection timely; '
+                            . 'forcibly closing client socket' );
+            });
+        await Future->await_any( $timeout, $self->{_input_pump_future};
+        $self->{connection}->close;
     }
 
     # These *should* have been de-allocated above; however,
@@ -1251,6 +1269,16 @@ as part of the C<connect> procedure.
 An instance of L<Protocol::Sys::Virt::KeepAlive> or derived class configured
 to reply to PING messages using a PONG message as well as closing the
 C<connection> when the keepalive threshold is exceeded.
+
+=item * C<ping_interval> (optional)
+
+Interval in seconds between PING messages sent. Please keep in mind that the
+keepalive threshold is in number of messages not responded to, meaning that
+with a C<ping_interval> of 60 and a threshold of 5, it will take 5 minutes
+before a dead connection will be killed, if the operating system doesn't throw
+an error before it.
+
+When not supplied, defaults to C<60>.
 
 =item * C<url> (optional)
 
