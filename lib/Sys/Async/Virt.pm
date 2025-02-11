@@ -16,7 +16,7 @@ no warnings qw(void);
 use experimental 'signatures';
 use Feature::Compat::Try;
 use Future::AsyncAwait;
-use Sublike::Extended; # From XS-Parse-Sublike, used by Future::AsyncAwait
+use Sublike::Extended 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
 package Sys::Async::Virt v0.0.15;
 
@@ -1105,7 +1105,7 @@ sub _secret_instance($self, $id) {
     return $c;
 }
 
-extended async sub _call($self, $proc, $args = {}, :$unwrap = '', :$stream = '', :$empty = '') {
+async sub _call($self, $proc, $args = {}, :$unwrap = '', :$stream = '', :$empty = '') {
     die $log->fatal( "RPC call without remote connection (proc: $proc)" )
         unless $self->is_connected;
     my $serial = await $self->{remote}->call( $proc, $args );
@@ -1299,7 +1299,7 @@ async sub is_secure($self) {
                                 {}, unwrap => 'secure' ));
 }
 
-extended async sub connect($self, :$pump = undef) {
+async sub connect($self, :$pump = undef) {
     return if $self->{_state} ne 'DISCONNECTED';
 
     unless ($self->{connection}) {
