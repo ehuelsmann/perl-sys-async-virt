@@ -16,7 +16,7 @@ no warnings qw(void);
 use experimental 'signatures';
 use Feature::Compat::Try;
 use Future::AsyncAwait;
-use Sublike::Extended 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
+use Sublike::Extended 0.29 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
 package Sys::Async::Virt v0.0.16;
 
