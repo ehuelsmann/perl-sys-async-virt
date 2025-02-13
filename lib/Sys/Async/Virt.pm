@@ -3971,8 +3971,6 @@ C<auth> method rather pointless.
 
 =item * C<@generate: none> entrypoints review (and implement relevant ones)
 
-=item * C<@generate: server> entrypoints review (and implement relevant ones)
-
 =item * libvirt client configuration (C</etc/libvirt/libvirt.conf> (for C<root>)
  or C<$XDG_CONFIG_HOME/libvirt/libvirt.conf> (for other users))
 
