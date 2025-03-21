@@ -1,5 +1,11 @@
 -----
 
+0.0.17   2025-03-21
+    [Changed]
+       * Updated to libvirt tag v11.1.0 (from v11.0.0); adds constants
+         LIST_NODE_DEVICES_CAP_CCWGROUP_DEV, LIST_NODE_DEVICES_CAP_CCWGROUP_MEMBER,
+         MIGRATE_PARAM_BANDWIDTH_AVAIL_SWITCHOVER, MESSAGE_IOERRORS
+
 0.0.16   2025-02-13
     [Added]
        * Configurable PING message interval
