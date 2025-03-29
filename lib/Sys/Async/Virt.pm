@@ -1593,7 +1593,7 @@ async sub _close($self, $reason) {
                     $log->info( 'Server failed to close connection timely; '
                                 . 'forcibly closing client socket' );
                 });
-            await Future->await_any( $timeout, $self->{_input_pump_future};
+            await Future->await_any( $timeout, $self->{_input_pump_future} );
             $self->{connection}->close;
         }
         catch ($e) {
@@ -1609,7 +1609,7 @@ async sub _close($self, $reason) {
                 $log->info( 'Server failed to close connection timely; '
                             . 'forcibly closing client socket' );
             });
-        await Future->await_any( $timeout, $self->{_input_pump_future};
+        await Future->await_any( $timeout, $self->{_input_pump_future} );
         $self->{connection}->close;
     }
 
