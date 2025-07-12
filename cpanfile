@@ -9,13 +9,13 @@ requires 'IO::Async::Notifier';
 requires 'IO::Async::Stream';
 requires 'Log::Any';
 requires 'Object::Pad' => '0.821';
-requires 'Protocol::Sys::Virt' => '11.1.0';
-requires 'Protocol::Sys::Virt::KeepAlive' => '11.1.0';
-requires 'Protocol::Sys::Virt::Remote' => '11.1.0';
-requires 'Protocol::Sys::Virt::Remote::XDR' => '11.1.0';
-requires 'Protocol::Sys::Virt::UNIXSocket' => '11.1.0';
-requires 'Protocol::Sys::Virt::URI' => '11.1.0';
-requires 'Sublike::Extended' => '0.29';  # treat 'sub' as extended keyword
+requires 'Protocol::Sys::Virt' => '11.5.0';
+requires 'Protocol::Sys::Virt::KeepAlive' => '11.5.0';
+requires 'Protocol::Sys::Virt::Remote' => '11.5.0';
+requires 'Protocol::Sys::Virt::Remote::XDR' => '11.5.0';
+requires 'Protocol::Sys::Virt::UNIXSocket' => '11.5.0';
+requires 'Protocol::Sys::Virt::URI' => '11.5.0';
+requires 'Sublike::Extended' => '0.29';  # treat 'method' and 'sub' as extended keywords
 
 on test => sub {
     requires 'Test2::V0';
@@ -23,7 +23,7 @@ on test => sub {
 
 on develop => sub {
     requires 'Carp::Always';
-    requires 'Protocol::Sys::Virt::Devel' => '0.0.5';
+    requires 'Protocol::Sys::Virt::Devel' => '1.0.0';
     requires 'Test::Pod' => '1.0';
     requires 'Test::Pod::Coverage' => '1.10';
     requires 'Pod::ProjectDocs';
