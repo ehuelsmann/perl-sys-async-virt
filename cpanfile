@@ -8,6 +8,7 @@ requires 'Future::Queue';
 requires 'IO::Async::Notifier';
 requires 'IO::Async::Stream';
 requires 'Log::Any';
+requires 'Object::Pad' => '0.820';
 requires 'Protocol::Sys::Virt' => '11.1.0';
 requires 'Protocol::Sys::Virt::KeepAlive' => '11.1.0';
 requires 'Protocol::Sys::Virt::Remote' => '11.1.0';

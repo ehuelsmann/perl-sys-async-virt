@@ -14,8 +14,9 @@ use v5.26;
 use warnings;
 use experimental 'signatures';
 use Future::AsyncAwait;
+use Object::Pad;
 
-package Sys::Async::Virt::Domain __VERSION__;
+class Sys::Async::Virt::Domain __VERSION__;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -25,18 +26,15 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 __CONSTANTS__
 
-sub new($class, %args) {
-    return bless {
-        id => $args{id},
-        client => $args{client},
-    }, $class;
-}
+field $_id :param :reader;
+field $_client :param :reader;
+
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_BLOCK_JOB_INFO
-async sub get_block_job_info( $self, $disk, $flags = 0 ) {
-    my $rv = await $self->{client}->_call(
+async method get_block_job_info($disk, $flags = 0) {
+    my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_BLOCK_JOB_INFO,
-        { dom => $self->{id}, path => $disk, flags => $flags // 0 } );
+        { dom => $_id, path => $disk, flags => $flags // 0 } );
 
     if ($rv->{found}) {
         return $rv;
@@ -47,40 +45,39 @@ async sub get_block_job_info( $self, $disk, $flags = 0 ) {
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_EMULATOR_PIN_INFO
-async sub get_emulator_pin_info($self, $flags = 0) {
-    my $maplen = await $self->{client}->_maplen;
-    my $rv = await $self->{client}->_call(
+async method get_emulator_pin_info($flags = 0) {
+    my $maplen = await $_client->_maplen;
+    my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_EMULATOR_PIN_INFO,
-        { dom => $self->{id}, maplen => $maplen,
+        { dom => $_id, maplen => $maplen,
           flags => $flags // 0 } );
 
     if ($rv->{ret} == 0) {
         return undef;
     }
     else {
-        return await $self->{client}->_from_cpumap( $rv->{cpumaps} );
+        return await $_client->_from_cpumap( $rv->{cpumaps} );
     }
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_IOTHREAD_INFO
-async sub get_iothread_info( $self, $flags = 0 ) {
-    my $client = $self->{client};
-    my $rv = await $client->_call(
+async method get_iothread_info($flags = 0) {
+    my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_IOTHREAD_INFO,
-        { dom => $self->{id}, flags => $flags // 0 } );
+        { dom => $_id, flags => $flags // 0 } );
 
     my @rv;
     for my $thread ($rv->{info}->@*) {
         push @rv, {
             iothread_id => $thread->{iothread_id},
-            cpumap => await $client->_from_cpumap( $thread->{cpumap} )
+            cpumap => await $_client->_from_cpumap( $thread->{cpumap} )
         };
     }
 
     return \@rv;
 }
 
-sub _patch_security_label( $sec ) {
+sub _patch_security_label($sec) {
     my $label = $sec->{label};
     $label = join('', map { chr($_) } $label->@* );
     chop $label; # eliminate terminating ascii \0-char
@@ -88,20 +85,20 @@ sub _patch_security_label( $sec ) {
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL
-async sub get_security_label( $self ) {
-    my $rv = await $self->{client}->_call(
+async method get_security_label() {
+    my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_SECURITY_LABEL,
-        { dom => $self->{id} } );
+        { dom => $_id } );
 
     _patch_security_label( $rv );
     return $rv;
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_SECURITY_LABEL_LIST
-async sub get_security_label_list( $self ) {
-    my $rv = await $self->{client}->_call(
+async method get_security_label_list() {
+    my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_SECURITY_LABEL_LIST,
-        { dom => $self->{id} } );
+        { dom => $_id } );
 
     for my $label ($rv->{labels}->@*) {
         _patch_security_label( $label );
@@ -111,48 +108,46 @@ async sub get_security_label_list( $self ) {
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_TIME
-async sub get_time( $self, $flags = 0 ) {
-    my $rv = await $self->{client}->_call(
+async method get_time($flags = 0) {
+    my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_TIME,
-        { dom => $self->{id}, flags => $flags // 0 } );
+        { dom => $_id, flags => $flags // 0 } );
 
     return ( $rv->{seconds}, $rv->{nseconds} );
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_VCPU_PIN_INFO
-async sub get_vcpu_pin_info($self, $flags = 0 ) {
+async method get_vcpu_pin_info($flags = 0) {
     my $vcpus  = await $self->get_vcpus_flags( $flags // 0 );
-    my $cpus   = await $self->{client}->{totcpus};
-    my $maplen = await $self->{client}->{maplen};
-    my $rv = await $self->{client}->_call(
+    my $cpus   = await $_client->{totcpus};
+    my $maplen = await $_client->_maplen;
+    my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_VCPU_PIN_INFO,
-        { dom => $self->{id}, ncpumaps => $vcpus,
+        { dom => $_id, ncpumaps => $vcpus,
           maplen => $maplen, flags => $flags });
 
-    my $client = $self->{client};
     my $maps = $rv->{cpumaps};
     my @rv;
     foreach my $vcpu_idx (0 .. ($rv->{num} - 1)) {
-        push @rv, await $client->_from_cpumap( $vcpu_idx*$maplen );
+        push @rv, await $_client->_from_cpumap( $vcpu_idx*$maplen );
     }
 
     return \@rv;
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_VCPUS
-async sub get_vcpus($self) {
-    my $client = $self->{client};
+async method get_vcpus() {
     my $vcpus  = await $self->get_vcpus_flags;
-    my $maplen = await $self->{client}->_maplen;
-    my $rv = await $client->_call(
+    my $maplen = await $_client->_maplen;
+    my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_VCPUS,
-        { dom => $self->{id}, maxinfo => $vcpus, maplen => $maplen } );
+        { dom => $_id, maxinfo => $vcpus, maplen => $maplen } );
 
     my @rv;
     foreach my $vcpu_idx (0 .. ($vcpus - 1)) {
         push @rv, {
             $rv->{info}->[$vcpu_idx]->%*,
-            affinity => await $client->_from_cpumap( $rv->{cpumaps},
+            affinity => await $_client->_from_cpumap( $rv->{cpumaps},
                                                      $vcpu_idx*$maplen ) };
     }
 
@@ -160,10 +155,10 @@ async sub get_vcpus($self) {
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_PIN_EMULATOR
-async sub pin_emulator($self, $cpumap, $flags = 0) {
+async method pin_emulator($cpumap, $flags = 0) {
     await $self->_call(
         $remote->PROC_DOMAIN_PIN_EMULATOR,
-        { dom => $self->{id}, cpumap => $cpumap,
+        { dom => $_id, cpumap => $cpumap,
           flags => $flags // 0 } );
 }
 

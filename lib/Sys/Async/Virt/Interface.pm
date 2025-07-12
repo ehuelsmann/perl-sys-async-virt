@@ -14,8 +14,9 @@ use v5.26;
 use warnings;
 use experimental 'signatures';
 use Future::AsyncAwait;
+use Object::Pad;
 
-package Sys::Async::Virt::Interface v0.0.21;
+class Sys::Async::Virt::Interface v0.0.21;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -28,41 +29,38 @@ use constant {
 };
 
 
-sub new($class, %args) {
-    return bless {
-        id => $args{id},
-        client => $args{client},
-    }, $class;
-}
+field $_id :param :reader;
+field $_client :param :reader;
 
-sub create($self, $flags = 0) {
-    return $self->{client}->_call(
+
+method create($flags = 0) {
+    return $_client->_call(
         $remote->PROC_INTERFACE_CREATE,
-        { iface => $self->{id}, flags => $flags // 0 }, empty => 1 );
+        { iface => $_id, flags => $flags // 0 }, empty => 1 );
 }
 
-sub destroy($self, $flags = 0) {
-    return $self->{client}->_call(
+method destroy($flags = 0) {
+    return $_client->_call(
         $remote->PROC_INTERFACE_DESTROY,
-        { iface => $self->{id}, flags => $flags // 0 }, empty => 1 );
+        { iface => $_id, flags => $flags // 0 }, empty => 1 );
 }
 
-async sub get_xml_desc($self, $flags = 0) {
-    return await $self->{client}->_call(
+async method get_xml_desc($flags = 0) {
+    return await $_client->_call(
         $remote->PROC_INTERFACE_GET_XML_DESC,
-        { iface => $self->{id}, flags => $flags // 0 }, unwrap => 'xml' );
+        { iface => $_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
-async sub is_active($self) {
-    return await $self->{client}->_call(
+async method is_active() {
+    return await $_client->_call(
         $remote->PROC_INTERFACE_IS_ACTIVE,
-        { iface => $self->{id} }, unwrap => 'active' );
+        { iface => $_id }, unwrap => 'active' );
 }
 
-sub undefine($self) {
-    return $self->{client}->_call(
+method undefine() {
+    return $_client->_call(
         $remote->PROC_INTERFACE_UNDEFINE,
-        { iface => $self->{id} }, empty => 1 );
+        { iface => $_id }, empty => 1 );
 }
 
 

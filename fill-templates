@@ -625,7 +625,7 @@ sub proc_ep_argsmap($ep_name, $options, @argnames) {
     @argnames;
 
     if ($options->{first_arg_name}) {
-        unshift @args, ($options->{first_arg_name} . ' => $self->{id}');
+        unshift @args, ($options->{first_arg_name} . ' => $_id');
     }
     return join(', ', @args);
 }
@@ -638,7 +638,7 @@ sub proc_ep_flag_typed_param_string_okay($is_main, $entrypoint) {
             return '$flags |= await $self->_typed_param_string_okay();';
         }
         else {
-            return '$flags |= await $self->{client}->_typed_param_string_okay();';
+            return '$flags |= await $_client->_typed_param_string_okay();';
         }
     }
     else {
@@ -654,7 +654,7 @@ sub proc_ep_filter_typed_param_string($is_main, $entrypoint) {
                 "\$$_->{name} = await \$self->_filter_typed_param_string( \$$_->{name} );";
             }
             else {
-                "\$$_->{name} = await \$self->{client}->_filter_typed_param_string( \$$_->{name} );";
+                "\$$_->{name} = await \$_client->_filter_typed_param_string( \$$_->{name} );";
             }
         }
         grep { $_->{type} and $_->{type} eq 'remote_typed_param' }
@@ -669,7 +669,7 @@ sub proc_entrypoint($module, $entrypoint) {
     my $query_nparams =
         (($entrypoint->{generator} !~ m/^(client|both)$/)
          and grep { $_ eq 'nparams' } @argnames);
-    my $argstr = proc_ep_argstring($entrypoint->{name}, 'self', @argnames);
+    my $argstr = proc_ep_argstring($entrypoint->{name}, @argnames);
     my $argsmap_options = {
         first_arg_name => $first_arg_name,
         ($query_nparams ? ( override => { nparams => '$nparams' } ) : ()),
@@ -685,7 +685,7 @@ sub proc_entrypoint($module, $entrypoint) {
                            or $ret_unwrap or $query_nparams)
         ? ('async ', 'await ')
         : ('', '');
-    my $call = $is_main ? '$self->_call' : '$self->{client}->_call';
+    my $call = $is_main ? '$self->_call' : '$_client->_call';
     my $stream =
         $entrypoint->{retstream} ? ", stream => '$entrypoint->{retstream}'" : '';
     my $empty =
@@ -715,7 +715,7 @@ sub proc_entrypoint($module, $entrypoint) {
          RETURN
     chomp $return;
     $entrypoint->{code} = (<<~PROC =~ s/^\s*\n//mgr);
-        ${async}sub $entrypoint->{name}($argstr) {
+        ${async}method $entrypoint->{name}($argstr) {
             $modify_flags
             $filter_params
             $nparams

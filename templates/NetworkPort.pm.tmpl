@@ -14,8 +14,9 @@ use v5.26;
 use warnings;
 use experimental 'signatures';
 use Future::AsyncAwait;
+use Object::Pad;
 
-package Sys::Async::Virt::NetworkPort __VERSION__;
+class Sys::Async::Virt::NetworkPort __VERSION__;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -25,12 +26,9 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 __CONSTANTS__
 
-sub new($class, %args) {
-    return bless {
-        id => $args{id},
-        client => $args{client},
-    }, $class;
-}
+field $_id :param :reader;
+field $_client :param :reader;
+
 
 __CALLS__
 
