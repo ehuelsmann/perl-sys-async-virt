@@ -12,17 +12,16 @@
 
 use v5.26;
 use warnings;
+no warnings qw(void);
 use experimental 'signatures';
+use Feature::Compat::Try;
 use Future::AsyncAwait;
-use Object::Pad 0.807;
+use Object::Pad 0.821;
 use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
-class Sys::Async::Virt v0.0.21 :repr(HASH);
+class Sys::Async::Virt v0.1.0 :repr(HASH);
 
 inherit IO::Async::Notifier;
-
-no warnings qw(void);
-use Feature::Compat::Try;
 
 
 use Carp qw(croak);
@@ -39,22 +38,22 @@ use Protocol::Sys::Virt::Remote v11.5.0;
 use Protocol::Sys::Virt::Transport v11.5.0;
 use Protocol::Sys::Virt::URI v11.5.0; # imports parse_url
 
-use Sys::Async::Virt::Connection::Factory v0.0.21;
-use Sys::Async::Virt::Domain v0.0.21;
-use Sys::Async::Virt::DomainCheckpoint v0.0.21;
-use Sys::Async::Virt::DomainSnapshot v0.0.21;
-use Sys::Async::Virt::Network v0.0.21;
-use Sys::Async::Virt::NetworkPort v0.0.21;
-use Sys::Async::Virt::NwFilter v0.0.21;
-use Sys::Async::Virt::NwFilterBinding v0.0.21;
-use Sys::Async::Virt::Interface v0.0.21;
-use Sys::Async::Virt::StoragePool v0.0.21;
-use Sys::Async::Virt::StorageVol v0.0.21;
-use Sys::Async::Virt::NodeDevice v0.0.21;
-use Sys::Async::Virt::Secret v0.0.21;
+use Sys::Async::Virt::Connection::Factory v0.1.0;
+use Sys::Async::Virt::Domain v0.1.0;
+use Sys::Async::Virt::DomainCheckpoint v0.1.0;
+use Sys::Async::Virt::DomainSnapshot v0.1.0;
+use Sys::Async::Virt::Network v0.1.0;
+use Sys::Async::Virt::NetworkPort v0.1.0;
+use Sys::Async::Virt::NwFilter v0.1.0;
+use Sys::Async::Virt::NwFilterBinding v0.1.0;
+use Sys::Async::Virt::Interface v0.1.0;
+use Sys::Async::Virt::StoragePool v0.1.0;
+use Sys::Async::Virt::StorageVol v0.1.0;
+use Sys::Async::Virt::NodeDevice v0.1.0;
+use Sys::Async::Virt::Secret v0.1.0;
 
-use Sys::Async::Virt::Callback v0.0.21;
-use Sys::Async::Virt::Stream v0.0.21;
+use Sys::Async::Virt::Callback v0.1.0;
+use Sys::Async::Virt::Stream v0.1.0;
 
 use constant {
     CLOSE_REASON_ERROR                                  => 0,
@@ -2349,7 +2348,7 @@ Sys::Async::Virt - LibVirt protocol implementation for clients
 
 =head1 VERSION
 
-v0.0.21
+v0.1.0
 
 Based on LibVirt tag v11.5.0
 

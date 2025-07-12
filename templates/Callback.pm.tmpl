@@ -13,12 +13,12 @@
 use v5.26;
 use warnings;
 use experimental qw/ signatures /;
+use Feature::Compat::Try;
 use Future::AsyncAwait;
-use Object::Pad 0.807;
+use Object::Pad 0.821;
 
 class Sys::Async::Virt::Callback __VERSION__;
 
-use Feature::Compat::Try;
 
 use Carp qw(croak);
 use Future::Queue;
@@ -33,11 +33,10 @@ field $_deregister_call :param;
 field $_queue;
 field $_cancelled;
 
-BUILD {
-    my %args = @_;
+ADJUST :params (:$queue_len //= 12, :$factory) {
     $_queue = Future::Queue->new(
-        max_items => $args{queue_len} // 12,
-        prototype => $args{factory}
+        max_items => $queue_len,
+        prototype => $factory
         );
 }
 

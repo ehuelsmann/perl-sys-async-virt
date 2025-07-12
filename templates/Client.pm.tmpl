@@ -12,17 +12,16 @@
 
 use v5.26;
 use warnings;
+no warnings qw(void);
 use experimental 'signatures';
+use Feature::Compat::Try;
 use Future::AsyncAwait;
-use Object::Pad 0.807;
+use Object::Pad 0.821;
 use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
 class Sys::Async::Virt __VERSION__ :repr(HASH);
 
 inherit IO::Async::Notifier;
-
-no warnings qw(void);
-use Feature::Compat::Try;
 
 
 use Carp qw(croak);

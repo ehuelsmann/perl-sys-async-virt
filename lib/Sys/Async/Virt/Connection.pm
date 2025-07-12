@@ -17,7 +17,7 @@ use Future::AsyncAwait;
 use Object::Pad;
 use Carp::Always;
 
-class Sys::Async::Virt::Connection v0.0.21 :repr(HASH);
+class Sys::Async::Virt::Connection v0.1.0 :repr(HASH);
 
 inherit IO::Async::Notifier;
 
@@ -86,7 +86,7 @@ Sys::Async::Virt::Connection - Connection to LibVirt server (abstract
 
 =head1 VERSION
 
-v0.0.21
+v0.1.0
 
 =head1 SYNOPSIS
 

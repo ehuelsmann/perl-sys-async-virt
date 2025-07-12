@@ -13,18 +13,18 @@
 use v5.26;
 use warnings;
 use experimental qw/ signatures /;
-use Future::AsyncAwait;
-use Object::Pad 0.807;
-
-class Sys::Async::Virt::Callback v0.0.21;
-
 use Feature::Compat::Try;
+use Future::AsyncAwait;
+use Object::Pad 0.821;
+
+class Sys::Async::Virt::Callback v0.1.0;
+
 
 use Carp qw(croak);
 use Future::Queue;
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v0.0.21;
+use Protocol::Sys::Virt::Remote::XDR v0.1.0;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 field $_id :param :reader;
@@ -33,11 +33,10 @@ field $_deregister_call :param;
 field $_queue;
 field $_cancelled;
 
-BUILD {
-    my %args = @_;
+ADJUST :params (:$queue_len //= 12, :$factory) {
     $_queue = Future::Queue->new(
-        max_items => $args{queue_len} // 12,
-        prototype => $args{factory}
+        max_items => $queue_len,
+        prototype => $factory
         );
 }
 
@@ -94,7 +93,7 @@ Sys::Async::Virt::Callback - Client side proxy to remote LibVirt event source
 
 =head1 VERSION
 
-v0.0.21
+v0.1.0
 
 =head1 SYNOPSIS
 
