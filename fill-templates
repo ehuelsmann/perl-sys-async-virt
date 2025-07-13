@@ -821,7 +821,33 @@ while (my $line = <$fh>) {
 
 close $fh;
 close $oh;
-
 rename 'cpanfile.new', 'cpanfile';
 
+
+open $fh, '<:encoding(UTF-8)', 'Makefile.PL';
+open $oh, '>:encoding(UTF-8)', 'Makefile.PL.new';
+
+while (my $line = <$fh>) {
+    chomp $line;
+    if ($line =~ m/
+          (?<KEY>
+             VERSION
+             \s*
+             =>
+             \s*
+             ['"])
+          (?<VERSION>[^'"]+)
+        /xp) {
+        
+        $line = ${^PREMATCH} . $+{KEY} . $version . ${^POSTMATCH};
+    }
+    say $oh $line;
+}
+
+close $fh;
+close $oh;
+rename 'Makefile.PL.new', 'Makefile.PL';
+
+
 say (scalar @skipped_entrypoints - scalar @manual_entrypoints);
+
