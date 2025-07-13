@@ -19,8 +19,9 @@ use Future::AsyncAwait;
 use Object::Pad 0.821;
 use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
-class Sys::Async::Virt __VERSION__ :repr(HASH);
+class Sys::Async::Virt __VERSION__;
 
+# inheriting from IO::Async::Notifier (a non-Object::Pad base class) implies ':repr(HASH)'
 inherit IO::Async::Notifier;
 
 

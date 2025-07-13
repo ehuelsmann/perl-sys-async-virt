@@ -16,8 +16,9 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad 0.821;
 
-class Sys::Async::Virt::Stream __VERSION__ :repr(HASH);
+class Sys::Async::Virt::Stream __VERSION__;
 
+# inheriting from IO::Async::Notifier (a non-Object::Pad base class) implies ':repr(HASH)'
 inherit IO::Async::Notifier;
 
 use Carp qw(croak);
