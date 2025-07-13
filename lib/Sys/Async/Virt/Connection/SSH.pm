@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad;
 
-class Sys::Async::Virt::Connection::SSH v0.1.2;
+class Sys::Async::Virt::Connection::SSH v0.1.3;
 
 inherit Sys::Async::Virt::Connection '$_in', '$_out';
 
@@ -29,7 +29,7 @@ use Protocol::Sys::Virt::URI v11.5.0; # imports parse_url
 
 field $_url      :reader :param;
 field $_socket   :reader :param = undef;
-field $_readonly :param :reader;
+field $_readonly :reader :param;
 field $_process;
 
 method close() {
@@ -147,7 +147,7 @@ Sys::Async::Virt::Connection::SSH - Connection to LibVirt server over SSH
 
 =head1 VERSION
 
-v0.1.2
+v0.1.3
 
 =head1 SYNOPSIS
 
