@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad 0.821;
 
-class Sys::Async::Virt::Stream v0.1.1 :repr(HASH);
+class Sys::Async::Virt::Stream v0.1.2 :repr(HASH);
 
 inherit IO::Async::Notifier;
 
@@ -24,7 +24,7 @@ use Carp qw(croak);
 use Future::Queue;
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v0.1.1;
+use Protocol::Sys::Virt::Remote::XDR v0.1.2;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 field $_id :param :reader;
@@ -161,7 +161,7 @@ Sys::Async::Virt::Stream - Client side of a data transfer channel
 
 =head1 VERSION
 
-v0.1.1
+v0.1.2
 
 =head1 SYNOPSIS
 
