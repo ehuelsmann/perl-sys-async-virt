@@ -1,8 +1,10 @@
 #!/usr/bin/env perl
 
 use v5.20;
+use strict;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
+use English;
 
 use JSON::PP;
 use List::Util qw(any none max);
@@ -787,5 +789,39 @@ client($api_data->{xdr_parse_version},
        'templates/',
        $header_syms,
        $c_api_defs);
+
+open my $fh, '<:encoding(UTF-8)', 'cpanfile';
+open my $oh, '>:encoding(UTF-8)', 'cpanfile.new';
+
+while (my $line = <$fh>) {
+    chomp $line;
+    if ($line =~ m/
+           requires                    # Match literal "requires"
+           \s+                        # Optional whitespace
+           ['"]                       # Opening quote (single or double)
+           Protocol::Sys::Virt        # The module name
+           (?<M>[^'"]*)               # Any characters except quotes (for version specs)
+           ['"]                       # Closing quote
+           \s*                        # Optional whitespace
+           (?:,|=>)                   # Either comma or fat arrow
+           \s*                        # Optional whitespace
+           (?<Q>['"])                 # Capture the quote type in named group 'Q'
+           (?<V>[^'"]+)               # Capture the version in named group 'V'
+        /x) {
+        if ($+{M} ne '::Devel') {
+            my %m = %+;
+            my $tgt_version = ($dep_psv_version =~ s/^v//r);
+            my $orig = "$m{Q}$m{V}$m{Q}";
+            my $tgt = "$m{Q}$tgt_version$m{Q}";
+            $line =~ s/$orig/$tgt/;
+        }
+    }
+    say $oh $line;
+}
+
+close $fh;
+close $oh;
+
+rename 'cpanfile.new', 'cpanfile';
 
 say (scalar @skipped_entrypoints - scalar @manual_entrypoints);
