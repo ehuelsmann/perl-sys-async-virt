@@ -29,7 +29,7 @@ use Protocol::Sys::Virt::URI __P::S::V::VERSION__; # imports parse_url
 
 field $_url      :reader :param;
 field $_socket   :reader :param = undef;
-field $_readonly :param :reader;
+field $_readonly :reader :param;
 field $_process;
 
 method close() {
