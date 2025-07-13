@@ -27,10 +27,10 @@ use Log::Any qw($log);
 use Protocol::Sys::Virt::UNIXSocket __P::S::V::VERSION__; # imports socket_path
 use Protocol::Sys::Virt::URI __P::S::V::VERSION__; # imports parse_url
 
-field $_url :param :reader;
-field $_socket :param = undef :reader;
+field $_url      :reader :param;
+field $_socket   :reader :param = undef;
 field $_readonly :param :reader;
-field $_process = undef;
+field $_process;
 
 method close() {
     $_process->kill( 'TERM' ) if not $_process->is_exited;
