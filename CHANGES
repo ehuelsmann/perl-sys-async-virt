@@ -12,6 +12,7 @@
        * Missing `await` in `get_cpu_map` in call to async function
        * Calling correct factory methods for instantiation of networks,
          ports, pools, nwfilters, volumes, snapshots and secrets
+       * Experimental field enheritance warning from Object::Pad suppressed
 
 0.1.5    2025-09-06
    [Changed]
