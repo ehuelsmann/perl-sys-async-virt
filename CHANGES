@@ -10,6 +10,8 @@
        * Connection closing time-out should have been relative
        * Invocation of non-existing `Future->await_any` to `->wait_any`
        * Missing `await` in `get_cpu_map` in call to async function
+       * Calling correct factory methods for instantiation of networks,
+         ports, pools, nwfilters, volumes, snapshots and secrets
 
 0.1.5    2025-09-06
    [Changed]

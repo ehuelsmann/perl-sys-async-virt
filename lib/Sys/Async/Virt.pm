@@ -989,7 +989,7 @@ method _network_instance($id) {
     my $c = $_networks->{$id->{uuid}};
     unless ($c) {
         $c = $_networks->{$id->{uuid}} =
-            network_factory(
+            _network_factory(
                 client => $self,
                 remote => $_remote,
                 id => $id );
@@ -1002,7 +1002,7 @@ method _network_port_instance($id) {
     my $c = $_network_ports->{$id->{uuid}};
     unless ($c) {
         $c = $_network_ports->{$id->{uuid}} =
-            network_port_factory(
+            _network_port_factory(
                 client => $self,
                 remote => $_remote,
                 id => $id );
@@ -1015,7 +1015,7 @@ method _nwfilter_instance($id) {
     my $c = $_nwfilters->{$id->{uuid}};
     unless ($c) {
         $c = $_nwfilters->{$id->{uuid}} =
-            nwfilter_factory(
+            _nwfilter_factory(
                 client => $self,
                 remote => $_remote,
                 id => $id );
@@ -1029,7 +1029,7 @@ method _nwfilter_binding_instance($id) {
     my $c = $_nwfilter_bindings->{$key};
     unless ($c) {
         $c = $_nwfilter_bindings->{$key} =
-            nwfilter_binding_factory(
+            _nwfilter_binding_factory(
                 client => $self,
                 remote => $_remote,
                 id => $id );
@@ -1043,7 +1043,7 @@ method _interface_instance($id) {
     my $c = $_interfaces->{$key};
     unless ($c) {
         $c = $_interfaces->{$key} =
-            interface_factory(
+            _interface_factory(
                 client => $self,
                 remote => $_remote,
                 id => $id );
@@ -1056,7 +1056,7 @@ method _storage_pool_instance($id) {
     my $c = $_storage_pools->{$id->{uuid}};
     unless ($c) {
         $c = $_storage_pools->{$id->{uuid}} =
-            storage_pool_factory(
+            _storage_pool_factory(
                 client => $self,
                 remote => $_remote,
                 id => $id );
@@ -1069,7 +1069,7 @@ method _storage_vol_instance($id) {
     my $c = $_storage_vols->{$id->{key}};
     unless ($c) {
         $c = $_storage_vols->{$id->{key}} =
-            storage_vol_factory->(
+            _storage_vol_factory->(
                 client => $self,
                 remote => $_remote,
                 id => $id );
@@ -1082,7 +1082,7 @@ method _node_device_instance($id) {
     my $c = $_node_devices->{$id->{name}};
     unless ($c) {
         $c = $_node_devices->{$id->{name}} =
-            node_device_factory(
+            _node_device_factory(
                 client => $self,
                 remote => $_remote,
                 id => $id );
@@ -1095,7 +1095,7 @@ method _secret_instance($id) {
     my $c = $_secrets->{$id->{uuid}};
     unless ($c) {
         $c = $_secrets->{$id->{uuid}} =
-            secret_factory(
+            _secret_factory(
                 client => $self,
                 remote => $_remote,
                 id => $id );
