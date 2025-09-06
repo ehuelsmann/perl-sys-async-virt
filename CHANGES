@@ -4,6 +4,7 @@
    [Fixed]
        * `get_cpu_map` broken by migration to Object::Pad
        * Connection closing time-out should have been relative
+       * Invocation of non-existing `Future->await_any` to `->wait_any`
 
 0.1.5    2025-09-06
    [Changed]

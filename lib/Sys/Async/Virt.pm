@@ -1589,7 +1589,7 @@ async method _close($reason) {
                     $log->info( 'Server failed to close connection timely; '
                                 . 'forcibly closing client socket' );
                 });
-            await Future->await_any( $timeout, $_pump_future );
+            await Future->wait_any( $timeout, $_pump_future );
             $_connection->close;
         }
         catch ($e) {
@@ -1605,7 +1605,7 @@ async method _close($reason) {
                 $log->info( 'Server failed to close connection timely; '
                             . 'forcibly closing client socket' );
             });
-        await Future->await_any( $timeout, $_pump_future );
+        await Future->wait_any( $timeout, $_pump_future );
         $_connection->close;
     }
 
