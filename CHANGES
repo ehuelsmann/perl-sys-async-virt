@@ -5,6 +5,7 @@
        * Examples:
          * eg/cpumap.pl
          * eg/getstate.pl
+         * eg/leases.pl
    [Fixed]
        * `get_cpu_map` broken by migration to Object::Pad
        * Connection closing time-out should have been relative
