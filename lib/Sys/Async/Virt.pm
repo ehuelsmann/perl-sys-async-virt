@@ -1681,7 +1681,7 @@ async method get_cpu_map() {
         totcpus => $rv->{ret},
         totonline => $rv->{online},
         maplen    => length($rv->{cpumap}),
-        onlinemap => $self->_from_cpumap( $rv->{cpumap} )
+        onlinemap => await $self->_from_cpumap( $rv->{cpumap} )
     };
 }
 
