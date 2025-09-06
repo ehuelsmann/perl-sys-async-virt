@@ -1583,7 +1583,7 @@ async method _close($reason) {
 
             # stop loops reading from and writing to the connection
             $_keepalive_future->cancel;
-            my $timeout = $self->loop->delay_future( at => 60 ); # 60s timeout
+            my $timeout = $self->loop->delay_future( after => 60 ); # 60s timeout
             $timeout->on_done(
                 sub {
                     $log->info( 'Server failed to close connection timely; '
