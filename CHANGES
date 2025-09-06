@@ -1,6 +1,9 @@
 -----
 
 0.1.6    TO BE RELEASED
+   [Added]
+       * Examples:
+         * eg/cpumap.pl
    [Fixed]
        * `get_cpu_map` broken by migration to Object::Pad
        * Connection closing time-out should have been relative
