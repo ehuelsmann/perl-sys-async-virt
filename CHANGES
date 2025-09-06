@@ -6,6 +6,9 @@
          * eg/cpumap.pl
          * eg/getstate.pl
          * eg/leases.pl
+   [Changed]
+       * Minimum version of development dependency
+         Protocol::Sys::Virt::Devel increased
    [Fixed]
        * `get_cpu_map` broken by migration to Object::Pad
        * Connection closing time-out should have been relative

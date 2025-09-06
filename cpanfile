@@ -23,7 +23,7 @@ on test => sub {
 
 on develop => sub {
     requires 'Carp::Always';
-    requires 'Protocol::Sys::Virt::Devel' => '1.0.0';
+    requires 'Protocol::Sys::Virt::Devel' => '1.0.1';
     requires 'Test::Pod' => '1.0';
     requires 'Test::Pod::Coverage' => '1.10';
     requires 'Pod::ProjectDocs';
