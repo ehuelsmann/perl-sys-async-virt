@@ -1,5 +1,9 @@
 -----
 
+0.1.6    TO BE RELEASED
+   [Fixed]
+       * `get_cpu_map` broken by migration to Object::Pad
+
 0.1.5    2025-09-06
    [Changed]
        * Updated to libvirt tag v11.7.0 (from v11.6.0)

@@ -986,8 +986,8 @@ async method get_cpu_map() {
         $remote->PROC_NODE_GET_CPU_MAP,
         { need_map => 1, need_online => 1, flags => 0 } );
 
-    $self->{_cpus} = $rv->{ret};
-    $self->{_maplen} = length($rv->{cpumap});
+    $_cpus = $rv->{ret};
+    $_maplen = length($rv->{cpumap});
 
     return {
         totcpus => $rv->{ret},
