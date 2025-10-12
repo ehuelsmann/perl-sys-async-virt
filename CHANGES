@@ -1,6 +1,6 @@
 -----
 
-0.1.6    TO BE RELEASED
+0.1.6    2025-10-12
    [Added]
        * Examples:
          * eg/cpumap.pl
@@ -9,6 +9,9 @@
    [Changed]
        * Minimum version of development dependency
          Protocol::Sys::Virt::Devel increased
+       * Updated libvirt to v11.8.0 (from v11.7.0)
+         * Adds CPU_STATS_GUEST constant for use with
+           node_get_cpu_stats()
    [Fixed]
        * `get_cpu_map` broken by migration to Object::Pad
        * Connection closing time-out should have been relative
