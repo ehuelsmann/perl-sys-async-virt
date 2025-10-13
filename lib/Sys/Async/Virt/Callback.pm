@@ -17,14 +17,14 @@ use Feature::Compat::Try;
 use Future::AsyncAwait;
 use Object::Pad 0.821;
 
-class Sys::Async::Virt::Callback v0.1.6;
+class Sys::Async::Virt::Callback v0.1.7;
 
 
 use Carp qw(croak);
 use Future::Queue;
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v0.1.6;
+use Protocol::Sys::Virt::Remote::XDR v0.1.7;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 field $_id              :reader :param;
@@ -93,7 +93,7 @@ Sys::Async::Virt::Callback - Client side proxy to remote LibVirt event source
 
 =head1 VERSION
 
-v0.1.6
+v0.1.7
 
 =head1 SYNOPSIS
 
