@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad ':experimental(inherit_field)';
 
-class Sys::Async::Virt::Connection::Local v0.1.6;
+class Sys::Async::Virt::Connection::Local v0.1.7;
 
 inherit Sys::Async::Virt::Connection '$_in', '$_out';
 
@@ -77,7 +77,7 @@ Sys::Async::Virt::Connection::Local - Connection to LibVirt server over Unix
 
 =head1 VERSION
 
-v0.1.6
+v0.1.7
 
 =head1 SYNOPSIS
 
