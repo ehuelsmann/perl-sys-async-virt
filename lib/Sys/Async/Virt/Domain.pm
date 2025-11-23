@@ -13,8 +13,10 @@
 use v5.26;
 use warnings;
 use experimental 'signatures';
+use Feature::Compat::Try;
 use Future::AsyncAwait;
-use Object::Pad;
+use Object::Pad 0.821;
+use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
 class Sys::Async::Virt::Domain v0.2.6;
 
@@ -1041,6 +1043,285 @@ async method get_vcpus() {
 
     return \@rv;
 }
+
+
+###############################################################################
+#
+#                                MIGRATION CODE
+#
+###############################################################################
+#
+# The migration protocol is documented in libvirt's repository:
+#   https://gitlab.com/libvirt/libvirt/-/blob/master/docs/kbase/internals/migration.rst
+#
+
+
+
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3_PARAMS
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3_PARAMS
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3_PARAMS
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_CONFIRM3_PARAMS
+# ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_FINISH3_PARAMS
+async method _managed_direct_migrate($dest_client, $params, $flags) {
+    #
+    # This function is a port of virDomainMigrate3
+    #
+    my $cancelled     = 1;
+    my $cookie;
+    my $notify_source = 1;
+    my $saved_error;
+
+    die $log->error(q{migrate() flags MIGRATE_NON_SHARED_DISK and }
+                    . q{MIGRATE_NON_SHARED_INC are mutually exclusive.})
+        if ($flags & MIGRATE_NON_SHARED_DISK
+            and $flags & MIGRATE_NON_SHARED_INC);
+
+    die $log->error(q{migrate() flag MIGRATE_NON_SHARED_SYNCHRONOUS_WRITES }
+                    . q{requires either MIGRATE_NON_SHARED_DISK or }
+                    . q{MIGRATE_NON_SHARED_INC.})
+        if ($flags & MIGRATE_NON_SHARED_SYNCHRONOUS_WRITES
+            and not ($flags & (MIGRATE_NON_SHARED_DISK | MIGRATE_NON_SHARED_INC)));
+
+    die $log->error(q{migrate() with 'dest_client' does not support PEER2PEER and/or TUNNELLED flags})
+        if ($flags & MIGRATE_PEER2PEER or $flags & MIGRATE_TUNNELLED);
+
+    typed_params_field( $params, MIGRATE_PARAM_DEST_NAME )
+        or typed_params_field( $params, MIGRATE_PARAM_DEST_NAME,
+                               typed_value_new( TYPED_PARAM_STRING, $self->name ) );
+
+    # The original code contains the section below, but we set the destination name here instead
+    # die $log->error(q{migrate() requires a non-zero-length destination VM name})
+    #     unless typed_params_field_string_value( $params, MIGRATE_PARAM_DEST_NAME );
+
+    my $params_feature = $dest_client->remote->DRV_FEATURE_MIGRATION_PARAMS;
+    die $log->error(q{Destination host missing feature MIGRATION_PARAMS; }
+                    . q{older migration protocols not supported})
+        if (not await $dest_client->_supports_feature( $params_feature ));
+
+    if ($flags & MIGRATE_OFFLINE) {
+        my $offline_feature = $_client->remote->DRV_FEATURE_MIGRATION_OFFLINE;
+        die $log->error(q{Source host does not support offline migration})
+            if (await $_client->_supports_feature( $offline_feature ));
+        die $log->error(q{Destination host does not support offline migration})
+            if (await $dest_client->_supports_feature( $offline_feature ));
+    }
+
+
+    my $protection = 0;
+    my $protection_feature = $_client->remote->DRV_FEATURE_MIGRATE_CHANGE_PROTECTION;
+    if (await $_client->_supports_feature( $protection_feature )) {
+        $protection = MIGRATE_CHANGE_PROTECTION;
+    }
+    if ($flags & MIGRATE_CHANGE_PROTECTION and not $protection) {
+        die $log->error(q{Cannot enforce change protection});
+    }
+    $flags &= ~MIGRATE_CHANGE_PROTECTION;
+
+
+    # Require VIR_DRV_FEATURE_MIGRATION_PARAMS to be available,
+    # since it was available since 2013
+    die $log->error(q{Source host does not support VIR_DRV_FEATURE_MIGRATION_PARAMS})
+        unless await $_client->_supports_feature( $_client->remote->DRV_FEATURE_MIGRATION_PARAMS );
+    die $log->error(q{Destination host does not support VIR_DRV_FEATURE_MIGRATION_PARAMS})
+        unless await $dest_client->_supports_feature( $_client->remote->DRV_FEATURE_MIGRATION_PARAMS );
+
+
+    my $rv;
+    $rv = await $_client->_call(
+        $remote->PROC_DOMAIN_MIGRATE_BEGIN3_PARAMS,
+        { dom => $_rpc_id, params => $params,
+          flags => ($flags | $protection) });
+
+    my $dom_xml;
+    ($dom_xml, $cookie) = $rv->@{ qw( xml cookie_out ) };
+    return undef unless $dom_xml;
+
+    try {
+        $rv = await $self->get_state;
+        if ($rv->{'state'} == PAUSED
+            and not ($flags & MIGRATE_POSTCOPY_RESUME)) {
+            $flags |= MIGRATE_PAUSED;
+        }
+    }
+    catch ($e) {
+        $log->debug( "Error: $e" );
+        # ignore errors
+    }
+
+    my $dest_uri;
+    my $dest_flags = $flags & ~(MIGRATE_ABORT_ON_ERROR | MIGRATE_AUTO_CONVERGE);
+
+
+    # # replace the MIGRATE_PARAM_DEST_XML parameter with $dom_xml
+    $params = typed_params_new( $params );
+    typed_params_field( $params, MIGRATE_PARAM_DEST_XML,
+                        typed_value_new( TYPED_PARAM_STRING, $dom_xml ) );
+    try {
+        $rv = await $dest_client->_call(
+            $remote->PROC_DOMAIN_MIGRATE_PREPARE3_PARAMS,
+            { cookie_in => $cookie, params => $params, flags => $dest_flags });
+        ($cookie, $dest_uri) = $rv->@{ qw( cookie_out uri_out ) };
+    }
+    catch ($e) {
+        $log->debug( "Error: $e" );
+        if ($protection) {
+            $saved_error = $e;
+            goto confirm;
+        }
+        else {
+            goto done;
+        }
+    }
+    if ($dest_uri) {
+        typed_params_field( $params, MIGRATE_PARAM_URI,
+                            typed_value_new( TYPED_PARAM_STRING, $dest_uri ) );
+    }
+    elsif (not typed_params_field_string_value( $params, MIGRATE_PARAM_URI )) {
+        try {
+            die $log->error("Internal error: MIGRATE_PREPARE3 didn't set 'uri'");
+        }
+        catch ($e) {
+            $log->debug( "Error: $e" );
+            $saved_error = $e;
+            goto finish;
+        }
+    }
+
+    if ($flags & MIGRATE_OFFLINE) {
+        $log->debug("Offline migration, skipping Perform phase");
+
+        $cookie = undef;
+        $cancelled = 0;
+        goto finish;
+    }
+
+    $log->debug("Perform3");
+    try {
+        $rv = await $_client->_call(
+            $remote->PROC_DOMAIN_MIGRATE_PERFORM3_PARAMS,
+            { dom => $_rpc_id,
+              dconnuri => undef,
+              params => $params,
+              cookie_in => $cookie,
+              flags => ($flags | $protection),
+            } );
+        $cookie = $rv->{cookie_out};
+        $cancelled = 0;
+    }
+    catch ($e) {
+        $log->debug( "Error: $e" );
+        $saved_error   = $e;
+        $notify_source = 0;
+    }
+
+  finish:
+    my $ddomain;
+    try {
+        $rv = await $dest_client->_call(
+            $remote->PROC_DOMAIN_MIGRATE_FINISH3_PARAMS,
+            { params => $params, cookie_in => $cookie,
+              flags => $dest_flags, cancelled => $cancelled });
+        ( $ddomain, $cookie ) = $rv->@{ qw( dom cookie_out ) };
+    }
+    catch ($e) {
+        $log->debug( "Error: $e" );
+        # ignore errors
+    }
+
+    if ($cancelled and $ddomain) {
+        $log->error("finish step ignored migration cancellation and started domain");
+    }
+    $cancelled = not defined $ddomain;
+
+  confirm:
+
+    if ($notify_source) {
+        try {
+            await $_client->_call(
+                $remote->PROC_DOMAIN_MIGRATE_CONFIRM3_PARAMS,
+                { dom => $_rpc_id, params => $params, cookie_in => $cookie,
+                  flags => ($flags | $protection), cancelled => $cancelled});
+        }
+        catch ($e) {
+            $log->debug( "Error: $e" );
+
+            my $name = $self->name;
+            $log->warn("Guest '$name' probably left in 'paused' state on source");
+        }
+    }
+
+  done:
+    if ($saved_error) {
+        die $saved_error;
+    }
+    else {
+        return $ddomain;
+    }
+}
+
+async method _managed_p2p_migrate($dest_libvirt_uri, $params, $flags) {
+    die $log->error(q{migrate() without PEER2PEER flag should not pass 'dest_libvirt_uri'})
+        if ($flags & MIGRATE_PEER2PEER);
+
+
+}
+
+async method _unmanaged_direct_migrate($params, $flags) {
+    die $log->error(q{migrate() requires MIGRATE_PARAM_URI when called without both 'dest_client' and 'dest_client_uri'})
+        if (not typed_params_field_string_value( $params, MIGRATE_PARAM_URI ));
+}
+
+async method migrate(:$dest_client = undef, :$dest_libvirt_uri = undef,
+                     :$params = [], :$flags = 0) {
+    # Migration exists in 3 main flavors:
+    # 1. Client controlled (connected to both source and destination)
+    #    In this flavor, the hypervisors exchange data directly
+    # 2. Source libvirt daemon controlled
+    #    This exists in 2 flavors:
+    #    a. the hypervisors exchange data directly
+    #    b. data between the hosts is tunneled over a connection between the libvirt daemons
+    # 3. Delegated to the source hypervisor
+    #
+    # Naming for these scenarios:
+    # (1) Managed direct migration
+    # (2) Managed peer-to-peer migration
+    # (2a) direct migration
+    # (2b) tunneled migration
+    # (3) Unmanaged direct migration
+    #
+    $log->info( 'Starting migration' );
+
+    die $log->error(q{migrate() accepts only one of 'dest_client' and 'dest_libvirt_uri'})
+        if ($dest_client and $dest_libvirt_uri);
+
+    die $log->error(q{migrate() TUNNELLED flag requires PEER2PEER flag to be set})
+        if ($flags & MIGRATE_TUNNELLED
+            and not ($flags & MIGRATE_PEER2PEER));
+
+    my $params_feature = $_client->remote->DRV_FEATURE_MIGRATION_PARAMS;
+    die $log->error(qq{Source host missing feature MIGRATION_PARAMS($params_feature); }
+                    . q{older migration protocols not supported})
+        if (not await $_client->_supports_feature( $params_feature ));
+
+    if ($dest_client) {
+        $log->info('Managed direct migration');
+        return await $self->_managed_direct_migrate($dest_client, $params, $flags);
+    }
+    elsif ($dest_libvirt_uri) {
+        $log->info('Managed peer-to-peer migration');
+        return await $self->_managed_p2p_migrate($dest_libvirt_uri);
+    }
+
+    $log->info('Unmanaged direct migration');
+    return await $self->_unmanaged_direct_migrate();
+}
+
+###############################################################################
+#
+#                             END OF MIGRATION CODE
+#
+###############################################################################
+
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_PIN_EMULATOR
 async method pin_emulator($cpumap, $flags = 0) {
@@ -2107,6 +2388,14 @@ with one extra key C<affinity>, an array of booleans where each element
 indicates whether the vCPU is allowed to run on that physical CPU (affinity).
 
 See also the documentation of L<virDomainGetVcpus|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetVcpus>.
+
+=head2 migrate
+
+  my $ddom = await $dom->migrate( dest_client => $dest_client, params => $params, flags => $flags );
+
+This function currently supports managed direct migration. See L<virDomainMigrate3|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrate3>.
+
+The functionality provided by L<virDomainMigrateToURI3|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateToURI3> is being developed.
 
 =head2 pin_emulator
 

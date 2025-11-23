@@ -330,7 +330,7 @@ field $_url           :param = $ENV{LIBVIRT_DEFAULT_URI};
 field $_readonly      :param = undef;
 field $_connection    :param = undef;
 field $_transport     :param = undef;
-field $_remote        :param = undef;
+field $_remote        :reader :param = undef;
 field $_factory       :param = undef;
 field $_keepalive     :param = undef;
 field $_ping_interval :param = 60;
@@ -4069,6 +4069,18 @@ replies.
 
 =over 8
 
+=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature
+ (v1.3.3 - 2016-04-06) is not - currently - supported
+
+=begin fill-templates
+
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
+
+=end fill-templates
+
 =item * Talking to servers without the MIGRATION_PARAM feature
  (v1.1.0 - 2013-07-01) is not - currently - supported
 
@@ -4097,17 +4109,8 @@ replies.
 
 =end fill-templates
 
-=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature
- (v1.3.3 - 2016-04-06) is not - currently - supported
-
-=begin fill-templates
-
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
-
-=end fill-templates
+=item * Talking to servers without the MIGRATE_CHANGE_PROTECTION feature
+ (v0.10.0 - 2012-08-29) is not - currently - supported
 
 =back
 
@@ -4158,24 +4161,6 @@ towards implementation are greatly appreciated.
 =item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS
 
 =item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS_FD
-
-=back
-
-
-
-=item * @generate: none (src/libvirt_internal.h)
-
-=over 8
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3_PARAMS
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_CONFIRM3_PARAMS
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_FINISH3_PARAMS
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3_PARAMS
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3_PARAMS
 
 =back
 
