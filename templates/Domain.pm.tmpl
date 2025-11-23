@@ -13,8 +13,10 @@
 use v5.26;
 use warnings;
 use experimental 'signatures';
+use Feature::Compat::Try;
 use Future::AsyncAwait;
-use Object::Pad;
+use Object::Pad 0.821;
+use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
 class Sys::Async::Virt::Domain __VERSION__;
 
@@ -152,6 +154,129 @@ async method get_vcpus() {
     }
 
     return \@rv;
+}
+
+async sub _managed_direct_migrate($self, $dest_client, $params, $flags) {
+    my $src_client = $self->{client};
+    my $remote = $self->{remote};
+    die $log->error(q{migrate() with 'dest_client' does not support PEER2PEER an TUNNELLED flags})
+        if ($flags & MIGRATE_PEER2PEER or $flags & MIGRATE_TUNNELLED);
+
+    die $log->error(q{migrate() flags MIGRATE_NON_SHARED_DISK and }
+                    . q{MIGRATE_NON_SHARED_INC are mutually exclusive.})
+        if ($flags & MIGRATE_NON_SHARED_DISK
+            and $flags & MIGRATE_NON_SHARED_INC);
+
+    die $log->error(q{migrate() flag MIGRATE_NON_SHARED_SYNCHRONOUS_WRITES }
+                    . q{requires either MIGRATE_NON_SHARED_DISK or }
+                    . q{MIGRATE_NON_SHARED_INC.})
+        if ($flags & MIGRATE_NON_SHARED_SYNCHRONOUS_WRITES
+            and not ($flags & (MIGRATE_NON_SHARED_DISK | MIGRATE_NON_SHARED_INC)));
+
+    my $params_feature = $remote->DRV_FEATURE_MIGRATION_PARAMS;
+    die $log->error(q{Destination host missing feature MIGRATION_PARAMS; }
+                    . q{older migration protocols not supported})
+        if (await $dest_client->_supports_feature( $params_feature ));
+
+    my $offline_feature = $remote->DRV_FEATURE_MIGRATION_OFFLINE;
+    die $log->error(q{Source host does not support offline migration})
+        if (await $src_client->_supports_feature( $offline_feature ));
+    die $log->error(q{Destination host does not support offline migration})
+        if (await $dest_client->_supports_feature( $offline_feature ));
+
+    my $protection = 0;
+    my $protection_feature = $remote->DRV_FEATURE_CHANGE_PROTECTION;
+    if (await $src_client->_supports_feature( $protection_feature )) {
+        die $log->error(q{Cannot enforce change protection})
+            if ($flags & MIGRATE_CHANGE_PROTECTION);
+        $protection = MIGRATE_CHANGE_PROTECTION;
+    }
+    $flags &= ~MIGRATE_CHANGE_PROTECTION;
+
+    ### start migrating; virdomainmigrateversion3full
+    my $rv;
+    $rv = await $src_client->_call(
+        $remote->PROC_DOMAIN_MIGRATE_BEGIN3_PARAMS,
+        { dom => $self->{id}, params => $params,
+          flags => ($flags | $protection) });
+
+    my ($dom_xml, $src_cookie) = $rv->@{ qw( xml cookie ) };
+    my ($dest_cookie, $dest_uri);
+    try {
+        # replace the MIGRATE_PARAM_DEST_XML parameter with $dom_xml
+        try {
+            $rv = await $self->get_state;
+            if ($rv->{'state'} == PAUSED
+                and not ($flags & MIGRATE_PAUSED)) {
+                $flags |= MIGRATE_PAUSED;
+            }
+        }
+        catch ($e) {
+            # ignore errors
+        }
+
+        my $dest_flags = $flags & ~(MIGRATE_ABORT_ON_ERROR | MIGRATE_AUTO_CONVERGE);
+        $rv = await $dest_client->_call(
+            $remote->PROC_DOMAIN_MIGRATE_PREPARE3_PARAMS,
+            { cookie_in => $src_cookie, params => $params, flags => $dest_flags });
+        ($dest_cookie, $dest_uri) = $rv->@{ qw( cookie_out uri_out ) };
+    }
+    catch ($e) { }
+    finally {
+    }
+}
+
+async sub _managed_p2p_migrate($self, $dest_libvirt_uri, $params, $flags) {
+    die $log->error(q{migrate() without PEER2PEER flag should not pass 'dest_libvirt_uri'})
+        if ($flags & MIGRATE_PEER2PEER);
+
+
+}
+
+async sub _unmanaged_direct_migrate($self, $params, $flags) {
+    die $log->error(q{migrate() requires MIGRATE_PARAM_URI when called without both 'dest_client' and 'dest_client_uri'})
+        if (not get_typed_parameter( $params, MIGRATE_PARAM_URI ));
+}
+
+async sub migrate($self, :$dest_client = undef, :$dest_libvirt_uri = undef,
+                           :$params = [], :$flags = 0) {
+    # Migration exists in 3 main flavors:
+    # 1. Client controlled (connected to both source and destination)
+    #    In this flavor, the hypervisors exchange data directly
+    # 2. Source libvirt daemon controlled
+    #    This exists in 2 flavors:
+    #    a. the hypervisors exchange data directly
+    #    b. data between the hosts is tunneled over a connection between the libvirt daemons
+    # 3. Delegated to the source hypervisor
+    #
+    # Naming for these scenarios:
+    # (1) Managed direct migration
+    # (2) Managed peer-to-peer migration
+    # (2a) direct migration
+    # (2b) tunneled migration
+    # (3) Unmanaged direct migration
+    #
+
+    die $log->error(q{migrate() accepts only one of 'dest_client' and 'dest_libvirt_uri'})
+        if ($dest_client and $dest_libvirt_uri);
+
+    die $log->error(q{migrate() TUNNELLED flag requires PEER2PEER flag to be set})
+        if ($flags & MIGRATE_TUNNELLED
+            and not ($flags & MIGRATE_PEER2PEER));
+
+    my $params_feature = $self->{remote}->DRV_FEATURE_MIGRATION_PARAMS;
+    die $log->error(q{Source host missing feature MIGRATION_PARAMS; }
+                    . q{older migration protocols not supported})
+        if (await $self->{client}->_supports_feature( $params_feature ));
+
+    if ($dest_client) {
+        return await $self->_managed_direct_migrate($dest_client);
+    }
+    elsif ($dest_libvirt_uri) {
+        return await $self->_managed_p2p_migrate($dest_libvirt_uri);
+    }
+
+    return await $self->_unmanaged_direct_migrate();
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_PIN_EMULATOR
