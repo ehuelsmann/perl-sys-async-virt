@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+set -x
+
+virsh destroy vmhost1
+virsh destroy vmhost2

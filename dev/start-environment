@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+set -x
+
+virsh create vmhost1.xml
+virsh create vmhost2.xml

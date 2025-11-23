@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+set -x
+
+rm id_ed25519 id_ed25519.pub
+rm vmhost1.qcow2 vmhost1.xml
+rm vmhost2.qcow2 vmhost2.xml
+rm appliance.qcow2
+

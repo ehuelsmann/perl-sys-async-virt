@@ -8,6 +8,7 @@
 ^MANIFEST.bak
 ^Makefile$
 ^devel/
+^dev/
 ^html/
 ^templates/
 ^Sys-Async-Virt-

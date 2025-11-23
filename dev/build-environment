@@ -1,0 +1,63 @@
+#!/usr/bin/bash
+
+set -x
+
+if [ ! -e ./id_ed25519 ]; then
+   ssh-keygen -t ed25519 -f ./id_ed25519 -N ""
+fi
+
+virt-builder \
+   -o appliance.qcow2 \
+   -m 4096 \
+   --format qcow2 \
+   --arch amd64 \
+   --root-password password:root \
+   --hostname sys-async-template \
+   --run-command "bash -c \"debconf-set-selections <<< 'grub-pc grub-pc/install_devices multiselect /dev/sda'\"" \
+   --run-command "DEBIAN_FRONTEND=noninteractive apt-get -y --allow-releaseinfo-change update" \
+   --run-command "DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -q -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew" \
+   --install avahi-daemon,libvirt-daemon,libvirt-clients,qemu-kvm,openssh-server,dhcpcd,curl \
+   --append-line "/etc/ssh/sshd_config:PermitRootLogin yes" \
+   --append-line "/etc/ssh/sshd_config:PasswordAuthentication yes" \
+   --append-line "/root/.ssh/authorized_keys:$(cat ./id_ed25519.pub)" \
+   --copy-in "id_ed25519:/root/.ssh" \
+   --copy-in "id_ed25519.pub:/root/.ssh" \
+   --append-line "/etc/ssh/ssh_config:    StrictHostKeyChecking no" \
+   --firstboot-command "ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N \"\"" \
+   debian-13
+
+qemu-img create -b appliance.qcow2 -F qcow2 -f qcow2 vmhost1.qcow2
+qemu-img create -b appliance.qcow2 -F qcow2 -f qcow2 vmhost2.qcow2
+
+virt-customize \
+   --format qcow2 \
+   -a vmhost1.qcow2 \
+   -m 4096 \
+   --hostname vmhost1.local
+
+virt-customize \
+   --format qcow2 \
+   -a vmhost2.qcow2 \
+   -m 4096 \
+   --hostname vmhost2.local
+
+virt-install \
+   --print-xml \
+   --network network=default \
+   --disk path=vmhost1.qcow2,bus=scsi,format=qcow2 \
+   --name vmhost1 \
+   --memory 4096 \
+   --vcpus 2 \
+   --osinfo debian12 > vmhost1.xml
+
+virt-install \
+   --print-xml \
+   --network network=default \
+   --disk path=vmhost2.qcow2,bus=scsi,format=qcow2 \
+   --name vmhost2 \
+   --memory 4096 \
+   --vcpus 2 \
+   --osinfo debian12 > vmhost2.xml
+
+virsh create vmhost1.xml
+virsh create vmhost2.xml
