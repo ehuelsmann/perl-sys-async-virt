@@ -1,10 +1,20 @@
 #!/usr/bin/bash
 
-set -x
+set -xeo pipefail
 
 if [ ! -e ./id_ed25519 ]; then
    ssh-keygen -t ed25519 -f ./id_ed25519 -N ""
 fi
+
+if [ -e vmhost1.qcow2 -a ! -w vmhost1.qcow2 ]; then
+    echo ERROR: cannot modify vmhost1.qcow2
+    exit 1
+fi
+if [ -e vmhost2.qcow2 -a ! -w vmhost2.qcow2 ]; then
+    echo ERROR: cannot modify vmhost2.qcow2
+    exit 1
+fi
+
 
 virt-builder \
    -o appliance.qcow2 \
@@ -16,14 +26,15 @@ virt-builder \
    --run-command "bash -c \"debconf-set-selections <<< 'grub-pc grub-pc/install_devices multiselect /dev/sda'\"" \
    --run-command "DEBIAN_FRONTEND=noninteractive apt-get -y --allow-releaseinfo-change update" \
    --run-command "DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -q -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew" \
-   --install avahi-daemon,libvirt-daemon,libvirt-clients,qemu-kvm,openssh-server,dhcpcd,curl \
+   --install avahi-daemon,libvirt-daemon,libvirt-clients,qemu-kvm,openssh-server,dhcpcd,curl,virtinst \
    --append-line "/etc/ssh/sshd_config:PermitRootLogin yes" \
    --append-line "/etc/ssh/sshd_config:PasswordAuthentication yes" \
    --append-line "/root/.ssh/authorized_keys:$(cat ./id_ed25519.pub)" \
    --copy-in "id_ed25519:/root/.ssh" \
    --copy-in "id_ed25519.pub:/root/.ssh" \
    --append-line "/etc/ssh/ssh_config:    StrictHostKeyChecking no" \
-   --firstboot-command "ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N \"\"" \
+   --firstboot-command "ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N \"\" ; systemctl restart ssh.service" \
+   --run-command "DEBIAN_FRONTEND=noninteractive apt-get autoremove -q -y" \
    debian-13
 
 qemu-img create -b appliance.qcow2 -F qcow2 -f qcow2 vmhost1.qcow2
@@ -33,13 +44,17 @@ virt-customize \
    --format qcow2 \
    -a vmhost1.qcow2 \
    -m 4096 \
-   --hostname vmhost1.local
+   --hostname vmhost1.local \
+   --edit '/etc/hosts:s/^127\.0\.1\.1.*/127.0.1.1 vmhost1.local vmhost1/'
+ssh-keygen -f ~/.ssh/known_hosts -R vmhost1.local
 
 virt-customize \
    --format qcow2 \
    -a vmhost2.qcow2 \
    -m 4096 \
-   --hostname vmhost2.local
+   --hostname vmhost2.local \
+   --edit '/etc/hosts:s/^127\.0\.1\.1.*/127.0.1.1 vmhost2.local vmhost2/'
+ssh-keygen -f ~/.ssh/known_hosts -R vmhost2.local
 
 virt-install \
    --print-xml \
