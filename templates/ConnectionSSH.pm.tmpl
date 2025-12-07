@@ -121,7 +121,7 @@ async method connect() {
         stderr => {
             on_read => sub {
                 # eat stderr input
-                my $bufref = $_[1]; say $bufref; ${$bufref} = ''; 0;
+                my $bufref = $_[1]; say $bufref->$*; $bufref->$* = ''; 0;
             },
         },
         stdin => {
