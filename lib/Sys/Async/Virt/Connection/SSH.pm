@@ -88,7 +88,11 @@ async method connect() {
     my $nc_command = sprintf($nc_proxy,
                              $c{query}->{netcat} // 'nc',
                              $socket_path);
-    my $native_command = 'virt-ssh-helper ' . shell_escape("$c{proxy}");
+    my $native_command = 'virt-ssh-helper ';
+    $native_command .= '-r ' if $_readonly;
+
+    # $c{proxy} is the URL to use on the proxy
+    $native_command .= shell_escape($c{proxy});
     if ($proxy_mode eq 'netcat') {
         $remote_cmd = sprintf(q|sh -c %s|, shell_escape($nc_command));
     }
