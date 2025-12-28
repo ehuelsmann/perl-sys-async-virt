@@ -4,6 +4,8 @@ requires 'perl' => '5.26.0'; # combination of Future::AsyncAwait and signatures
 requires 'Feature::Compat::Try';
 requires 'Future';
 requires 'Future::AsyncAwait';
+requires 'Future::IO';
+requires 'Future::Selector';
 requires 'Future::Queue';
 requires 'IO::Async::Notifier';
 requires 'IO::Async::Stream';
