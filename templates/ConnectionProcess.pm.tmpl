@@ -29,7 +29,7 @@ use Protocol::Sys::Virt::URI __P::S::V::VERSION__; # imports parse_url
 field $_url :param :reader;
 field $_process = undef;
 
-method close() {
+async method close() {
     $_process->kill( 'TERM' )
         if not $_process->is_exited;
 }
@@ -40,19 +40,21 @@ method configure(%args) {
     $self->SUPER::configure(%args);
 }
 
-async method connect() {
-    my %c = parse_url( $_url );
+method _command( $url ) {
+    my %c = parse_url( $url );
+    return $c{command};
+}
 
-    my $cmd  = $c{command};
+async method connect() {
     my $process = $self->loop->open_process(
-        command => $cmd,
+        command => $self->_command( $_url ),
         stdout => {
             on_read => sub { 0 },
         },
         stderr => {
             on_read => sub {
                 # eat stderr input
-                my $bufref = $_[1]; say $bufref; ${$bufref} = ''; 0;
+                my $bufref = $_[1]; say $$bufref; ${$bufref} = ''; 0;
             },
         },
         stdin => {

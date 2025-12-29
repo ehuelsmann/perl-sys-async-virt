@@ -18,7 +18,7 @@ use Object::Pad ':experimental(inherit_field)';
 
 class Sys::Async::Virt::Connection::SSH __VERSION__;
 
-inherit Sys::Async::Virt::Connection '$_in', '$_out';
+inherit Sys::Async::Virt::Connection::Process;
 
 use Carp qw(croak);
 use IO::Async::Stream;
@@ -27,17 +27,10 @@ use Log::Any qw($log);
 use Protocol::Sys::Virt::UNIXSocket __P::S::V::VERSION__; # imports socket_path
 use Protocol::Sys::Virt::URI __P::S::V::VERSION__; # imports parse_url
 
-field $_url      :reader :param;
 field $_socket   :reader :param = undef;
 field $_readonly :reader :param;
-field $_process;
-
-method close() {
-    $_process->kill( 'TERM' ) if not $_process->is_exited;
-}
 
 method configure(%args) {
-    delete $args{url};
     delete $args{socket};
     delete $args{readonly};
 
@@ -68,8 +61,8 @@ my $auto_proxy =
     q{else %s; } .
     q{fi};
 
-async method connect() {
-    my %c = parse_url( $_url );
+method _command( $url ) {
+    my %c = parse_url( $url );
     my @args =  ('-e', 'none');
     push @args, ('-p', $c{port}) if $c{port};
     push @args, ('-l', $c{username}) if $c{username};
@@ -111,29 +104,8 @@ async method connect() {
 
     my $local_cmd  = $c{query}->{command} // 'ssh';
     my @cmd = ($local_cmd, @args, '--', $c{host}, $remote_cmd);
-    $log->trace("SSH remote command: $remote_cmd");
-    $log->trace("SSH total command: " . join(' ', @cmd) );
-    $_process = $self->loop->open_process(
-        command => \@cmd,
-        stdout => {
-            on_read => sub { 0 },
-        },
-        stderr => {
-            on_read => sub {
-                # eat stderr input
-                my $bufref = $_[1]; say $bufref; ${$bufref} = ''; 0;
-            },
-        },
-        stdin => {
-            via => 'pipe_write'
-        },
-        on_finish => sub { }, # on_finish is mandatory
-        );
 
-    $_in  = $_process->stdout;
-    $_out = $_process->stdin;
-
-    return;
+    return \@cmd;
 }
 
 method is_secure() {
