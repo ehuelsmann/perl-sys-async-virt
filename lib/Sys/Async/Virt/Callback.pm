@@ -60,6 +60,8 @@ async method cancel() {
 }
 
 method cleanup() {
+    return unless $_queue;
+
     $_queue->finish;
     $_queue = undef;
     delete $_client->{_callbacks}->{$_id};
