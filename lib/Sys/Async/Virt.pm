@@ -1570,9 +1570,9 @@ async method _close($reason) {
         try {
             await Future->wait_all(
                 (map { $_->cancel }
-                 grep values $_callbacks->%*),
+                 grep { $_ } values $_callbacks->%*),
                 (map { $_->abort }
-                 grep values $_streams->%*)
+                 grep { $_ } values $_streams->%*)
                 );
             $log->debug( 'Unregistering CLOSE CALLBACK' );
             await $self->_call(
