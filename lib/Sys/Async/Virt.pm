@@ -1291,6 +1291,15 @@ method is_opened() {
             and $_substate eq 'OPENED');
 }
 
+method _deregister_callback($f, $proc, $id) {
+    delete $_callbacks->{$id};
+    my $r = $self->_call( $proc, { callbackID => $id } );
+    $r->on_done(sub { $f->done }) if $f;
+
+    $self->adopt_future( $r );
+    return;
+}
+
 method _remove_stream($id) {
     delete $_streams->{$id};
     return;
@@ -1395,7 +1404,6 @@ async method connect(:$pump //= \&_pump) {
 
     return;
 }
-
 
 # ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_CALLBACK_REGISTER_ANY
 # ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_CALLBACK_DEREGISTER_ANY

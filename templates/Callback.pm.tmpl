@@ -46,16 +46,12 @@ async method next_event() {
 }
 
 async method cancel() {
-    return if ($_cancelled
-               and $_cancelled->is_ready);
     return await $_cancelled if $_cancelled;
 
-    $_cancelled = $_client->_call(
-        $_deregister_call,
-        { callbackID => $_id });
+    $_cancelled = $_client->loop->new_future;
+    $self->cleanup;
     await $_cancelled;
 
-    $self->cleanup;
     return;
 }
 
@@ -64,7 +60,11 @@ method cleanup() {
 
     $_queue->finish;
     $_queue = undef;
-    delete $_client->{_callbacks}->{$_id};
+    $_client->_deregister_callback(
+        $_cancelled,
+        $_deregister_call,
+        $_id );
+
     return;
 }
 
@@ -75,13 +75,12 @@ method _dispatch_event($event) {
         $_queue->push($event);
     }
     catch ($e) {
-        ###TODO: Rather not RETAIN here?
-        $self->cancel->retain;
+        $self->cleanup;
     }
 }
 
 method DESTROY() {
-    $self->cancel->retain unless $_cancelled;
+    $self->cleanup;
 }
 
 
