@@ -381,7 +381,7 @@ method _storage_vol_instance($id) {
     my $c = $_storage_vols->{$id->{key}};
     unless ($c) {
         $c = $_storage_vols->{$id->{key}} =
-            _storage_vol_factory->(
+            _storage_vol_factory(
                 client => $self,
                 remote => $_remote,
                 id => $id );

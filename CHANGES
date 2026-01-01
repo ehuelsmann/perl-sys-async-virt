@@ -8,6 +8,7 @@
        * Undefined value warnings during event callback registration
        * Errors during cleanup calls on cleaned up callbacks
        * Experimental warnings on inherited fields in Connection classes
+       * Typo preventing correct instantiation of StorageVol classes
 
 0.1.10   2025-12-02
    [Changed]
