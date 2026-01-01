@@ -4,6 +4,8 @@ requires 'perl' => '5.26.0'; # combination of Future::AsyncAwait and signatures
 requires 'Feature::Compat::Try';
 requires 'Future';
 requires 'Future::AsyncAwait';
+requires 'Future::IO';
+requires 'Future::Selector';
 requires 'Future::Queue';
 requires 'IO::Async::Notifier';
 requires 'IO::Async::Stream';
@@ -23,6 +25,7 @@ on test => sub {
 
 on develop => sub {
     requires 'Carp::Always';
+    # requires 'Log::Any::Adapter::TAP';
     requires 'Protocol::Sys::Virt::Devel' => '1.0.1';
     requires 'Test::Pod' => '1.0';
     requires 'Test::Pod::Coverage' => '1.10';

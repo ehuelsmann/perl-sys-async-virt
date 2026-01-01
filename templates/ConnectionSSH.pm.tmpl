@@ -21,7 +21,6 @@ class Sys::Async::Virt::Connection::SSH __VERSION__;
 inherit Sys::Async::Virt::Connection::Process;
 
 use Carp qw(croak);
-use IO::Async::Stream;
 use Log::Any qw($log);
 
 use Protocol::Sys::Virt::UNIXSocket __P::S::V::VERSION__; # imports socket_path
@@ -29,13 +28,6 @@ use Protocol::Sys::Virt::URI __P::S::V::VERSION__; # imports parse_url
 
 field $_socket   :reader :param = undef;
 field $_readonly :reader :param;
-
-method configure(%args) {
-    delete $args{socket};
-    delete $args{readonly};
-
-    $self->SUPER::configure(%args);
-}
 
 sub shell_escape($val) {
     if ($val !~ m/[\s!"'`$<>#&*?;\\\[\]{}()~|^]/) { # no shell chars
@@ -102,10 +94,12 @@ method _command( $url ) {
         croak $log->fatal( "Unknown proxy mode '$proxy_mode'" );
     }
 
+    $log->trace("SSH remote command: $remote_cmd");
+
     my $local_cmd  = $c{query}->{command} // 'ssh';
     my @cmd = ($local_cmd, @args, '--', $c{host}, $remote_cmd);
 
-    return \@cmd;
+    return @cmd;
 }
 
 method is_secure() {
@@ -137,7 +131,12 @@ __VERSION__
 =head1 DESCRIPTION
 
 This module connects to a local LibVirt server through an ssh binary in
-the system PATH.
+the system PATH, inheriting most of its behaviour from
+L< Sys::Async::Virt::Connection::Process >.
+
+B< NOTE > This module requires the C<< Future::IO->waitpid >> call to work,
+which the default implementation does not provide. Any of the other backends
+listed in L< Future::IO > needs to be active for this module to work.
 
 =head1 URL PARAMETERS
 
@@ -174,10 +173,6 @@ Not to be called directly. Instantiated via the connection factory
 (L<Sys::Async::Virt::Connection::Factory>).
 
 =head1 METHODS
-
-=head2 connect
-
-  await $conn->connect;
 
 =head2 is_secure
 

@@ -1,6 +1,8 @@
 -----
 
 0.1.11   TO BE RELEASED
+   [Breaking]
+       * Migrated from IO::Async to Future::IO
    [Changed]
        * SSH connections implemented as specialization of Process connections
    [Fixed]
