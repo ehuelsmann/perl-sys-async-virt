@@ -1586,10 +1586,12 @@ __PRIVATE_EPS__
 
 =over 8
 
-=item * Sort interaction between C<connect> and C<auth> methods
+=item * Streams created with << $vol->upload() >> broken
 
-Currently, C<connect> always calls C<auth>, which makes having a public
-C<auth> method rather pointless.
+These streams seem to be malfunctioning, albeit that the tests were very limited:
+Only on Ubuntu Noble with LibVirt 10.0.0 ; this could very well be a problem
+long solved. If you have other experiences, please share them through the issue
+tracker.
 
 =item * Modules implementing connections for various protocols (tcp, tls, etc)
 
