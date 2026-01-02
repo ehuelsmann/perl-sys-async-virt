@@ -19,7 +19,7 @@ use Future::AsyncAwait;
 use Object::Pad 0.821;
 use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
-class Sys::Async::Virt v0.1.10;
+class Sys::Async::Virt v0.2.0;
 
 
 use Carp qw(croak);
@@ -29,30 +29,30 @@ use Future::Selector;
 use Log::Any qw($log);
 use Scalar::Util qw(reftype weaken);
 
-use Protocol::Sys::Virt::Remote::XDR v11.10.0;
+use Protocol::Sys::Virt::Remote::XDR v11.10.1;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-use Protocol::Sys::Virt::KeepAlive v11.10.0;
-use Protocol::Sys::Virt::Remote v11.10.0;
-use Protocol::Sys::Virt::Transport v11.10.0;
-use Protocol::Sys::Virt::URI v11.10.0; # imports parse_url
+use Protocol::Sys::Virt::KeepAlive v11.10.1;
+use Protocol::Sys::Virt::Remote v11.10.1;
+use Protocol::Sys::Virt::Transport v11.10.1;
+use Protocol::Sys::Virt::URI v11.10.1; # imports parse_url
 
-use Sys::Async::Virt::Connection::Factory v0.1.10;
-use Sys::Async::Virt::Domain v0.1.10;
-use Sys::Async::Virt::DomainCheckpoint v0.1.10;
-use Sys::Async::Virt::DomainSnapshot v0.1.10;
-use Sys::Async::Virt::Network v0.1.10;
-use Sys::Async::Virt::NetworkPort v0.1.10;
-use Sys::Async::Virt::NwFilter v0.1.10;
-use Sys::Async::Virt::NwFilterBinding v0.1.10;
-use Sys::Async::Virt::Interface v0.1.10;
-use Sys::Async::Virt::StoragePool v0.1.10;
-use Sys::Async::Virt::StorageVol v0.1.10;
-use Sys::Async::Virt::NodeDevice v0.1.10;
-use Sys::Async::Virt::Secret v0.1.10;
+use Sys::Async::Virt::Connection::Factory v0.2.0;
+use Sys::Async::Virt::Domain v0.2.0;
+use Sys::Async::Virt::DomainCheckpoint v0.2.0;
+use Sys::Async::Virt::DomainSnapshot v0.2.0;
+use Sys::Async::Virt::Network v0.2.0;
+use Sys::Async::Virt::NetworkPort v0.2.0;
+use Sys::Async::Virt::NwFilter v0.2.0;
+use Sys::Async::Virt::NwFilterBinding v0.2.0;
+use Sys::Async::Virt::Interface v0.2.0;
+use Sys::Async::Virt::StoragePool v0.2.0;
+use Sys::Async::Virt::StorageVol v0.2.0;
+use Sys::Async::Virt::NodeDevice v0.2.0;
+use Sys::Async::Virt::Secret v0.2.0;
 
-use Sys::Async::Virt::Callback v0.1.10;
-use Sys::Async::Virt::Stream v0.1.10;
+use Sys::Async::Virt::Callback v0.2.0;
+use Sys::Async::Virt::Stream v0.2.0;
 
 use constant {
     CLOSE_REASON_ERROR                                  => 0,
@@ -2438,23 +2438,31 @@ Sys::Async::Virt - LibVirt protocol implementation for clients
 
 =head1 VERSION
 
-v0.1.10
+v0.2.0
 
 Based on LibVirt tag v11.10.0
 
 =head1 SYNOPSIS
 
+  use Future::AsyncAwait;
+
+  use Future;
   use Sys::Async::Virt;
 
-  my $client = Sys::Async::Virt->new(url => 'qemu:///system');
-  my $run_f  = $client->run;
+  async sub main( $client ) {
+     await $client->connect;
+     my $domains = await $client->list_all_domains;
 
-  await $client->connect;
-  my $domains = await $client->list_all_domains;
+     await $virt->close;
+     $virt->stop;
+  }
 
-  await $virt->close;
-  $virt->stop;
-  await $run_f;
+  my $c = Sys::Async::Virt->new(url => 'qemu:///system');
+  await Future->await(
+     $client->run,
+     main( $client )
+  );
+
 
 =head1 DESCRIPTION
 
@@ -4073,10 +4081,12 @@ replies.
 
 =over 8
 
-=item * Sort interaction between C<connect> and C<auth> methods
+=item * Streams created with << $vol->upload() >> broken
 
-Currently, C<connect> always calls C<auth>, which makes having a public
-C<auth> method rather pointless.
+These streams seem to be malfunctioning, albeit that the tests were very limited:
+Only on Ubuntu Noble with LibVirt 10.0.0 ; this could very well be a problem
+long solved. If you have other experiences, please share them through the issue
+tracker.
 
 =item * Modules implementing connections for various protocols (tcp, tls, etc)
 

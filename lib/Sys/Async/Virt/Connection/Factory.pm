@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad;
 
-class Sys::Async::Virt::Connection::Factory v0.1.10;
+class Sys::Async::Virt::Connection::Factory v0.2.0;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -82,7 +82,7 @@ Sys::Async::Virt::Connection::Factory - Class for
 
 =head1 VERSION
 
-v0.1.10
+v0.2.0
 
 =head1 SYNOPSIS
 

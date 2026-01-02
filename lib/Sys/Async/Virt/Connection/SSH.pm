@@ -16,15 +16,15 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad ':experimental(inherit_field)';
 
-class Sys::Async::Virt::Connection::SSH v0.1.10;
+class Sys::Async::Virt::Connection::SSH v0.2.0;
 
 inherit Sys::Async::Virt::Connection::Process;
 
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::UNIXSocket v11.10.0; # imports socket_path
-use Protocol::Sys::Virt::URI v11.10.0; # imports parse_url
+use Protocol::Sys::Virt::UNIXSocket v11.10.1; # imports socket_path
+use Protocol::Sys::Virt::URI v11.10.1; # imports parse_url
 
 field $_socket   :reader :param = undef;
 field $_readonly :reader :param;
@@ -117,7 +117,7 @@ Sys::Async::Virt::Connection::SSH - Connection to LibVirt server over SSH
 
 =head1 VERSION
 
-v0.1.10
+v0.2.0
 
 =head1 SYNOPSIS
 

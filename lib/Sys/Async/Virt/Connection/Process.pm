@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad ':experimental(inherit_field)';
 
-class Sys::Async::Virt::Connection::Process v0.1.10;
+class Sys::Async::Virt::Connection::Process v0.2.0;
 
 inherit Sys::Async::Virt::Connection '$_in', '$_out';
 
@@ -26,7 +26,7 @@ use IO::Handle;
 use IPC::Open2;
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::URI v11.10.0; # imports parse_url
+use Protocol::Sys::Virt::URI v11.10.1; # imports parse_url
 
 field $_url :param :reader;
 field $_pid;
@@ -72,7 +72,7 @@ Sys::Async::Virt::Connection::Process - Connection to LibVirt server using
 
 =head1 VERSION
 
-v0.1.10
+v0.2.0
 
 =head1 SYNOPSIS
 
@@ -90,7 +90,7 @@ which forwards standard input to and standard output from the LibVirt server.
 
 B< NOTE > This module requires the C<< Future::IO->waitpid >> call to work,
 which the default implementation does not provide. Any of the other backends
-listed in L< Future::IO > needs to be active for this module to work.
+listed in L<Future::IO> needs to be active for this module to work.
 
 =head1 URL PARAMETERS
 
