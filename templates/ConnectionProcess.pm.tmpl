@@ -42,7 +42,7 @@ async method close() {
 
 method _command( $url ) {
     my %c = parse_url( $url );
-    return $c{command};
+    return $c{query}->{command};
 }
 
 async method connect() {
