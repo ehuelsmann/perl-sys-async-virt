@@ -1,5 +1,13 @@
 -----
 
+0.2.1    2026-01-04
+   [Fixed]
+       * Writes of data frames bigger than 8192 bytes as is likely the case
+         when using upload streams
+       * Versions in Protocol::Sys::Virt 'use' statements list
+         Sys::Virt::Async version numbers (instead of dependency versions)
+
+
 0.2.0    2026-01-02
    [Breaking]
        * Migrated from IO::Async to Future::IO

@@ -16,14 +16,14 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad 0.821;
 
-class Sys::Async::Virt::Stream v0.2.0;
+class Sys::Async::Virt::Stream v0.2.1;
 
 use Carp qw(croak);
 use Future;
 use Future::Queue;
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v0.2.0;
+use Protocol::Sys::Virt::Remote::XDR v11.10.1;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 field $_id :param :reader;
@@ -154,7 +154,7 @@ Sys::Async::Virt::Stream - Client side of a data transfer channel
 
 =head1 VERSION
 
-v0.2.0
+v0.2.1
 
 =head1 SYNOPSIS
 

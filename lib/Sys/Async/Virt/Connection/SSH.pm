@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad ':experimental(inherit_field)';
 
-class Sys::Async::Virt::Connection::SSH v0.2.0;
+class Sys::Async::Virt::Connection::SSH v0.2.1;
 
 inherit Sys::Async::Virt::Connection::Process;
 
@@ -117,7 +117,7 @@ Sys::Async::Virt::Connection::SSH - Connection to LibVirt server over SSH
 
 =head1 VERSION
 
-v0.2.0
+v0.2.1
 
 =head1 SYNOPSIS
 
