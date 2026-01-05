@@ -22,6 +22,7 @@ field $_in  :inheritable = undef;
 field $_out :inheritable = undef;
 
 # Futures indicating status of the last read/write action
+field $_read_f           = Future->done;
 field $_write_f          = Future->done;
 field $_eof;
 
@@ -66,7 +67,9 @@ async method read($type, $len) {
     return undef if $_eof;
 
     $log->trace( "Starting read of length $len" );
-    my $data = await Future::IO->read_exactly( $_in, $len );
+    $_read_f = $_read_f->then(sub { Future::IO->read_exactly( $_in, $len ) });
+
+    my $data = await $_read_f;
     $log->trace( "Finished read of length $len" );
     $_eof = not defined $data;
 
@@ -77,9 +80,8 @@ method _write_chunk($data) {
     die "Write to closed file" if $_eof;
 
     $log->trace( 'Low-level write of ' . length($data) . ' bytes' );
-    my $f = Future::IO->write_exactly( $_out, $data );
-    $_write_f = $_write_f->then(sub { $f });
-    return $f;
+    $_write_f = $_write_f->then(sub { Future::IO->write_exactly( $_out, $data ) });
+    return $_write_f;
 }
 
 
