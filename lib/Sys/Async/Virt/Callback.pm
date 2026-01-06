@@ -17,7 +17,7 @@ use Feature::Compat::Try;
 use Future::AsyncAwait;
 use Object::Pad 0.821;
 
-class Sys::Async::Virt::Callback v0.2.1;
+class Sys::Async::Virt::Callback v0.2.2;
 
 
 use Carp qw(croak);
@@ -94,7 +94,7 @@ Sys::Async::Virt::Callback - Client side proxy to remote LibVirt event source
 
 =head1 VERSION
 
-v0.2.1
+v0.2.2
 
 =head1 SYNOPSIS
 
