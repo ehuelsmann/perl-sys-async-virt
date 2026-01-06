@@ -965,7 +965,7 @@ async method open() {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_CLOSE
 # ENTRYPOINT: REMOTE_PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK
 async method _close($reason) {
-    return unless (_STATE_INITIALIZED <= $_state <= _STATE_OPENED );
+    return unless (_STATE_INITIALIZED <= $_state and $_state <= _STATE_OPENED );
     $_state = _STATE_CLEANING_UP;
 
     unless ($_connection->is_read_eof
