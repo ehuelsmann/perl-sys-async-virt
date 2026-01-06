@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad;
 
-class Sys::Async::Virt::Network v0.2.2;
+class Sys::Async::Virt::Network v0.2.3;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -173,7 +173,7 @@ Sys::Async::Virt::Network - Client side proxy to remote LibVirt network
 
 =head1 VERSION
 
-v0.2.2
+v0.2.3
 
 =head1 SYNOPSIS
 
