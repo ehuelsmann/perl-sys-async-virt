@@ -1,6 +1,6 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version v0.3.1
+#     This file was generated using XDR::Parse version v1.0.1
 #                   and LibVirt version v11.10.0
 #
 #      Don't edit this file, use the source template instead

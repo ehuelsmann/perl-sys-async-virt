@@ -1,6 +1,6 @@
 ####################################################################
 #
-#     This file was generated using XDR::Parse version v0.3.1
+#     This file was generated using XDR::Parse version v1.0.1
 #                   and LibVirt version v11.10.0
 #
 #      Don't edit this file, use the source template instead
@@ -21,7 +21,7 @@ class Sys::Async::Virt::DomainCheckpoint v0.2.1;
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v0.2.1;
+use Protocol::Sys::Virt::Remote::XDR v11.10.1;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use constant {
