@@ -3547,6 +3547,15 @@ See documentation of L<virStorageVolLookupByPath|https://libvirt.org/html/libvir
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt->CLOSE_REASON_ERROR;
+
+   # - or -
+
+   my $value = $client->CLOSE_REASON_ERROR;
+
+
+
 =over 8
 
 =item CLOSE_REASON_ERROR

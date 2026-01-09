@@ -325,12 +325,31 @@ sub expand_mod_template($template, $mod, $h_syms, $module_functions, $translator
     CONSTANTS
 
     my $constants_pod = join("\n\n", map { "=item $_->{sym}" } @constants);
+    my $constants_pod_preamble = '';
+    if ($constants and $varname{$mod}) {
+        my $first_constant = $constants[0]->{sym};
+        my $mod_name;
+        if ($mod eq 'Client') {
+            $mod_name = 'Sys::Async::Virt';
+        }
+        else {
+            $mod_name = 'Sys::Async::Virt::' . $mod;
+        }
+        $constants_pod_preamble = <<~POD;
+           my \$value = $mod_name\->$first_constant;
+
+           # - or -
+
+           my \$value = \$$varname{$mod}\->$first_constant;
+        POD
+    }
     _version_replacements( $xdr_parse_version, $tmpl );
     $tmpl =~ s/__REPLY_TRANSLATORS__/$translators/;
     $tmpl =~ s/__CALLS__/$calls/;
     $tmpl =~ s/__CONSTANTS__/$constants/;
     $tmpl =~ s/__ENTRYPOINTS__/$entrypoints_pod/;
     $tmpl =~ s/__PRIVATE_EPS__/$private_ep_pod/;
+    $tmpl =~ s/__CONSTANTS_POD_PREAMBLE__/$constants_pod_preamble/;
     $tmpl =~ s/__CONSTANTS_POD__/$constants_pod/;
     $tmpl =~ s/__UNIMPLEMENTED__/$skipped_pod/;
 

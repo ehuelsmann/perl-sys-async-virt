@@ -3241,6 +3241,15 @@ See documentation of L<virDomainUpdateDeviceFlags|https://libvirt.org/html/libvi
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::Domain->CHECKPOINT_CREATE_REDEFINE;
+
+   # - or -
+
+   my $value = $dom->CHECKPOINT_CREATE_REDEFINE;
+
+
+
 =over 8
 
 =item CHECKPOINT_CREATE_REDEFINE

@@ -342,6 +342,15 @@ See documentation of L<virNetworkUpdate|https://libvirt.org/html/libvirt-libvirt
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::Network->XML_INACTIVE;
+
+   # - or -
+
+   my $value = $net->XML_INACTIVE;
+
+
+
 =over 8
 
 =item XML_INACTIVE

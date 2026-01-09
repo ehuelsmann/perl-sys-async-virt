@@ -152,6 +152,15 @@ See documentation of L<virDomainCheckpointListAllChildren|https://libvirt.org/ht
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::DomainCheckpoint->XML_SECURE;
+
+   # - or -
+
+   my $value = $checkpoint->XML_SECURE;
+
+
+
 =over 8
 
 =item XML_SECURE

@@ -154,6 +154,15 @@ See documentation of L<virInterfaceUndefine|https://libvirt.org/html/libvirt-lib
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::Interface->XML_INACTIVE;
+
+   # - or -
+
+   my $value = $iface->XML_INACTIVE;
+
+
+
 =over 8
 
 =item XML_INACTIVE

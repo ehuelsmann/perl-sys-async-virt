@@ -152,6 +152,15 @@ See documentation of L<virNetworkPortSetParameters|https://libvirt.org/html/libv
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::NetworkPort->BANDWIDTH_IN_AVERAGE;
+
+   # - or -
+
+   my $value = $port->BANDWIDTH_IN_AVERAGE;
+
+
+
 =over 8
 
 =item BANDWIDTH_IN_AVERAGE

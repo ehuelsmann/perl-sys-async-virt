@@ -161,6 +161,15 @@ See documentation of L<virSecretUndefine|https://libvirt.org/html/libvirt-libvir
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::Secret->EVENT_DEFINED;
+
+   # - or -
+
+   my $value = $secret->EVENT_DEFINED;
+
+
+
 =over 8
 
 =item EVENT_DEFINED

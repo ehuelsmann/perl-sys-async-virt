@@ -225,6 +225,15 @@ See documentation of L<virDomainRevertToSnapshot|https://libvirt.org/html/libvir
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::DomainSnapshot->XML_SECURE;
+
+   # - or -
+
+   my $value = $snapshot->XML_SECURE;
+
+
+
 =over 8
 
 =item XML_SECURE

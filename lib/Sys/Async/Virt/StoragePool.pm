@@ -360,6 +360,15 @@ See documentation of L<virStorageVolLookupByName|https://libvirt.org/html/libvir
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::StoragePool->INACTIVE;
+
+   # - or -
+
+   my $value = $pool->INACTIVE;
+
+
+
 =over 8
 
 =item INACTIVE

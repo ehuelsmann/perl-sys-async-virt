@@ -353,6 +353,15 @@ See documentation of L<virNodeDeviceUpdate|https://libvirt.org/html/libvirt-libv
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::NodeDevice->XML_INACTIVE;
+
+   # - or -
+
+   my $value = $dev->XML_INACTIVE;
+
+
+
 =over 8
 
 =item XML_INACTIVE

@@ -264,6 +264,15 @@ See documentation of L<virStorageVolWipePattern|https://libvirt.org/html/libvirt
 
 =head1 CONSTANTS
 
+
+   my $value = Sys::Async::Virt::StorageVol->FILE;
+
+   # - or -
+
+   my $value = $vol->FILE;
+
+
+
 =over 8
 
 =item FILE
