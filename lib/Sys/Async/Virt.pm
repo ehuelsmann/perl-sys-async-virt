@@ -4097,13 +4097,6 @@ replies.
 
 =over 8
 
-=item * Streams created with << $vol->upload() >> broken
-
-These streams seem to be malfunctioning, albeit that the tests were very limited:
-Only on Ubuntu Noble with LibVirt 10.0.0 ; this could very well be a problem
-long solved. If you have other experiences, please share them through the issue
-tracker.
-
 =item * Modules implementing connections for various protocols (tcp, tls, etc)
 
 =item * C<@generate: none> entrypoints review (and implement relevant ones)
