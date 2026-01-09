@@ -29,6 +29,14 @@ __CONSTANTS__
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
+method key() {
+    return $_id->{key};
+}
+
 __CALLS__
 
 
@@ -56,6 +64,18 @@ __VERSION__
 =head2 new
 
 =head1 METHODS
+
+=head2 name
+
+  $name = $pool->name;
+
+Returns the name of the storage volume.
+
+=head2 key
+
+  $key = $pool->key;
+
+Returns a globally unique string identifying the storage volume.
 
 __ENTRYPOINTS__
 

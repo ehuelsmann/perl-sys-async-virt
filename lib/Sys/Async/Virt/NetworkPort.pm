@@ -38,6 +38,14 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method uuid() {
+    return $_id->{uuid};
+}
+
+method uuid_string() {
+    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+}
+
 
 method delete($flags = 0) {
     return $_client->_call(
@@ -94,6 +102,18 @@ v0.2.3
 =head2 new
 
 =head1 METHODS
+
+=head2 uuid
+
+  $uuid = $port->uuid;
+
+Returns a 16-byte string containing the (binary) UUID.
+
+=head2 uuid_string
+
+  $str = $port->uuid_string;
+
+Returns the string representation of the UUID (C<xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx>).
 
 =head2 delete
 

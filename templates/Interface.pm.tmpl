@@ -29,6 +29,13 @@ __CONSTANTS__
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
+method mac() {
+    return $_id->{mac};
+}
 
 __CALLS__
 
@@ -57,6 +64,18 @@ __VERSION__
 =head2 new
 
 =head1 METHODS
+
+=head2 name
+
+  my $name = $iface->name;
+
+Returns the name of the interface.
+
+=head2 mac
+
+  my $mac = $iface->mac;
+
+Returns the MAC address of the interface.
 
 __ENTRYPOINTS__
 

@@ -51,6 +51,10 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
 
 method delete($flags = 0) {
     return $_client->_call(
@@ -142,6 +146,12 @@ There are no (LibVirt) events available for snapshots.
 Not to be called directly. Various API calls return instances of this type.
 
 =head1 METHODS
+
+=head2 name
+
+  $name = $snapshot->name;
+
+Returns the name of the domain snapshot.
 
 =head2 delete
 

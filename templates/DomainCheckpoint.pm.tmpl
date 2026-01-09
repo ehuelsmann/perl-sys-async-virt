@@ -29,6 +29,10 @@ __CONSTANTS__
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
 
 __CALLS__
 
@@ -69,6 +73,12 @@ No (LibVirt) events available for domain checkpoints.
 Not to be called directly. Various APIs return instances of this type.
 
 =head1 METHODS
+
+=head2 name
+
+  $name = $checkpoint->name;
+
+Returns the name of the domain checkpoint.
 
 __ENTRYPOINTS__
 

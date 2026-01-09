@@ -29,6 +29,10 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
 
 method delete() {
     return $_client->_call(
@@ -67,6 +71,12 @@ v0.2.3
 =head2 new
 
 =head1 METHODS
+
+=head2 name
+
+  $name = $binding->name;
+
+Returns the name of the filter binding.
 
 =head2 delete
 

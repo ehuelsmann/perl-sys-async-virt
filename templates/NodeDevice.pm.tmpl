@@ -29,6 +29,10 @@ __CONSTANTS__
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
 
 __CALLS__
 
@@ -57,6 +61,12 @@ __VERSION__
 =head2 new
 
 =head1 METHODS
+
+=head2 name
+
+  $name = $dev->name;
+
+Returns the name of the device.
 
 __ENTRYPOINTS__
 

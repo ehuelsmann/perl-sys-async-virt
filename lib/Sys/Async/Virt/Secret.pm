@@ -33,6 +33,21 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method uuid() {
+    return $_id->{uuid};
+}
+
+method uuid_string() {
+    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+}
+
+method usage_type() {
+    return $_id->{usageType};
+}
+
+method usage_id() {
+    return $_id->{usageID};
+}
 
 async method get_value($flags = 0) {
     return await $_client->_call(
@@ -84,6 +99,30 @@ v0.2.3
 =head2 new
 
 =head1 METHODS
+
+=head2 uuid
+
+  $uuid = $secret->uuid;
+
+Returns a 16-byte string containing the (binary) UUID.
+
+=head2 uuid_string
+
+  $str = $secret->uuid_string;
+
+Returns the string representation of the UUID (C<xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx>).
+
+=head2 usage_type
+
+  my $usage_type = $secret->usage_type;
+
+Returns the usage type of the secret.
+
+=head2 usage_id
+
+  my $usage_id = $secret->usage_id;
+
+Returns the identifier of he object with which the secret is to be used.
 
 =head2 get_value
 

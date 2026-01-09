@@ -57,6 +57,14 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
+method key() {
+    return $_id->{key};
+}
+
 method delete($flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_VOL_DELETE,
@@ -149,6 +157,18 @@ v0.2.3
 =head2 new
 
 =head1 METHODS
+
+=head2 name
+
+  $name = $pool->name;
+
+Returns the name of the storage volume.
+
+=head2 key
+
+  $key = $pool->key;
+
+Returns a globally unique string identifying the storage volume.
 
 =head2 delete
 

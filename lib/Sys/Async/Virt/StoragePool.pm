@@ -50,6 +50,18 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
+method uuid() {
+    return $_id->{uuid};
+}
+
+method uuid_string() {
+    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+}
+
 
 method build($flags = 0) {
     return $_client->_call(
@@ -185,6 +197,24 @@ v0.2.3
 =head2 new
 
 =head1 METHODS
+
+=head2 name
+
+  $name = $pool->name;
+
+Returns the name of the pool.
+
+=head2 uuid
+
+  $uuid = $pool->uuid;
+
+Returns a 16-byte string containing the (binary) UUID.
+
+=head2 uuid_string
+
+  $str = $pool->uuid_string;
+
+Returns the string representation of the UUID (C<xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx>).
 
 =head2 build
 

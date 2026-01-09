@@ -32,6 +32,13 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
+method mac() {
+    return $_id->{mac};
+}
 
 method create($flags = 0) {
     return $_client->_call(
@@ -89,6 +96,18 @@ v0.2.3
 =head2 new
 
 =head1 METHODS
+
+=head2 name
+
+  my $name = $iface->name;
+
+Returns the name of the interface.
+
+=head2 mac
+
+  my $mac = $iface->mac;
+
+Returns the MAC address of the interface.
 
 =head2 create
 

@@ -39,6 +39,10 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
 
 method create($flags = 0) {
     return $_client->_call(
@@ -186,6 +190,12 @@ v0.2.3
 =head2 new
 
 =head1 METHODS
+
+=head2 name
+
+  $name = $dev->name;
+
+Returns the name of the device.
 
 =head2 create
 

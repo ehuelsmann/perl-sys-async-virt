@@ -1,6 +1,8 @@
 -----
 
 0.2.4    TO BE RELEASED
+   [Added]
+       * Accessors for name, UUID, MAC, etc
    [Fixed]
        * Process connections ('*+ext://' URI) don't pick up the 'command'
          query parameter

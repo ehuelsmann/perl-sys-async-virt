@@ -893,6 +893,17 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method name() {
+    return $_id->{name};
+}
+
+method uuid() {
+    return $_id->{uuid};
+}
+
+method uuid_string() {
+    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+}
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_BLOCK_JOB_INFO
 async method get_block_job_info($disk, $flags = 0) {
@@ -1991,6 +2002,24 @@ Not to be called directly. Instances are returned from calls
 in L<Sys::Async::Virt>.
 
 =head1 METHODS
+
+=head2 name
+
+  $name = $dom->name;
+
+Returns the name of the domain.
+
+=head2 uuid
+
+  $uuid = $dom->uuid;
+
+Returns a 16-byte string containing the (binary) UUID.
+
+=head2 uuid_string
+
+  $str = $dom->uuid_string;
+
+Returns the string representation of the UUID (C<xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx>).
 
 =head2 get_block_job_info
 
