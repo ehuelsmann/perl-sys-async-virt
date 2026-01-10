@@ -30,47 +30,47 @@ use constant {
 };
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method uuid() {
-    return $_id->{uuid};
+    return $_rpc_id->{uuid};
 }
 
 method uuid_string() {
-    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+    return join( '-', unpack('H8H4H4H4H12', $_rpc_id->{uuid}) );
 }
 
 method usage_type() {
-    return $_id->{usageType};
+    return $_rpc_id->{usageType};
 }
 
 method usage_id() {
-    return $_id->{usageID};
+    return $_rpc_id->{usageID};
 }
 
 async method get_value($flags = 0) {
     return await $_client->_call(
         $remote->PROC_SECRET_GET_VALUE,
-        { secret => $_id, flags => $flags // 0 }, unwrap => 'value' );
+        { secret => $_rpc_id, flags => $flags // 0 }, unwrap => 'value' );
 }
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_SECRET_GET_XML_DESC,
-        { secret => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { secret => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 method set_value($value, $flags = 0) {
     return $_client->_call(
         $remote->PROC_SECRET_SET_VALUE,
-        { secret => $_id, value => $value, flags => $flags // 0 }, empty => 1 );
+        { secret => $_rpc_id, value => $value, flags => $flags // 0 }, empty => 1 );
 }
 
 method undefine() {
     return $_client->_call(
         $remote->PROC_SECRET_UNDEFINE,
-        { secret => $_id }, empty => 1 );
+        { secret => $_rpc_id }, empty => 1 );
 }
 
 

@@ -36,132 +36,132 @@ use constant {
 };
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 
 method create($flags = 0) {
     return $_client->_call(
         $remote->PROC_NODE_DEVICE_CREATE,
-        { name => $_id, flags => $flags // 0 }, empty => 1 );
+        { name => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 async method create_xml($flags = 0) {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_CREATE_XML,
-        { xml_desc => $_id, flags => $flags // 0 }, unwrap => 'dev' );
+        { xml_desc => $_rpc_id, flags => $flags // 0 }, unwrap => 'dev' );
 }
 
 async method define_xml($flags = 0) {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_DEFINE_XML,
-        { xml_desc => $_id, flags => $flags // 0 }, unwrap => 'dev' );
+        { xml_desc => $_rpc_id, flags => $flags // 0 }, unwrap => 'dev' );
 }
 
 method destroy() {
     return $_client->_call(
         $remote->PROC_NODE_DEVICE_DESTROY,
-        { name => $_id }, empty => 1 );
+        { name => $_rpc_id }, empty => 1 );
 }
 
 method detach_flags($driverName, $flags = 0) {
     return $_client->_call(
         $remote->PROC_NODE_DEVICE_DETACH_FLAGS,
-        { name => $_id, driverName => $driverName, flags => $flags // 0 }, empty => 1 );
+        { name => $_rpc_id, driverName => $driverName, flags => $flags // 0 }, empty => 1 );
 }
 
 method dettach() {
     return $_client->_call(
         $remote->PROC_NODE_DEVICE_DETTACH,
-        { name => $_id }, empty => 1 );
+        { name => $_rpc_id }, empty => 1 );
 }
 
 async method get_autostart() {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_GET_AUTOSTART,
-        { name => $_id }, unwrap => 'autostart' );
+        { name => $_rpc_id }, unwrap => 'autostart' );
 }
 
 async method get_parent() {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_GET_PARENT,
-        { name => $_id }, unwrap => 'parentName' );
+        { name => $_rpc_id }, unwrap => 'parentName' );
 }
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_GET_XML_DESC,
-        { name => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { name => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 async method is_active() {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_IS_ACTIVE,
-        { name => $_id }, unwrap => 'active' );
+        { name => $_rpc_id }, unwrap => 'active' );
 }
 
 async method is_persistent() {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_IS_PERSISTENT,
-        { name => $_id }, unwrap => 'persistent' );
+        { name => $_rpc_id }, unwrap => 'persistent' );
 }
 
 async method list_caps() {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_LIST_CAPS,
-        { name => $_id, maxnames => $remote->NODE_DEVICE_CAPS_LIST_MAX }, unwrap => 'names' );
+        { name => $_rpc_id, maxnames => $remote->NODE_DEVICE_CAPS_LIST_MAX }, unwrap => 'names' );
 }
 
 async method lookup_by_name() {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_LOOKUP_BY_NAME,
-        { name => $_id }, unwrap => 'dev' );
+        { name => $_rpc_id }, unwrap => 'dev' );
 }
 
 async method lookup_scsi_host_by_wwn($wwpn, $flags = 0) {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_LOOKUP_SCSI_HOST_BY_WWN,
-        { wwnn => $_id, wwpn => $wwpn, flags => $flags // 0 }, unwrap => 'dev' );
+        { wwnn => $_rpc_id, wwpn => $wwpn, flags => $flags // 0 }, unwrap => 'dev' );
 }
 
 async method num_of_caps() {
     return await $_client->_call(
         $remote->PROC_NODE_DEVICE_NUM_OF_CAPS,
-        { name => $_id }, unwrap => 'num' );
+        { name => $_rpc_id }, unwrap => 'num' );
 }
 
 method reattach() {
     return $_client->_call(
         $remote->PROC_NODE_DEVICE_RE_ATTACH,
-        { name => $_id }, empty => 1 );
+        { name => $_rpc_id }, empty => 1 );
 }
 
 method reset() {
     return $_client->_call(
         $remote->PROC_NODE_DEVICE_RESET,
-        { name => $_id }, empty => 1 );
+        { name => $_rpc_id }, empty => 1 );
 }
 
 method set_autostart($autostart) {
     return $_client->_call(
         $remote->PROC_NODE_DEVICE_SET_AUTOSTART,
-        { name => $_id, autostart => $autostart }, empty => 1 );
+        { name => $_rpc_id, autostart => $autostart }, empty => 1 );
 }
 
 method undefine($flags = 0) {
     return $_client->_call(
         $remote->PROC_NODE_DEVICE_UNDEFINE,
-        { name => $_id, flags => $flags // 0 }, empty => 1 );
+        { name => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 method update($xml_desc, $flags = 0) {
     return $_client->_call(
         $remote->PROC_NODE_DEVICE_UPDATE,
-        { name => $_id, xml_desc => $xml_desc, flags => $flags // 0 }, empty => 1 );
+        { name => $_rpc_id, xml_desc => $xml_desc, flags => $flags // 0 }, empty => 1 );
 }
 
 

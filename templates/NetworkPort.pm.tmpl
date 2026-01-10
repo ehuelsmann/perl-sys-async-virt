@@ -26,19 +26,19 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 __CONSTANTS__
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method network() {
-    return $_client->_domain_network_instance( $_id->{net} );
+    return $_client->_domain_network_instance( $_rpc_id->{net} );
 }
 
 method uuid() {
-    return $_id->{uuid};
+    return $_rpc_id->{uuid};
 }
 
 method uuid_string() {
-    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+    return join( '-', unpack('H8H4H4H4H12', $_rpc_id->{uuid}) );
 }
 
 

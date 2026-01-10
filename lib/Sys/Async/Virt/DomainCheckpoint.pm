@@ -39,40 +39,40 @@ use constant {
 };
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method domain() {
-    return $_client->_domain_instance( $_id->{dom} );
+    return $_client->_domain_instance( $_rpc_id->{dom} );
 }
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 
 method delete($flags = 0) {
     return $_client->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_DELETE,
-        { checkpoint => $_id, flags => $flags // 0 }, empty => 1 );
+        { checkpoint => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 async method get_parent($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_GET_PARENT,
-        { checkpoint => $_id, flags => $flags // 0 }, unwrap => 'parent' );
+        { checkpoint => $_rpc_id, flags => $flags // 0 }, unwrap => 'parent' );
 }
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_GET_XML_DESC,
-        { checkpoint => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { checkpoint => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 async method list_all_children($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_CHECKPOINT_LIST_ALL_CHILDREN,
-        { checkpoint => $_id, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 }, unwrap => 'checkpoints' );
+        { checkpoint => $_rpc_id, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 }, unwrap => 'checkpoints' );
 }
 
 

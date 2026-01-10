@@ -26,15 +26,15 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 __CONSTANTS__
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 method mac() {
-    return $_id->{mac};
+    return $_rpc_id->{mac};
 }
 
 __CALLS__

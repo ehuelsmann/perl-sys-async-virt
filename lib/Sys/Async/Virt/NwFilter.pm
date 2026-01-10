@@ -26,32 +26,32 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 method uuid() {
-    return $_id->{uuid};
+    return $_rpc_id->{uuid};
 }
 
 method uuid_string() {
-    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+    return join( '-', unpack('H8H4H4H4H12', $_rpc_id->{uuid}) );
 }
 
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_NWFILTER_GET_XML_DESC,
-        { nwfilter => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { nwfilter => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 method undefine() {
     return $_client->_call(
         $remote->PROC_NWFILTER_UNDEFINE,
-        { nwfilter => $_id }, empty => 1 );
+        { nwfilter => $_rpc_id }, empty => 1 );
 }
 
 

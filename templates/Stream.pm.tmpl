@@ -26,7 +26,7 @@ use Log::Any qw($log);
 use Protocol::Sys::Virt::Remote::XDR __P::S::V::VERSION__;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_proc :param :reader;
 field $_client :param :reader;
 field $_direction :param :reader;
@@ -86,7 +86,7 @@ async method send($data, $offset = 0, $length = undef) {
 
     my $chunk = ($offset or $length) ? substr($data, $offset, $length) : $data;
     return await $_client->_send(
-        $_proc, $_id,
+        $_proc, $_rpc_id,
         data => $chunk );
 }
 
@@ -101,13 +101,13 @@ async method send_hole($length, $flags = 0) {
 
     return if $_finished->is_ready; # discard all transfers
     return await $_client->_send(
-        $_proc, $_id,
+        $_proc, $_rpc_id,
         hole => { length => $length, flags => $flags } );
 }
 
 async method abort() {
     return if $_finished->is_ready;
-    $_client->_send_finish( $_proc, $_id, 1 );
+    $_client->_send_finish( $_proc, $_rpc_id, 1 );
     await $_finished;
 
     $self->cleanup;
@@ -128,7 +128,7 @@ method cleanup() {
 
 async method finish() {
     return if $_finished->is_ready;
-    $_client->_send_finish( $_proc, $_id, 0 );
+    $_client->_send_finish( $_proc, $_rpc_id, 0 );
     await $_finished;
 
     $self->cleanup;
@@ -142,7 +142,7 @@ async method finish() {
 method DESTROY() {
     if (not $_finished->is_ready) {
         # abort the stream
-        $_client->_send_finish( $_proc, $_id, 1 );
+        $_client->_send_finish( $_proc, $_rpc_id, 1 );
     }
 }
 

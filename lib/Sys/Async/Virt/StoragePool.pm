@@ -47,128 +47,128 @@ use constant {
 };
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 method uuid() {
-    return $_id->{uuid};
+    return $_rpc_id->{uuid};
 }
 
 method uuid_string() {
-    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+    return join( '-', unpack('H8H4H4H4H12', $_rpc_id->{uuid}) );
 }
 
 
 method build($flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_POOL_BUILD,
-        { pool => $_id, flags => $flags // 0 }, empty => 1 );
+        { pool => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 method create($flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_POOL_CREATE,
-        { pool => $_id, flags => $flags // 0 }, empty => 1 );
+        { pool => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 method delete($flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_POOL_DELETE,
-        { pool => $_id, flags => $flags // 0 }, empty => 1 );
+        { pool => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 method destroy() {
     return $_client->_call(
         $remote->PROC_STORAGE_POOL_DESTROY,
-        { pool => $_id }, empty => 1 );
+        { pool => $_rpc_id }, empty => 1 );
 }
 
 async method get_autostart() {
     return await $_client->_call(
         $remote->PROC_STORAGE_POOL_GET_AUTOSTART,
-        { pool => $_id }, unwrap => 'autostart' );
+        { pool => $_rpc_id }, unwrap => 'autostart' );
 }
 
 method get_info() {
     return $_client->_call(
         $remote->PROC_STORAGE_POOL_GET_INFO,
-        { pool => $_id } );
+        { pool => $_rpc_id } );
 }
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_STORAGE_POOL_GET_XML_DESC,
-        { pool => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { pool => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 async method is_active() {
     return await $_client->_call(
         $remote->PROC_STORAGE_POOL_IS_ACTIVE,
-        { pool => $_id }, unwrap => 'active' );
+        { pool => $_rpc_id }, unwrap => 'active' );
 }
 
 async method is_persistent() {
     return await $_client->_call(
         $remote->PROC_STORAGE_POOL_IS_PERSISTENT,
-        { pool => $_id }, unwrap => 'persistent' );
+        { pool => $_rpc_id }, unwrap => 'persistent' );
 }
 
 async method list_all_volumes($flags = 0) {
     return await $_client->_call(
         $remote->PROC_STORAGE_POOL_LIST_ALL_VOLUMES,
-        { pool => $_id, need_results => $remote->STORAGE_VOL_LIST_MAX, flags => $flags // 0 }, unwrap => 'vols' );
+        { pool => $_rpc_id, need_results => $remote->STORAGE_VOL_LIST_MAX, flags => $flags // 0 }, unwrap => 'vols' );
 }
 
 async method list_volumes() {
     return await $_client->_call(
         $remote->PROC_STORAGE_POOL_LIST_VOLUMES,
-        { pool => $_id, maxnames => $remote->STORAGE_VOL_LIST_MAX }, unwrap => 'names' );
+        { pool => $_rpc_id, maxnames => $remote->STORAGE_VOL_LIST_MAX }, unwrap => 'names' );
 }
 
 async method num_of_volumes() {
     return await $_client->_call(
         $remote->PROC_STORAGE_POOL_NUM_OF_VOLUMES,
-        { pool => $_id }, unwrap => 'num' );
+        { pool => $_rpc_id }, unwrap => 'num' );
 }
 
 method refresh($flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_POOL_REFRESH,
-        { pool => $_id, flags => $flags // 0 }, empty => 1 );
+        { pool => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 method set_autostart($autostart) {
     return $_client->_call(
         $remote->PROC_STORAGE_POOL_SET_AUTOSTART,
-        { pool => $_id, autostart => $autostart }, empty => 1 );
+        { pool => $_rpc_id, autostart => $autostart }, empty => 1 );
 }
 
 method undefine() {
     return $_client->_call(
         $remote->PROC_STORAGE_POOL_UNDEFINE,
-        { pool => $_id }, empty => 1 );
+        { pool => $_rpc_id }, empty => 1 );
 }
 
 async method vol_create_xml($xml, $flags = 0) {
     return await $_client->_call(
         $remote->PROC_STORAGE_VOL_CREATE_XML,
-        { pool => $_id, xml => $xml, flags => $flags // 0 }, unwrap => 'vol' );
+        { pool => $_rpc_id, xml => $xml, flags => $flags // 0 }, unwrap => 'vol' );
 }
 
 async method vol_create_xml_from($xml, $clonevol, $flags = 0) {
     return await $_client->_call(
         $remote->PROC_STORAGE_VOL_CREATE_XML_FROM,
-        { pool => $_id, xml => $xml, clonevol => $clonevol, flags => $flags // 0 }, unwrap => 'vol' );
+        { pool => $_rpc_id, xml => $xml, clonevol => $clonevol, flags => $flags // 0 }, unwrap => 'vol' );
 }
 
 async method vol_lookup_by_name($name) {
     return await $_client->_call(
         $remote->PROC_STORAGE_VOL_LOOKUP_BY_NAME,
-        { pool => $_id, name => $name }, unwrap => 'vol' );
+        { pool => $_rpc_id, name => $name }, unwrap => 'vol' );
 }
 
 

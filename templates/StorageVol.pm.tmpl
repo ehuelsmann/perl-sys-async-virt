@@ -26,19 +26,19 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 __CONSTANTS__
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method key() {
-    return $_id->{key};
+    return $_rpc_id->{key};
 }
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 method pool() {
-    return $_client->_storage_pool_instance( $_id->{pool} );
+    return $_client->_storage_pool_instance( $_rpc_id->{pool} );
 }
 
 __CALLS__

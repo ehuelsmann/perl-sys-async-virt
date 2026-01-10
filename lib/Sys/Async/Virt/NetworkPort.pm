@@ -35,49 +35,49 @@ use constant {
 };
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method network() {
-    return $_client->_domain_network_instance( $_id->{net} );
+    return $_client->_domain_network_instance( $_rpc_id->{net} );
 }
 
 method uuid() {
-    return $_id->{uuid};
+    return $_rpc_id->{uuid};
 }
 
 method uuid_string() {
-    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+    return join( '-', unpack('H8H4H4H4H12', $_rpc_id->{uuid}) );
 }
 
 
 method delete($flags = 0) {
     return $_client->_call(
         $remote->PROC_NETWORK_PORT_DELETE,
-        { port => $_id, flags => $flags // 0 }, empty => 1 );
+        { port => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 async method get_parameters($flags = 0) {
     $flags |= await $_client->_typed_param_string_okay();
     my $nparams = await $_client->_call(
         $remote->PROC_NETWORK_PORT_GET_PARAMETERS,
-        { port => $_id, nparams => 0, flags => $flags // 0 }, unwrap => 'nparams' );
+        { port => $_rpc_id, nparams => 0, flags => $flags // 0 }, unwrap => 'nparams' );
     return await $_client->_call(
         $remote->PROC_NETWORK_PORT_GET_PARAMETERS,
-        { port => $_id, nparams => $nparams, flags => $flags // 0 }, unwrap => 'params' );
+        { port => $_rpc_id, nparams => $nparams, flags => $flags // 0 }, unwrap => 'params' );
 }
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_NETWORK_PORT_GET_XML_DESC,
-        { port => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { port => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 async method set_parameters($params, $flags = 0) {
     $params = await $_client->_filter_typed_param_string( $params );
     return await $_client->_call(
         $remote->PROC_NETWORK_PORT_SET_PARAMETERS,
-        { port => $_id, params => $params, flags => $flags // 0 }, empty => 1 );
+        { port => $_rpc_id, params => $params, flags => $flags // 0 }, empty => 1 );
 }
 
 

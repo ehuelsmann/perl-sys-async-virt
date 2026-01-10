@@ -54,85 +54,85 @@ use constant {
 };
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method key() {
-    return $_id->{key};
+    return $_rpc_id->{key};
 }
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 method pool() {
-    return $_client->_storage_pool_instance( $_id->{pool} );
+    return $_client->_storage_pool_instance( $_rpc_id->{pool} );
 }
 
 method delete($flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_VOL_DELETE,
-        { vol => $_id, flags => $flags // 0 }, empty => 1 );
+        { vol => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 method download($offset, $length, $flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_VOL_DOWNLOAD,
-        { vol => $_id, offset => $offset, length => $length, flags => $flags // 0 }, stream => 'read', empty => 1 );
+        { vol => $_rpc_id, offset => $offset, length => $length, flags => $flags // 0 }, stream => 'read', empty => 1 );
 }
 
 method get_info() {
     return $_client->_call(
         $remote->PROC_STORAGE_VOL_GET_INFO,
-        { vol => $_id } );
+        { vol => $_rpc_id } );
 }
 
 method get_info_flags($flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_VOL_GET_INFO_FLAGS,
-        { vol => $_id, flags => $flags // 0 } );
+        { vol => $_rpc_id, flags => $flags // 0 } );
 }
 
 async method get_path() {
     return await $_client->_call(
         $remote->PROC_STORAGE_VOL_GET_PATH,
-        { vol => $_id }, unwrap => 'name' );
+        { vol => $_rpc_id }, unwrap => 'name' );
 }
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_STORAGE_VOL_GET_XML_DESC,
-        { vol => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { vol => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 async method pool_lookup_by_volume() {
     return await $_client->_call(
         $remote->PROC_STORAGE_POOL_LOOKUP_BY_VOLUME,
-        { vol => $_id }, unwrap => 'pool' );
+        { vol => $_rpc_id }, unwrap => 'pool' );
 }
 
 method resize($capacity, $flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_VOL_RESIZE,
-        { vol => $_id, capacity => $capacity, flags => $flags // 0 }, empty => 1 );
+        { vol => $_rpc_id, capacity => $capacity, flags => $flags // 0 }, empty => 1 );
 }
 
 method upload($offset, $length, $flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_VOL_UPLOAD,
-        { vol => $_id, offset => $offset, length => $length, flags => $flags // 0 }, stream => 'write', empty => 1 );
+        { vol => $_rpc_id, offset => $offset, length => $length, flags => $flags // 0 }, stream => 'write', empty => 1 );
 }
 
 method wipe($flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_VOL_WIPE,
-        { vol => $_id, flags => $flags // 0 }, empty => 1 );
+        { vol => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 method wipe_pattern($algorithm, $flags = 0) {
     return $_client->_call(
         $remote->PROC_STORAGE_VOL_WIPE_PATTERN,
-        { vol => $_id, algorithm => $algorithm, flags => $flags // 0 }, empty => 1 );
+        { vol => $_rpc_id, algorithm => $algorithm, flags => $flags // 0 }, empty => 1 );
 }
 
 

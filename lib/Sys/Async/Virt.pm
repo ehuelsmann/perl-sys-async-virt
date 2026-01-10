@@ -1448,7 +1448,7 @@ async method connect() {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_CALLBACK_REGISTER_ANY
 # ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_CALLBACK_DEREGISTER_ANY
 async method domain_event_register_any($eventID, $domain = undef) {
-    my $dom = $domain ? $domain->id : undef;
+    my $dom = $domain ? $domain->rpc_id : undef;
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_DOMAIN_EVENT_CALLBACK_REGISTER_ANY,
         { eventID => $eventID, dom => $dom });
@@ -1468,7 +1468,7 @@ async method domain_event_register_any($eventID, $domain = undef) {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_NETWORK_EVENT_REGISTER_ANY
 # ENTRYPOINT: REMOTE_PROC_CONNECT_NETWORK_EVENT_DEREGISTER_ANY
 async method network_event_register_any($eventID, $network = undef) {
-    my $net = $network ? $network->id : undef;
+    my $net = $network ? $network->rpc_id : undef;
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_NETWORK_EVENT_REGISTER_ANY,
         { eventID => $eventID, net => $net });
@@ -1487,7 +1487,7 @@ async method network_event_register_any($eventID, $network = undef) {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_STORAGE_POOL_EVENT_REGISTER_ANY
 # ENTRYPOINT: REMOTE_PROC_CONNECT_STORAGE_POOL_EVENT_DEREGISTER_ANY
 async method storage_pool_event_register_any($eventID, $pool = undef) {
-    my $p = $pool ? $pool->id : undef;
+    my $p = $pool ? $pool->rpc_id : undef;
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_STORAGE_POOL_EVENT_REGISTER_ANY,
         { eventID => $eventID, pool => $p });
@@ -1506,7 +1506,7 @@ async method storage_pool_event_register_any($eventID, $pool = undef) {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_NODE_DEVICE_EVENT_REGISTER_ANY
 # ENTRYPOINT: REMOTE_PROC_CONNECT_NODE_DEVICE_EVENT_DEREGISTER_ANY
 async method node_device_event_register_any($eventID, $dev = undef) {
-    my $d = $dev ? $dev->id : undef;
+    my $d = $dev ? $dev->rpc_id : undef;
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_NODE_DEVICE_EVENT_REGISTER_ANY,
         { eventID => $eventID, dev => $d });
@@ -1525,7 +1525,7 @@ async method node_device_event_register_any($eventID, $dev = undef) {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_SECRET_EVENT_REGISTER_ANY
 # ENTRYPOINT: REMOTE_PROC_CONNECT_SECRET_EVENT_DEREGISTER_ANY
 async method secret_event_register_any($eventID, $secret = undef) {
-    my $s = $secret ? $secret->id : undef;
+    my $s = $secret ? $secret->rpc_id : undef;
     my $rv = await $self->_call(
         $remote->PROC_CONNECT_SECRET_EVENT_REGISTER_ANY,
         { eventID => $eventID, secret => $s });

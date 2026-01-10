@@ -26,27 +26,27 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 method port() {
-    return $_client->_network_port_instance( $_id->{portdev} );
+    return $_client->_network_port_instance( $_rpc_id->{portdev} );
 }
 
 method delete() {
     return $_client->_call(
         $remote->PROC_NWFILTER_BINDING_DELETE,
-        { nwfilter => $_id }, empty => 1 );
+        { nwfilter => $_rpc_id }, empty => 1 );
 }
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_NWFILTER_BINDING_GET_XML_DESC,
-        { nwfilter => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { nwfilter => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 

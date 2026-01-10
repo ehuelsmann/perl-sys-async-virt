@@ -48,70 +48,70 @@ use constant {
 };
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method domain() {
-    return $_client->_domain_instance( $_id->{dom} );
+    return $_client->_domain_instance( $_rpc_id->{dom} );
 }
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 
 method delete($flags = 0) {
     return $_client->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_DELETE,
-        { snap => $_id, flags => $flags // 0 }, empty => 1 );
+        { snap => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 async method get_parent($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_GET_PARENT,
-        { snap => $_id, flags => $flags // 0 }, unwrap => 'snap' );
+        { snap => $_rpc_id, flags => $flags // 0 }, unwrap => 'snap' );
 }
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_GET_XML_DESC,
-        { snap => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { snap => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 async method has_metadata($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_HAS_METADATA,
-        { snap => $_id, flags => $flags // 0 }, unwrap => 'metadata' );
+        { snap => $_rpc_id, flags => $flags // 0 }, unwrap => 'metadata' );
 }
 
 async method is_current($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_IS_CURRENT,
-        { snap => $_id, flags => $flags // 0 }, unwrap => 'current' );
+        { snap => $_rpc_id, flags => $flags // 0 }, unwrap => 'current' );
 }
 
 async method list_all_children($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_LIST_ALL_CHILDREN,
-        { snapshot => $_id, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 }, unwrap => 'snapshots' );
+        { snapshot => $_rpc_id, need_results => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 }, unwrap => 'snapshots' );
 }
 
 async method list_children_names($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_LIST_CHILDREN_NAMES,
-        { snap => $_id, maxnames => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 }, unwrap => 'names' );
+        { snap => $_rpc_id, maxnames => $remote->DOMAIN_SNAPSHOT_LIST_MAX, flags => $flags // 0 }, unwrap => 'names' );
 }
 
 async method num_children($flags = 0) {
     return await $_client->_call(
         $remote->PROC_DOMAIN_SNAPSHOT_NUM_CHILDREN,
-        { snap => $_id, flags => $flags // 0 }, unwrap => 'num' );
+        { snap => $_rpc_id, flags => $flags // 0 }, unwrap => 'num' );
 }
 
 method revert_to_snapshot($flags = 0) {
     return $_client->_call(
         $remote->PROC_DOMAIN_REVERT_TO_SNAPSHOT,
-        { snap => $_id, flags => $flags // 0 }, empty => 1 );
+        { snap => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 

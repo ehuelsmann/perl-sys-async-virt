@@ -26,26 +26,30 @@ my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 __CONSTANTS__
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
+method id() {
+    return $_rpc_id->{id};
+}
+
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 method uuid() {
-    return $_id->{uuid};
+    return $_rpc_id->{uuid};
 }
 
 method uuid_string() {
-    return join( '-', unpack('H8H4H4H4H12', $_id->{uuid}) );
+    return join( '-', unpack('H8H4H4H4H12', $_rpc_id->{uuid}) );
 }
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_GET_BLOCK_JOB_INFO
 async method get_block_job_info($disk, $flags = 0) {
     my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_BLOCK_JOB_INFO,
-        { dom => $_id, path => $disk, flags => $flags // 0 } );
+        { dom => $_rpc_id, path => $disk, flags => $flags // 0 } );
 
     if ($rv->{found}) {
         return $rv;
@@ -60,7 +64,7 @@ async method get_emulator_pin_info($flags = 0) {
     my $maplen = await $_client->_maplen;
     my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_EMULATOR_PIN_INFO,
-        { dom => $_id, maplen => $maplen,
+        { dom => $_rpc_id, maplen => $maplen,
           flags => $flags // 0 } );
 
     if ($rv->{ret} == 0) {
@@ -75,7 +79,7 @@ async method get_emulator_pin_info($flags = 0) {
 async method get_iothread_info($flags = 0) {
     my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_IOTHREAD_INFO,
-        { dom => $_id, flags => $flags // 0 } );
+        { dom => $_rpc_id, flags => $flags // 0 } );
 
     my @rv;
     for my $thread ($rv->{info}->@*) {
@@ -99,7 +103,7 @@ sub _patch_security_label($sec) {
 async method get_security_label() {
     my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_SECURITY_LABEL,
-        { dom => $_id } );
+        { dom => $_rpc_id } );
 
     _patch_security_label( $rv );
     return $rv;
@@ -109,7 +113,7 @@ async method get_security_label() {
 async method get_security_label_list() {
     my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_SECURITY_LABEL_LIST,
-        { dom => $_id } );
+        { dom => $_rpc_id } );
 
     for my $label ($rv->{labels}->@*) {
         _patch_security_label( $label );
@@ -122,7 +126,7 @@ async method get_security_label_list() {
 async method get_time($flags = 0) {
     my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_TIME,
-        { dom => $_id, flags => $flags // 0 } );
+        { dom => $_rpc_id, flags => $flags // 0 } );
 
     return ( $rv->{seconds}, $rv->{nseconds} );
 }
@@ -134,7 +138,7 @@ async method get_vcpu_pin_info($flags = 0) {
     my $maplen = await $_client->_maplen;
     my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_VCPU_PIN_INFO,
-        { dom => $_id, ncpumaps => $vcpus,
+        { dom => $_rpc_id, ncpumaps => $vcpus,
           maplen => $maplen, flags => $flags });
 
     my $maps = $rv->{cpumaps};
@@ -152,7 +156,7 @@ async method get_vcpus() {
     my $maplen = await $_client->_maplen;
     my $rv = await $_client->_call(
         $remote->PROC_DOMAIN_GET_VCPUS,
-        { dom => $_id, maxinfo => $vcpus, maplen => $maplen } );
+        { dom => $_rpc_id, maxinfo => $vcpus, maplen => $maplen } );
 
     my @rv;
     foreach my $vcpu_idx (0 .. ($vcpus - 1)) {
@@ -169,7 +173,7 @@ async method get_vcpus() {
 async method pin_emulator($cpumap, $flags = 0) {
     await $self->_call(
         $remote->PROC_DOMAIN_PIN_EMULATOR,
-        { dom => $_id, cpumap => $cpumap,
+        { dom => $_rpc_id, cpumap => $cpumap,
           flags => $flags // 0 } );
 }
 
@@ -217,6 +221,12 @@ Not to be called directly. Instances are returned from calls
 in L<Sys::Async::Virt>.
 
 =head1 METHODS
+
+=head2 id
+
+  $id = $dom->id;
+
+Returns the id of the domain when running or C<undef> otherwise.
 
 =head2 name
 

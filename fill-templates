@@ -646,7 +646,7 @@ sub proc_ep_argsmap($ep_name, $options, @argnames) {
     @argnames;
 
     if ($options->{first_arg_name}) {
-        unshift @args, ($options->{first_arg_name} . ' => $_id');
+        unshift @args, ($options->{first_arg_name} . ' => $_rpc_id');
     }
     return join(', ', @args);
 }

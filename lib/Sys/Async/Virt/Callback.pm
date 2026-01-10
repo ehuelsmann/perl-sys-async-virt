@@ -27,7 +27,7 @@ use Log::Any qw($log);
 use Protocol::Sys::Virt::Remote::XDR v11.10.3;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-field $_id              :reader :param;
+field $_rpc_id          :reader :param;
 field $_client          :reader :param;
 field $_deregister_call :param;
 field $_queue;
@@ -63,7 +63,7 @@ method cleanup() {
     $_client->_deregister_callback(
         $_cancelled,
         $_deregister_call,
-        $_id );
+        $_rpc_id );
 
     return;
 }

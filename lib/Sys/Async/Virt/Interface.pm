@@ -29,45 +29,45 @@ use constant {
 };
 
 
-field $_id :param :reader;
+field $_rpc_id :param :reader;
 field $_client :param :reader;
 
 method name() {
-    return $_id->{name};
+    return $_rpc_id->{name};
 }
 
 method mac() {
-    return $_id->{mac};
+    return $_rpc_id->{mac};
 }
 
 method create($flags = 0) {
     return $_client->_call(
         $remote->PROC_INTERFACE_CREATE,
-        { iface => $_id, flags => $flags // 0 }, empty => 1 );
+        { iface => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 method destroy($flags = 0) {
     return $_client->_call(
         $remote->PROC_INTERFACE_DESTROY,
-        { iface => $_id, flags => $flags // 0 }, empty => 1 );
+        { iface => $_rpc_id, flags => $flags // 0 }, empty => 1 );
 }
 
 async method get_xml_desc($flags = 0) {
     return await $_client->_call(
         $remote->PROC_INTERFACE_GET_XML_DESC,
-        { iface => $_id, flags => $flags // 0 }, unwrap => 'xml' );
+        { iface => $_rpc_id, flags => $flags // 0 }, unwrap => 'xml' );
 }
 
 async method is_active() {
     return await $_client->_call(
         $remote->PROC_INTERFACE_IS_ACTIVE,
-        { iface => $_id }, unwrap => 'active' );
+        { iface => $_rpc_id }, unwrap => 'active' );
 }
 
 method undefine() {
     return $_client->_call(
         $remote->PROC_INTERFACE_UNDEFINE,
-        { iface => $_id }, empty => 1 );
+        { iface => $_rpc_id }, empty => 1 );
 }
 
 
