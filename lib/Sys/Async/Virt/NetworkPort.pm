@@ -38,6 +38,10 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method network() {
+    return $_client->_domain_network_instance( $_id->{net} );
+}
+
 method uuid() {
     return $_id->{uuid};
 }
@@ -102,6 +106,12 @@ v0.2.3
 =head2 new
 
 =head1 METHODS
+
+=head2 network
+
+  $net = $port->network;
+
+Returns the L<Sys::Async::Virt::Network> instance which this port is part of.
 
 =head2 uuid
 

@@ -51,6 +51,10 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method domain() {
+    return $_client->_domain_instance( $_id->{dom} );
+}
+
 method name() {
     return $_id->{name};
 }
@@ -146,6 +150,12 @@ There are no (LibVirt) events available for snapshots.
 Not to be called directly. Various API calls return instances of this type.
 
 =head1 METHODS
+
+=head2 domain
+
+  my $dom = $checkpoint->domain;
+
+Returns the L<Sys::Async::Virt::Domain> instance this is a checkpoint of.
 
 =head2 name
 

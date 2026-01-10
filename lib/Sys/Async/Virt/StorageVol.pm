@@ -57,12 +57,16 @@ use constant {
 field $_id :param :reader;
 field $_client :param :reader;
 
+method key() {
+    return $_id->{key};
+}
+
 method name() {
     return $_id->{name};
 }
 
-method key() {
-    return $_id->{key};
+method pool() {
+    return $_client->_storage_pool_instance( $_id->{pool} );
 }
 
 method delete($flags = 0) {
@@ -158,17 +162,23 @@ v0.2.3
 
 =head1 METHODS
 
+=head2 key
+
+  $key = $vol->key;
+
+Returns a globally unique string identifying the storage volume.
+
 =head2 name
 
-  $name = $pool->name;
+  $name = $vol->name;
 
 Returns the name of the storage volume.
 
-=head2 key
+=head2 pool
 
-  $key = $pool->key;
+  $pool = $vol->pool;
 
-Returns a globally unique string identifying the storage volume.
+Returns the L<Sys::Async::Virt::StoragePool> instance this volume belongs to.
 
 =head2 delete
 

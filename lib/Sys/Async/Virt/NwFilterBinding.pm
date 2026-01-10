@@ -33,6 +33,9 @@ method name() {
     return $_id->{name};
 }
 
+method port() {
+    return $_client->_network_port_instance( $_id->{portdev} );
+}
 
 method delete() {
     return $_client->_call(
@@ -77,6 +80,12 @@ v0.2.3
   $name = $binding->name;
 
 Returns the name of the filter binding.
+
+=head2 port
+
+  $port = $binding->port;
+
+Returns the L<Sys::Async::Virt::NetworkPort> instance this binding associates with.
 
 =head2 delete
 
