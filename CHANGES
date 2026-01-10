@@ -1,5 +1,10 @@
 -----
 
+0.2.5    2026-01-11
+   [Fixed]
+       * Failed to rename constructor argument 'id' to 'rpc_id'
+       * Release tarball naming includes 'v' prefix on version number
+
 0.2.4    2026-01-10
    [Added]
        * Accessors for name, UUID, MAC, etc
