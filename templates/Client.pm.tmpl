@@ -1145,8 +1145,8 @@ Based on LibVirt tag __LIBVIRT_TAG__
      $virt->stop;
   }
 
-  my $c = Sys::Async::Virt->new(url => 'qemu:///system');
-  await Future->await(
+  my $client = Sys::Async::Virt->new(url => 'qemu:///system');
+  await Future->needs_all(
      $client->run,
      main( $client )
   );
