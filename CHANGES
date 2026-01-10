@@ -8,6 +8,8 @@
        * Code examples at the top of the CONSTANTS sections
    [Fixed]
        * Detection of end-of-stream on transport streams ('connections')
+       * Handling of stream termination for LibVirt streams (e.g. volume
+         upload/download streams)
        * Process connections ('*+ext://' URI) don't pick up the 'command'
          query parameter
 

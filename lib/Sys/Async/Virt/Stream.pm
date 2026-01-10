@@ -44,14 +44,16 @@ async method receive() {
         die $e;
     }
 
-    return { data => '' } if $_finished->is_ready; # stop all reads
     return await $_queue->shift;
 }
 
-async method _dispatch_receive($data, $final) {
-    return if $_finished->is_ready; # discard all input
+async method _dispatch_receive($data, $hole, $eof, $final) {
     if ($final) {
         $_finished->done;
+        return;
+    }
+    if ($eof) {
+        $_queue->finish;
         return;
     }
     if ($_direction eq 'send') {
@@ -59,7 +61,7 @@ async method _dispatch_receive($data, $final) {
     }
 
     # throttle receiving if the queue gets too long
-    await $_queue->push($data);
+    await $_queue->push({ data => $data, hole => $hole });
     return;
 }
 
