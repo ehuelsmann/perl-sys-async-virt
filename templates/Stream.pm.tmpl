@@ -37,7 +37,7 @@ field $_queue = Future::Queue->new;
 
 async method receive() {
     if ($_direction eq 'send') {
-        die "Receive called on sending stream (id: $self->{id}";
+        die "Receive called on sending stream (id: $self->{id})";
     }
     if (my $e = $_pending_error) {
         $_pending_error = undef;

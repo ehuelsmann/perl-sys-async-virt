@@ -24,7 +24,7 @@ use Carp qw(croak);
 use Future::Queue;
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v11.10.1;
+use Protocol::Sys::Virt::Remote::XDR v11.10.3;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 field $_id              :reader :param;

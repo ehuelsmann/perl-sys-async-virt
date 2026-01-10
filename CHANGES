@@ -7,6 +7,7 @@
          checkpoints and snapshots, 'network' on ports and 'port' on bindings
        * Code examples at the top of the CONSTANTS sections
    [Fixed]
+       * Detection of end-of-stream on transport streams ('connections')
        * Process connections ('*+ext://' URI) don't pick up the 'command'
          query parameter
 

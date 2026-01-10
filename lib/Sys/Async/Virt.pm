@@ -29,13 +29,13 @@ use Future::Selector;
 use Log::Any qw($log);
 use Scalar::Util qw(reftype weaken);
 
-use Protocol::Sys::Virt::Remote::XDR v11.10.1;
+use Protocol::Sys::Virt::Remote::XDR v11.10.3;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-use Protocol::Sys::Virt::KeepAlive v11.10.1;
-use Protocol::Sys::Virt::Remote v11.10.1;
-use Protocol::Sys::Virt::Transport v11.10.1;
-use Protocol::Sys::Virt::URI v11.10.1; # imports parse_url
+use Protocol::Sys::Virt::KeepAlive v11.10.3;
+use Protocol::Sys::Virt::Remote v11.10.3;
+use Protocol::Sys::Virt::Transport v11.10.3;
+use Protocol::Sys::Virt::URI v11.10.3; # imports parse_url
 
 use Sys::Async::Virt::Connection::Factory v0.2.3;
 use Sys::Async::Virt::Domain v0.2.3;
@@ -295,8 +295,8 @@ use constant {
 use constant {
     _STATE_NONE           => 0,
     _STATE_INITIALIZING   => 1,
-    _STATE_INITIALIZED    => 2,
-    _STATE_AUTHENTICATING => 3,
+    _STATE_INITIALIZED    => 2, # Process transports: in/out pipes have been connected
+    _STATE_AUTHENTICATING => 3, # Process transports: failure to start is discovered in this state
     _STATE_AUTHENTICATED  => 4,
     _STATE_OPENING        => 5,
     _STATE_OPENED         => 6,
@@ -1247,12 +1247,13 @@ method _dispatch_stream(:$header, %args) {
     if ($_keepalive) {
         $_keepalive->mark_active;
     }
+
     if (my $stream = $_streams->{$header->{serial}}) {
         if ($args{error}) {
             return $stream->_dispatch_error($args{error});
         }
         else {
-            return $stream->_dispatch_receive($args{data}, $args{final});
+            return $stream->_dispatch_receive($args{data}, $args{hole}, $args{eof}, $args{final});
         }
     }
     else {
@@ -1277,6 +1278,7 @@ method register($r) {
 }
 
 async method run_once() {
+    return if $_eof;
     my ($len, $type) = $_transport->need;
     $log->trace( 'Reading data from connection' );
 
@@ -1379,7 +1381,7 @@ async method _dispatch_data( $f ) {
         $_selector->add( data => 'dispatch',
                          f    => $p );
     }
-    if (length($data) == 0 and $eof) {
+    if ($eof) {
         $_eof = 1;
         $log->info( 'EOF' );
         $_selector->add(
@@ -1654,7 +1656,10 @@ async method open() {
 # ENTRYPOINT: REMOTE_PROC_CONNECT_CLOSE
 # ENTRYPOINT: REMOTE_PROC_CONNECT_UNREGISTER_CLOSE_CALLBACK
 async method _close($reason) {
-    return unless (_STATE_INITIALIZED <= $_state and $_state <= _STATE_OPENED );
+    unless (_STATE_INITIALIZED <= $_state and $_state <= _STATE_OPENED) {
+        $_completed_f->done unless $_completed_f->is_ready;
+        return;
+    }
     $_state = _STATE_CLEANING_UP;
 
     unless ($_connection->is_read_eof

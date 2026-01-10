@@ -23,7 +23,7 @@ use Future;
 use Future::Queue;
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v11.10.1;
+use Protocol::Sys::Virt::Remote::XDR v11.10.3;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 field $_id :param :reader;
@@ -37,7 +37,7 @@ field $_queue = Future::Queue->new;
 
 async method receive() {
     if ($_direction eq 'send') {
-        die "Receive called on sending stream (id: $self->{id}";
+        die "Receive called on sending stream (id: $self->{id})";
     }
     if (my $e = $_pending_error) {
         $_pending_error = undef;

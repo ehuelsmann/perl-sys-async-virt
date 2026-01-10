@@ -23,8 +23,8 @@ inherit Sys::Async::Virt::Connection::Process;
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::UNIXSocket v11.10.1; # imports socket_path
-use Protocol::Sys::Virt::URI v11.10.1; # imports parse_url
+use Protocol::Sys::Virt::UNIXSocket v11.10.3; # imports socket_path
+use Protocol::Sys::Virt::URI v11.10.3; # imports parse_url
 
 field $_socket   :reader :param = undef;
 field $_readonly :reader :param;

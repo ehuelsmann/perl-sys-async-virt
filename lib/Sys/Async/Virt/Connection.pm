@@ -66,7 +66,7 @@ method is_write_eof() {
 
 async method read($type, $len) {
     die $log->fatal( "Unsupported transfer type $type" ) unless $type eq 'data';
-    return undef if $_eof;
+    return (undef, 1) if $_eof;
 
     $log->trace( "Starting read of length $len" );
     $_read_f = $_read_f->then(sub { Future::IO->read_exactly( $_in, $len ) });
@@ -75,7 +75,7 @@ async method read($type, $len) {
     $log->trace( "Finished read of length $len" );
     $_eof = not defined $data;
 
-    return $data;
+    return ($data, 0);
 }
 
 method _write_chunk($data) {
