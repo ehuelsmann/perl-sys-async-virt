@@ -857,8 +857,8 @@ while (my $line = <$fh>) {
              ['"])
           (?<VERSION>[^'"]+)
         /xp) {
-        
-        $line = ${^PREMATCH} . $+{KEY} . $version . ${^POSTMATCH};
+
+        $line = ${^PREMATCH} . $+{KEY} . substr($version, 1) . ${^POSTMATCH};
     }
     say $oh $line;
 }
