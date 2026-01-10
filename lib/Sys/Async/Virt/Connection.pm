@@ -32,7 +32,9 @@ use Log::Any qw($log);
 
 method _finalize_io() {
     $_eof = 1;
-    $_write_f->cancel;
+    $_write_f->fail( 'closed' ) unless $_write_f->is_ready;
+    $_read_f->fail( 'closed' )  unless $_read_f->is_ready;
+    $_read_f  = Future->fail( 'closed' );
     $_write_f = Future->fail( 'closed' );
 }
 

@@ -56,6 +56,7 @@ async method connect() {
     $_in->autoflush( 1 );
     $_in->blocking( 0 );
     $_exit_f = Future::IO->waitpid( $_pid );
+    $_exit_f->on_ready(sub { $self->_finalize_io });
 
     return;
 }
