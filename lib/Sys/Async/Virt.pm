@@ -2484,8 +2484,11 @@ broken links.)
 
 An important difference with the C API is that this API only lists the
 C<INPUT> and C<INPUT|OUTPUT (as input)> arguments for its functions.  The
-C<OUTPUT> and C<INPUT|OUTPUT (as output)> arguments will be returned in the
-C<on_reply> event.
+C<OUTPUT> and C<INPUT|OUTPUT (as output)> arguments will be returned from
+the function call (in a hash, if multiple values are to be returned):
+
+  my $cpumap = $client->get_cpu_map;
+  # $cpumap is a hash with the elements of the 'cpumap' LibVirt elements
 
 =head2 Data type differences between C and Perl API
 

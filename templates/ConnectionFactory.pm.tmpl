@@ -150,7 +150,7 @@ C<+YourPackage::Local> resolves to C<YourPackage::Local>.
 
 =back
 
-The default value maps the following transports: C<''>, C<unix>.
+The default value maps the following transports: C<''>, C<unix>, C<ext> and C<ssh>.
 
 =back
 
