@@ -1,11 +1,13 @@
 -----
 
-0.2.4    TO BE RELEASED
+0.2.4    2026-01-10
    [Added]
        * Accessors for name, UUID, MAC, etc
        * Accessors for related intances: 'pool' on volumes, 'domain' on
          checkpoints and snapshots, 'network' on ports and 'port' on bindings
        * Code examples at the top of the CONSTANTS sections
+   [Changed]
+       * Minimum dependency Protocol::Sys::Virt is now 11.10.3
    [Fixed]
        * Detection of end-of-stream on transport streams ('connections')
        * Handling of stream termination for LibVirt streams (e.g. volume

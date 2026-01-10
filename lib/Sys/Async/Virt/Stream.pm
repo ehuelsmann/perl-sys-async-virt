@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad 0.821;
 
-class Sys::Async::Virt::Stream v0.2.3;
+class Sys::Async::Virt::Stream v0.2.4;
 
 use Carp qw(croak);
 use Future;
@@ -156,7 +156,7 @@ Sys::Async::Virt::Stream - Client side of a data transfer channel
 
 =head1 VERSION
 
-v0.2.3
+v0.2.4
 
 =head1 SYNOPSIS
 
