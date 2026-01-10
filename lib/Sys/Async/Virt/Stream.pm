@@ -105,7 +105,7 @@ async method send_hole($length, $flags = 0) {
 
 async method abort() {
     return if $_finished->is_ready;
-    $_client->_send_finish( $_finished, $_proc, $_id, 1 );
+    $_client->_send_finish( $_proc, $_id, 1 );
     await $_finished;
 
     $self->cleanup;
@@ -126,7 +126,7 @@ method cleanup() {
 
 async method finish() {
     return if $_finished->is_ready;
-    $_client->_send_finish( $_finished, $_proc, $_id, 0 );
+    $_client->_send_finish( $_proc, $_id, 0 );
     await $_finished;
 
     $self->cleanup;
@@ -140,7 +140,7 @@ async method finish() {
 method DESTROY() {
     if (not $_finished->is_ready) {
         # abort the stream
-        $_client->_send_finish( undef, $_proc, $_id, 1 );
+        $_client->_send_finish( $_proc, $_id, 1 );
     }
 }
 

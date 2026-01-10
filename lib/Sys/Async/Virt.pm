@@ -1300,7 +1300,7 @@ method _deregister_callback($f, $proc, $id) {
     return;
 }
 
-method _send_finish($f, $proc, $serial, $abort) {
+method _send_finish($proc, $serial, $abort) {
     my $r = $_remote->stream_end($proc, $serial, $abort);
     # streams send a final "OK" message; we should be awaiting that
     # instead of declaring the future $f done here
