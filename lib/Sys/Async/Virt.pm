@@ -961,7 +961,7 @@ method _domain_instance($id) {
         $c = $_domains->{$key} = _domain_factory(
             client => $self,
             remote => $_remote,
-            id => $id );
+            rpc_id => $id );
         weaken $_domains->{$key};
     }
     return $c;
@@ -975,7 +975,7 @@ method _domain_checkpoint_instance($id) {
             _domain_checkpoint_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_domain_checkpoints->{$key};
     }
     return $c;
@@ -989,7 +989,7 @@ method _domain_snapshot_instance($id) {
             _domain_snapshot_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_domain_snapshots->{$id->{uuid}};
     }
     return $c;
@@ -1002,7 +1002,7 @@ method _network_instance($id) {
             _network_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_networks->{$id->{uuid}};
     }
     return $c;
@@ -1015,7 +1015,7 @@ method _network_port_instance($id) {
             _network_port_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_network_ports->{$id->{uuid}};
     }
     return $c;
@@ -1028,7 +1028,7 @@ method _nwfilter_instance($id) {
             _nwfilter_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_nwfilters->{$id->{uuid}};
     }
     return $c;
@@ -1042,7 +1042,7 @@ method _nwfilter_binding_instance($id) {
             _nwfilter_binding_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_nwfilter_bindings->{$key};
     }
     return $c;
@@ -1056,7 +1056,7 @@ method _interface_instance($id) {
             _interface_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_interfaces->{$key};
     }
     return $c;
@@ -1069,7 +1069,7 @@ method _storage_pool_instance($id) {
             _storage_pool_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_storage_pools->{$id->{uuid}};
     }
     return $c;
@@ -1082,7 +1082,7 @@ method _storage_vol_instance($id) {
             _storage_vol_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_storage_vols->{$id->{key}};
     }
     return $c;
@@ -1095,7 +1095,7 @@ method _node_device_instance($id) {
             _node_device_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_node_devices->{$id->{name}};
     }
     return $c;
@@ -1108,7 +1108,7 @@ method _secret_instance($id) {
             _secret_factory(
                 client => $self,
                 remote => $_remote,
-                id => $id );
+                rpc_id => $id );
         weaken $_secrets->{$id->{uuid}};
     }
     return $c;
@@ -1131,7 +1131,7 @@ async method _call($proc, $args = {}, :$unwrap = '', :$stream = '', :$empty = ''
     shift @rv if $empty;
     if ($stream) {
         my $s = Sys::Async::Virt::Stream->new(
-            id => $serial,
+            rpc_id => $serial,
             proc => $proc,
             client => $self,
             direction => ($stream eq 'write' ? 'send' : 'receive'),
