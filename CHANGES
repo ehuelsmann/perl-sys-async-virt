@@ -1,5 +1,9 @@
 -----
 
+0.2.6    TO BE RELEASED
+   [Fixed]
+       * C<> quoting in Sys::Async::Virt POD
+
 0.2.5    2026-01-11
    [Fixed]
        * Failed to rename constructor argument 'id' to 'rpc_id'

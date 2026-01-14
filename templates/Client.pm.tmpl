@@ -1224,9 +1224,9 @@ The API calls in these modules invoke remote procedure calls (RPC) on a
 LibVirt server (which may run locally). The return values are L<Future>s
 which can be C<await>ed using L<Future::AsyncAwait>.  Many calls start a
 process on the server without awaiting the result.  One example is the
-C<$domain->shutdown()> invocation: it returns when shut down has been
+C<< $domain->shutdown() >> invocation: it returns when shut down has been
 initiated, not when the domain is actually shut off. Other calls query
-the server for state (such as C<$domain->get_state()>) and return the
+the server for state (such as C<< $domain->get_state() >>) and return the
 state when the server replies to the invocation.
 
 The LibVirt protocol and server support concurrent requests: requests
