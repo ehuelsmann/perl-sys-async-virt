@@ -9,12 +9,12 @@ requires 'Future::Selector';
 requires 'Future::Queue';
 requires 'Log::Any';
 requires 'Object::Pad' => '0.821';
-requires 'Protocol::Sys::Virt' => '11.10.3';
-requires 'Protocol::Sys::Virt::KeepAlive' => '11.10.3';
-requires 'Protocol::Sys::Virt::Remote' => '11.10.3';
-requires 'Protocol::Sys::Virt::Remote::XDR' => '11.10.3';
-requires 'Protocol::Sys::Virt::UNIXSocket' => '11.10.3';
-requires 'Protocol::Sys::Virt::URI' => '11.10.3';
+requires 'Protocol::Sys::Virt' => '12.0.0';
+requires 'Protocol::Sys::Virt::KeepAlive' => '12.0.0';
+requires 'Protocol::Sys::Virt::Remote' => '12.0.0';
+requires 'Protocol::Sys::Virt::Remote::XDR' => '12.0.0';
+requires 'Protocol::Sys::Virt::UNIXSocket' => '12.0.0';
+requires 'Protocol::Sys::Virt::URI' => '12.0.0';
 requires 'Sublike::Extended' => '0.29';  # treat 'method' and 'sub' as extended keywords
 
 on test => sub {

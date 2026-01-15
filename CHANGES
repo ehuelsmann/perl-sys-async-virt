@@ -1,6 +1,11 @@
 -----
 
-0.2.6    TO BE RELEASED
+0.2.6    2026-01-15
+   [Changed]
+       * Updated libvirt to v12.0.0 (from v11.10.0)
+   [Added]
+       * Image format parameters SAVE_PARAM_IMAGE_FORMAT_* to be used
+         with the virDomainSaveParams() [$domain->save_params()] call
    [Fixed]
        * C<> quoting in Sys::Async::Virt POD
 

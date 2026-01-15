@@ -1,7 +1,7 @@
 ####################################################################
 #
 #     This file was generated using XDR::Parse version v1.0.1
-#                   and LibVirt version v11.10.0
+#                   and LibVirt version v12.0.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -16,12 +16,12 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad;
 
-class Sys::Async::Virt::Domain v0.2.5;
+class Sys::Async::Virt::Domain v0.2.6;
 
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v11.10.3;
+use Protocol::Sys::Virt::Remote::XDR v12.0.0;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use constant {
@@ -220,6 +220,13 @@ use constant {
     SAVE_PARAM_FILE                                                   => "file",
     SAVE_PARAM_DXML                                                   => "dxml",
     SAVE_PARAM_IMAGE_FORMAT                                           => "image_format",
+    SAVE_PARAM_IMAGE_FORMAT_RAW                                       => "raw",
+    SAVE_PARAM_IMAGE_FORMAT_GZIP                                      => "gzip",
+    SAVE_PARAM_IMAGE_FORMAT_BZIP2                                     => "bzip2",
+    SAVE_PARAM_IMAGE_FORMAT_XZ                                        => "xz",
+    SAVE_PARAM_IMAGE_FORMAT_LZOP                                      => "lzop",
+    SAVE_PARAM_IMAGE_FORMAT_ZSTD                                      => "zstd",
+    SAVE_PARAM_IMAGE_FORMAT_SPARSE                                    => "sparse",
     SAVE_PARAM_PARALLEL_CHANNELS                                      => "parallel.channels",
     CPU_STATS_CPUTIME                                                 => "cpu_time",
     CPU_STATS_USERTIME                                                => "user_time",
@@ -1976,7 +1983,7 @@ Sys::Async::Virt::Domain - Client side proxy to remote LibVirt domain
 
 =head1 VERSION
 
-v0.2.5
+v0.2.6
 
 =head1 SYNOPSIS
 
@@ -3651,6 +3658,20 @@ See documentation of L<virDomainUpdateDeviceFlags|https://libvirt.org/html/libvi
 =item SAVE_PARAM_DXML
 
 =item SAVE_PARAM_IMAGE_FORMAT
+
+=item SAVE_PARAM_IMAGE_FORMAT_RAW
+
+=item SAVE_PARAM_IMAGE_FORMAT_GZIP
+
+=item SAVE_PARAM_IMAGE_FORMAT_BZIP2
+
+=item SAVE_PARAM_IMAGE_FORMAT_XZ
+
+=item SAVE_PARAM_IMAGE_FORMAT_LZOP
+
+=item SAVE_PARAM_IMAGE_FORMAT_ZSTD
+
+=item SAVE_PARAM_IMAGE_FORMAT_SPARSE
 
 =item SAVE_PARAM_PARALLEL_CHANNELS
 
