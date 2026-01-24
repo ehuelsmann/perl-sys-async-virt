@@ -327,7 +327,7 @@ field $_typed_param_string_okay = undef;
 
 
 field $_url           :param = $ENV{LIBVIRT_DEFAULT_URI};
-field $_readonly      :param = undef;
+field $_readonly      :reader :param = undef;
 field $_connection    :param = undef;
 field $_transport     :param = undef;
 field $_remote        :reader :param = undef;
@@ -4100,7 +4100,7 @@ replies.
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3
-# ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3
+# used in domain migrations: ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_CONFIRM3
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_FINISH3
 
