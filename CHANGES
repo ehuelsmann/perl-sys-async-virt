@@ -1,5 +1,11 @@
 -----
 
+0.3.0    2026-01-25
+   [Added]
+       * Support for all types of migrations
+   [Changed]
+       * Dependency version of Protocol::Sys::Virt
+
 0.2.6    2026-01-15
    [Changed]
        * Updated libvirt to v12.0.0 (from v11.10.0)
