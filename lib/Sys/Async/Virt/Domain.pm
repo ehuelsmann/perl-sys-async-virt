@@ -2475,11 +2475,48 @@ See also the documentation of L<virDomainGetVcpus|https://libvirt.org/html/libvi
 
 =head2 migrate
 
-  my $ddom = await $dom->migrate( dest_client => $dest_client, params => $params, flags => $flags );
+  my $ddom = await $dom->migrate( $dest_client, $params, $flags );
 
-This function currently supports managed direct migration. See L<virDomainMigrate3|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrate3>.
+This function implements the I<managed direct migration> pattern: the client
+manages the migration through connnections to both the source and destination
+LibVirt daemons.
 
-The functionality provided by L<virDomainMigrateToURI3|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateToURI3> is being developed.
+Returns a L<Sys::Async::Virt::Domain> instance associated with C<$dest_client>
+in case of success. Throws an error otherwise.
+
+See L<virDomainMigrate3|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrate3>.
+
+For more information on migrations, see L<https://libvirt.org/migration.html>.
+
+=head2 migrate_to_uri
+
+  my $bool = await $dom->migrate_to_uri( $dconnuri, $params, $flags );
+
+This function provides the I<peer-to-peer> and I<unmanaged direct> migration
+patterns, where the client instructs the source host to connect to the
+destination to perform the migration. If the C<MIGRATE_PEER2PEER> flag is set,
+the source LibVirt daemon connects to the destination LibVirt daemon (managed
+peer to peer). Without this flag, the source LibVirt daemon instructs the
+hypervisor to connect to the target hypervisor and orchestrate the migration
+between the two (unmanaged direct migration).
+
+See L<virDomainMigrateToURI3|https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateToURI3>.
+
+For more information on migrations, see L<https://libvirt.org/migration.html>.
+
+=head2 migrate_peer2peer
+
+  my $bool = await $dom->migrate_peer2peer( $uri, $params, $flags );
+
+Convenience wrapper around C<migrate_to_uri>, setting the C<MIGRATE_PEER2PEER>
+flag.
+
+=head2 migrate_unmanaged_direct
+
+  my $bool = await $dom->migrate_unmanaged_direct( $uri, $params, $flags );
+
+Convenience wrapper around C<migrate_to_uri>, setting unsetting the
+C<MIGRATE_PEER2PEER> flag and adding C<MIGRATE_PARAM_URI> to C<$params>.
 
 =head2 pin_emulator
 
