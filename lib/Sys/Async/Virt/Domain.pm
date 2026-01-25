@@ -1391,6 +1391,15 @@ async method migrate_to_uri($dest_uri, $params, $flags) {
 }
 
 
+async method migrate_peer2peer( $dconnuri, $params, $flags ) {
+    return await $self->migrate_to_uri( $dconnuri, $params, $flags | MIGRATE_PEER2PEER );
+}
+
+async method migrate_unmanaged_direct( $miguri, $params, $flags ) {
+    typed_params_field_string_value( $params, MIGRATE_PARAM_URI, $miguri );
+    return await $self->migrate_to_uri( undef, $params, $flags & ~MIGRATE_PEER2PEER );
+}
+
 ###############################################################################
 #
 #                             END OF MIGRATION CODE
