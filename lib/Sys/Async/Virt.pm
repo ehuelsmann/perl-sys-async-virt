@@ -29,13 +29,13 @@ use Future::Selector;
 use Log::Any qw($log);
 use Scalar::Util qw(reftype weaken);
 
-use Protocol::Sys::Virt::Remote::XDR v12.0.0;
+use Protocol::Sys::Virt::Remote::XDR v12.0.6;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-use Protocol::Sys::Virt::KeepAlive v12.0.0;
-use Protocol::Sys::Virt::Remote v12.0.0;
-use Protocol::Sys::Virt::Transport v12.0.0;
-use Protocol::Sys::Virt::URI v12.0.0; # imports parse_url
+use Protocol::Sys::Virt::KeepAlive v12.0.6;
+use Protocol::Sys::Virt::Remote v12.0.6;
+use Protocol::Sys::Virt::Transport v12.0.6;
+use Protocol::Sys::Virt::URI v12.0.6; # imports parse_url
 
 use Sys::Async::Virt::Connection::Factory v0.2.6;
 use Sys::Async::Virt::Domain v0.2.6;
@@ -327,10 +327,10 @@ field $_typed_param_string_okay = undef;
 
 
 field $_url           :param = $ENV{LIBVIRT_DEFAULT_URI};
-field $_readonly      :param = undef;
+field $_readonly      :reader :param = undef;
 field $_connection    :param = undef;
 field $_transport     :param = undef;
-field $_remote        :param = undef;
+field $_remote        :reader :param = undef;
 field $_factory       :param = undef;
 field $_keepalive     :param = undef;
 field $_ping_interval :param = 60;
@@ -4069,6 +4069,18 @@ replies.
 
 =over 8
 
+=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature
+ (v1.3.3 - 2016-04-06) is not - currently - supported
+
+=begin fill-templates
+
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
+
+=end fill-templates
+
 =item * Talking to servers without the MIGRATION_PARAM feature
  (v1.1.0 - 2013-07-01) is not - currently - supported
 
@@ -4088,7 +4100,7 @@ replies.
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3
-# ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3
+# used in domain migrations: ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_CONFIRM3
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_FINISH3
 
@@ -4097,17 +4109,8 @@ replies.
 
 =end fill-templates
 
-=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature
- (v1.3.3 - 2016-04-06) is not - currently - supported
-
-=begin fill-templates
-
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
-
-=end fill-templates
+=item * Talking to servers without the MIGRATE_CHANGE_PROTECTION feature
+ (v0.10.0 - 2012-08-29) is not - currently - supported
 
 =back
 
@@ -4158,24 +4161,6 @@ towards implementation are greatly appreciated.
 =item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS
 
 =item * REMOTE_PROC_DOMAIN_OPEN_GRAPHICS_FD
-
-=back
-
-
-
-=item * @generate: none (src/libvirt_internal.h)
-
-=over 8
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3_PARAMS
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_CONFIRM3_PARAMS
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_FINISH3_PARAMS
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3_PARAMS
-
-=item * REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3_PARAMS
 
 =back
 

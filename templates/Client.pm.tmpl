@@ -91,10 +91,10 @@ field $_typed_param_string_okay = undef;
 
 
 field $_url           :param = $ENV{LIBVIRT_DEFAULT_URI};
-field $_readonly      :param = undef;
+field $_readonly      :reader :param = undef;
 field $_connection    :param = undef;
 field $_transport     :param = undef;
-field $_remote        :param = undef;
+field $_remote        :reader :param = undef;
 field $_factory       :param = undef;
 field $_keepalive     :param = undef;
 field $_ping_interval :param = 60;
@@ -1569,6 +1569,18 @@ __PRIVATE_EPS__
 
 =over 8
 
+=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature
+ (v1.3.3 - 2016-04-06) is not - currently - supported
+
+=begin fill-templates
+
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER
+# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
+
+=end fill-templates
+
 =item * Talking to servers without the MIGRATION_PARAM feature
  (v1.1.0 - 2013-07-01) is not - currently - supported
 
@@ -1588,7 +1600,7 @@ __PRIVATE_EPS__
 
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PREPARE3
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_BEGIN3
-# ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3
+# used in domain migrations: ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_PERFORM3
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_CONFIRM3
 # ENTRYPOINT: REMOTE_PROC_DOMAIN_MIGRATE_FINISH3
 
@@ -1597,17 +1609,8 @@ __PRIVATE_EPS__
 
 =end fill-templates
 
-=item * Talking to servers without the REMOTE_EVENT_CALLBACK feature
- (v1.3.3 - 2016-04-06) is not - currently - supported
-
-=begin fill-templates
-
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_DEREGISTER_ANY
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER
-# ENTRYPOINT: REMOTE_PROC_CONNECT_DOMAIN_EVENT_REGISTER_ANY
-
-=end fill-templates
+=item * Talking to servers without the MIGRATE_CHANGE_PROTECTION feature
+ (v0.10.0 - 2012-08-29) is not - currently - supported
 
 =back
 

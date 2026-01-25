@@ -21,7 +21,7 @@ class Sys::Async::Virt::DomainCheckpoint v0.2.6;
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v12.0.0;
+use Protocol::Sys::Virt::Remote::XDR v12.0.6;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use constant {

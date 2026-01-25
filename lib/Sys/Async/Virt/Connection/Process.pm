@@ -26,7 +26,7 @@ use IO::Handle;
 use IPC::Open2;
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::URI v12.0.0; # imports parse_url
+use Protocol::Sys::Virt::URI v12.0.6; # imports parse_url
 
 field $_url :param :reader;
 field $_pid;
