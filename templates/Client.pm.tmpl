@@ -92,6 +92,7 @@ field $_typed_param_string_okay = undef;
 
 field $_url           :param = $ENV{LIBVIRT_DEFAULT_URI};
 field $_readonly      :reader :param = undef;
+field $_sasl          :param = undef;
 field $_connection    :param = undef;
 field $_transport     :param = undef;
 field $_remote        :reader :param = undef;
@@ -103,6 +104,7 @@ field $_on_close      :param = sub {};
 field $_on_stream     :param = undef;
 field $_on_message    :param = sub {};
 
+field $_sasl_session     = undef;
 field $_selector         = Future::Selector->new;
 field $_completed_f      = undef;
 field $_eof              = 0;
@@ -593,8 +595,24 @@ async method run_once() {
     my ($len, $type) = $_transport->need;
     $log->trace( 'Reading data from connection' );
 
+    ###BUG: what if $type == 'fd' and we have sasl encodng??
+    my ($data, $eof);
+    if ($_sasl_session) {
+         my $buf;
+         ($buf, $eof) = await $_connection->read( 'data', 4 );
+
+         return (undef, $eof) if $eof;
+
+         my $sasl_len = unpack( 'L>', $buf );
+         ($buf, $eof) = await $_connection->read( 'data', $sasl_len );
+
+         return (undef, $eof) if $eof;
+
+         return ( $_sasl_session->decode( $buf, $sasl_len ), $eof );
+    }
+
     # closing the connection will kill the 'read' action
-    my ($data, $eof) = await $_connection->read( $type, $len );
+    ($data, $eof) = await $_connection->read( $type, $len );
     $_keepalive->mark_active if $_keepalive and $data;
     $log->trace( 'Reading data from connection: completed' );
 
@@ -639,7 +657,22 @@ async method initialize() {
         $_transport = Protocol::Sys::Virt::Transport->new(
             role => 'client',
             on_send => async sub($opaque, @data) {
-                await $_connection->write( @data );
+                if ($_sasl_session) {
+                    my $bufsize = $_sasl_session->property('maxbuf');
+                    my $buf = join( '', @data );
+                    my $idx = 0;
+                    my $len = length $buf;
+                    while ($len > 0) {
+                        my $enc =
+                            $_sasl_session->encode( substr( $buf, $idx, $bufsize ) );
+                        await $_connection->write( pack('L>', length($enc)), $enc );
+                        $len -= $bufsize;
+                        $idx += $bufsize;
+                    }
+                }
+                else {
+                    await $_connection->write( @data );
+                }
                 return $opaque;
             });
     }
@@ -855,6 +888,8 @@ async method secret_event_register_any($eventID, $secret = undef) {
 # ENTRYPOINT: REMOTE_PROC_AUTH_LIST
 # ENTRYPOINT: REMOTE_PROC_AUTH_POLKIT
 # ENTRYPOINT: REMOTE_PROC_AUTH_SASL_INIT
+# ENTRYPOINT: REMOTE_PROC_AUTH_SASL_START
+# ENTRYPOINT: REMOTE_PROC_AUTH_SASL_STEP
 
 # auth( $auth_type )
 #  --> clients take the selected auth mechanism from the
@@ -904,7 +939,49 @@ async method auth($auth_type = undef) {
     elsif ($selected == $remote->AUTH_SASL) {
         my $mechs = await $self->_call( $remote->PROC_AUTH_SASL_INIT, {},
                                         unwrap => 'mechlist' );
-        ...
+        $_sasl->mechanism( $mechs );
+
+        my %uri   = parse_url( $_url );
+        my $auth  = $_sasl->client_new(
+            'libvirt', $uri{host},
+            $_connection->is_secure ? '' : 'noplaintext noanonymous' );
+        $auth->property('maxbuf', 65536);
+
+        my $initial = $auth->client_start;
+        my $rv = await $self->_call( $remote->PROC_AUTH_SASL_START,
+                                     {
+                                         mech => $auth->mechanism,
+                                         nil => (defined $initial ? 0 : 1),
+                                         data => ($initial // '')
+                                     } );
+        my ($complete, $data) = $rv->@{ qw( complete data ) };
+
+        while (not $complete or $auth->need_step) {
+            my $next_data = $auth->client_step( $data );
+            last if ($complete and not $auth->need_step);
+            last if $auth->error;
+
+            $rv = await $self->_call( $remote->PROC_AUTH_SASL_STEP,
+                                      {
+                                          nil => (defined $next_data ? 0 : 1),
+                                          data => ($next_data // '')
+                                      } );
+            ( $complete, $data ) = $rv->@{ qw( complete data ) };
+        }
+        if (my $err = $auth->error) {
+            die $err;
+        }
+        elsif (not $auth->is_success) {
+            die 'Unknown SASL error';
+        }
+
+        if (defined $auth->property( 'ssf' )
+            and $auth->property( 'ssf' ) > 0) {
+            $log->trace( '"ssf" set; setting codec' );
+            $log->trace( '"maxbuf" set: ' . $auth->property('maxbuf') );
+
+            $_sasl_session = $auth;
+        }
     }
 
     $_state = _STATE_AUTHENTICATED;
