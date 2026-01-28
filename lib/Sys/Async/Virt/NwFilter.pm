@@ -21,7 +21,7 @@ class Sys::Async::Virt::NwFilter v0.3.0;
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v12.0.6;
+use Protocol::Sys::Virt::Remote::XDR v12.0.7;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 
