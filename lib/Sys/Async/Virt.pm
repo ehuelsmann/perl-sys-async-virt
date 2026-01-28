@@ -2768,6 +2768,10 @@ an error before it.
 
 When not supplied, defaults to C<60>.
 
+=item * C<sasl> (optional)
+
+An L<Authen::SASL> instance configured for authentication against the server.
+
 =item * C<url> (optional)
 
 The URL of the hypervisor to connect to as per L<https://libvirt.org/uri.html>.
@@ -4194,6 +4198,9 @@ replies.
 =head2 TODO
 
 =over 8
+
+=item * Configuration of the C<externalssf> parameter on the C<sasl> field in
+  the Sys::Async::Virt instance
 
 =item * Modules implementing connections for various protocols (tcp, tls, etc)
 
