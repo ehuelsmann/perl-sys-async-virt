@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad;
 
-class Sys::Async::Virt::StoragePool v0.3.0;
+class Sys::Async::Virt::StoragePool v0.4.0;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -184,7 +184,7 @@ Sys::Async::Virt::StoragePool - Client side proxy to remote LibVirt storage pool
 
 =head1 VERSION
 
-v0.3.0
+v0.4.0
 
 =head1 SYNOPSIS
 

@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad;
 
-class Sys::Async::Virt::NodeDevice v0.3.0;
+class Sys::Async::Virt::NodeDevice v0.4.0;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -177,7 +177,7 @@ Sys::Async::Virt::NodeDevice - Client side proxy to remote LibVirt host device
 
 =head1 VERSION
 
-v0.3.0
+v0.4.0
 
 =head1 SYNOPSIS
 
