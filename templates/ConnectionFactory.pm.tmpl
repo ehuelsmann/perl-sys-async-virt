@@ -27,7 +27,7 @@ our @default_drivers = (
     { transport => 'unix', class => 'Local', host => 0 },
     # { transport => '', class => 'TCP', host => 1 },
     # { transport => 'tls', class => 'TCP' },
-    # { transport => 'tcp', class => 'TCP' },
+    { transport => 'tcp', class => 'TCP' },
     { transport => 'ext', class => 'Process' },
     { transport => 'ssh', class => 'SSH' },
     );

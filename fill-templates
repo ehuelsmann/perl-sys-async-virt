@@ -102,7 +102,7 @@ my %module = (
 my $main_module = 'Client';
 my @other_modules = qw(
     Callback Stream Connection ConnectionFactory
-    ConnectionLocal ConnectionProcess ConnectionSSH );
+    ConnectionLocal ConnectionProcess ConnectionSSH ConnectionTCP );
 
 my %prefix_strip_xdr = (
     Client => qr/^connect_/,
