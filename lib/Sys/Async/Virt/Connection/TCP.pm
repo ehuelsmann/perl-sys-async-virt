@@ -29,9 +29,23 @@ use Protocol::Sys::Virt::URI; # imports parse_url
 
 my $use_async_resolver = eval { require Future::IO::Resolver; 1; };
 
-field $_url :param :reader;
+field $_url :param :reader :inheritable;
 field $_readonly :param = undef;
-field $_socket :param = undef;
+field $_socket :param :inheritable  = undef;
+
+
+### workaround methods while transitive inheritace doesn't work in Object::Pad
+### See: RT#172999
+
+method _set_in($in) {
+    $_in = $in;
+}
+
+method _set_out($out) {
+    $_out = $out;
+}
+
+###
 
 async method close() {
     # Work around for Future::IO which doesn't
