@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad;
 
-class Sys::Async::Virt::NwFilter v0.5.1;
+class Sys::Async::Virt::NwFilter v0.5.2;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -66,7 +66,7 @@ Sys::Async::Virt::NwFilter - Client side proxy to remote LibVirt network filter
 
 =head1 VERSION
 
-v0.5.1
+v0.5.2
 
 =head1 SYNOPSIS
 

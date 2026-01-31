@@ -1,5 +1,13 @@
 -----
 
+0.5.2    2026-01-31
+   [Fixed]
+       * Errors thrown when Future::IO::Resolver isn't installed
+   [Changed]
+       * Inheritable fields for TLS subclass to access
+       * Workaround added for parent class fields that TLS subclass
+         needs access to
+
 0.5.1    2026-01-31
    [Fixed]
        * TCP module missing from distribution (because not added to MANIFEST)
