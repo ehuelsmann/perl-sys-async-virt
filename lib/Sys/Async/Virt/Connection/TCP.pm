@@ -65,9 +65,9 @@ async method connect() {
     }
     else {
         my ($err, @addresses) = IO::Socket::IP::getaddrinfo(
-            host => $components{host},
-            service => ($components{port} // 16509),
-            socktype => SOCK_STREAM,
+            $components{host},
+            ($components{port} // 16509),
+            { socktype => SOCK_STREAM }
             );
         die $err if $err;
 
