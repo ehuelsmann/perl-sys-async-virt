@@ -4202,7 +4202,7 @@ replies.
 =item * Configuration of the C<externalssf> parameter on the C<sasl> field in
   the Sys::Async::Virt instance
 
-=item * Modules implementing connections for various protocols (tcp, tls, etc)
+=item * Modules implementing connections for various protocols (eg., tls)
 
 =item * C<@generate: none> entrypoints review (and implement relevant ones)
 
