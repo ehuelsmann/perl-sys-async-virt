@@ -23,9 +23,9 @@ class Sys::Async::Virt::Domain v0.4.0;
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::TypedParams v12.0.7;
-use Protocol::Sys::Virt::URI v12.0.7;
-use Protocol::Sys::Virt::Remote::XDR v12.0.7;
+use Protocol::Sys::Virt::TypedParams v12.0.8;
+use Protocol::Sys::Virt::URI v12.0.8;
+use Protocol::Sys::Virt::Remote::XDR v12.0.8;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use constant {

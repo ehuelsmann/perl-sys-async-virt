@@ -23,7 +23,7 @@ use Future;
 use Future::Queue;
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::Remote::XDR v12.0.7;
+use Protocol::Sys::Virt::Remote::XDR v12.0.8;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 field $_rpc_id :param :reader;

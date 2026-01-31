@@ -29,13 +29,13 @@ use Future::Selector;
 use Log::Any qw($log);
 use Scalar::Util qw(reftype weaken);
 
-use Protocol::Sys::Virt::Remote::XDR v12.0.7;
+use Protocol::Sys::Virt::Remote::XDR v12.0.8;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
-use Protocol::Sys::Virt::KeepAlive v12.0.7;
-use Protocol::Sys::Virt::Remote v12.0.7;
-use Protocol::Sys::Virt::Transport v12.0.7;
-use Protocol::Sys::Virt::URI v12.0.7; # imports parse_url
+use Protocol::Sys::Virt::KeepAlive v12.0.8;
+use Protocol::Sys::Virt::Remote v12.0.8;
+use Protocol::Sys::Virt::Transport v12.0.8;
+use Protocol::Sys::Virt::URI v12.0.8; # imports parse_url
 
 use Sys::Async::Virt::Connection::Factory v0.4.0;
 use Sys::Async::Virt::Domain v0.4.0;
