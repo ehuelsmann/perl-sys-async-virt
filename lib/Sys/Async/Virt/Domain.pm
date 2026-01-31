@@ -18,7 +18,7 @@ use Future::AsyncAwait;
 use Object::Pad 0.821;
 use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
-class Sys::Async::Virt::Domain v0.5.0;
+class Sys::Async::Virt::Domain v0.5.1;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -2350,7 +2350,7 @@ Sys::Async::Virt::Domain - Client side proxy to remote LibVirt domain
 
 =head1 VERSION
 
-v0.5.0
+v0.5.1
 
 =head1 SYNOPSIS
 

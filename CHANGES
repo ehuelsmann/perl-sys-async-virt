@@ -1,5 +1,9 @@
 -----
 
+0.5.1    2026-01-31
+   [Fixed]
+       * TCP module missing from distribution (because not added to MANIFEST)
+
 0.5.0    2026-01-31
    [Added]
        * Support for TCP connections in preparation of TLS connection support

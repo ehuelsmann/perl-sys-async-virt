@@ -16,7 +16,7 @@ use experimental 'signatures';
 use Future::AsyncAwait;
 use Object::Pad;
 
-class Sys::Async::Virt::DomainSnapshot v0.5.0;
+class Sys::Async::Virt::DomainSnapshot v0.5.1;
 
 use Carp qw(croak);
 use Log::Any qw($log);
@@ -127,7 +127,7 @@ Sys::Async::Virt::DomainSnapshot - Client side proxy to remote LibVirt domain sn
 
 =head1 VERSION
 
-v0.5.0
+v0.5.1
 
 =head1 SYNOPSIS
 
