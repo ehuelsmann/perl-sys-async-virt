@@ -27,7 +27,7 @@ use Log::Any qw($log);
 
 use Protocol::Sys::Virt::URI; # imports parse_url
 
-my $use_async_resolver = require Future::IO::Resolver;
+my $use_async_resolver = eval { require Future::IO::Resolver; 1; };
 
 field $_url :param :reader;
 field $_readonly :param = undef;
