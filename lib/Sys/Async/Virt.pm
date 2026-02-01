@@ -4180,8 +4180,6 @@ replies.
 =item * Configuration of the C<externalssf> parameter on the C<sasl> field in
   the Sys::Async::Virt instance
 
-=item * Modules implementing connections for various protocols (eg., tls)
-
 =item * C<@generate: none> entrypoints review (and implement relevant ones)
 
 =item * libvirt client configuration (C</etc/libvirt/libvirt.conf> (for C<root>)

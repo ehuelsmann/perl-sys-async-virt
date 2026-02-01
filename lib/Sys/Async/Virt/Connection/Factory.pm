@@ -25,8 +25,8 @@ use Protocol::Sys::Virt::URI; # imports 'parse_url'
 our @default_drivers = (
     { transport => '', class => 'Local', host => 0 },
     { transport => 'unix', class => 'Local', host => 0 },
-    # { transport => '', class => 'TCP', host => 1 },
-    # { transport => 'tls', class => 'TCP' },
+    { transport => '', class => 'TLS', host => 1 },
+    { transport => 'tls', class => 'TLS' },
     { transport => 'tcp', class => 'TCP' },
     { transport => 'ext', class => 'Process' },
     { transport => 'ssh', class => 'SSH' },
@@ -150,7 +150,8 @@ C<+YourPackage::Local> resolves to C<YourPackage::Local>.
 
 =back
 
-The default value maps the following transports: C<''>, C<unix>, C<ext> and C<ssh>.
+The default value maps the following transports: C<''>, C<unix>, C<ext>,
+C<tcp>, C<tls> and C<ssh>.
 
 =back
 
