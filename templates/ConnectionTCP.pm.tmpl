@@ -92,7 +92,8 @@ async method connect() {
         $_socket = IO::Socket::IP->new(
             Type => SOCK_STREAM,
             PeerAddrInfo => \@addresses,
-            );
+            )
+            or die "Failed to connect socket: $!";
     }
 
     $_in = $_out = $_socket;
