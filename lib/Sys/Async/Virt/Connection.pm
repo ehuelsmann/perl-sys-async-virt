@@ -64,12 +64,16 @@ method is_write_eof() {
     return $_eof;
 }
 
+method _read_internal( $len ) {
+    Future::IO->read_exactly( $_in, $len )
+}
+
 async method read($type, $len) {
     die $log->fatal( "Unsupported transfer type $type" ) unless $type eq 'data';
     return (undef, 1) if $_eof;
 
     $log->trace( "Starting read of length $len" );
-    $_read_f = $_read_f->then(sub { Future::IO->read_exactly( $_in, $len ) });
+    $_read_f = $_read_f->then(sub { $self->_read_internal( $len ) });
 
     my $data = await $_read_f;
     $log->trace( "Finished read of length $len" );
@@ -78,11 +82,15 @@ async method read($type, $len) {
     return ($data, 0);
 }
 
+method _write_internal( $data ) {
+    Future::IO->write_exactly( $_out, $data )
+}
+
 method _write_chunk($data) {
     die "Write to closed file" if $_eof;
 
     $log->trace( 'Low-level write of ' . length($data) . ' bytes' );
-    $_write_f = $_write_f->then(sub { Future::IO->write_exactly( $_out, $data ) });
+    $_write_f = $_write_f->then(sub { $self->_write_internal( $data ) });
     return $_write_f;
 }
 
