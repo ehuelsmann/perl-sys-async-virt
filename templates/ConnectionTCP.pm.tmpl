@@ -47,6 +47,10 @@ method _set_out($out) {
 
 ###
 
+method _default_port() {
+    return 16509;
+}
+
 async method close() {
     # Work around for Future::IO which doesn't
     # like handles being closed when there are
@@ -67,7 +71,7 @@ async method connect() {
     if ($use_async_resolver) {
         my ($address) = await Future::IO::Resolver->getaddrinfo(
             host => $components{host},
-            service => ($components{port} // 16509),
+            service => ($components{port} // $self->_default_port),
             socktype => SOCK_STREAM,
             );
         socket( $_socket,
@@ -80,7 +84,7 @@ async method connect() {
     else {
         my ($err, @addresses) = IO::Socket::IP::getaddrinfo(
             $components{host},
-            ($components{port} // 16509),
+            ($components{port} // $self->_default_port),
             { socktype => SOCK_STREAM }
             );
         die $err if $err;
