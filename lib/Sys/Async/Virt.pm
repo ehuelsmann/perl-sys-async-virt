@@ -1432,14 +1432,18 @@ async method run() {
     $_selector->add( data => '',
                      f    => $_completed_f );
     while ($running) {
-        my ( $tag, $f ) = await $_selector->select;
-        $tag //= '';
+        my @pairs = await $_selector->select;
 
-        if ( $tag eq 'data' ) {
-            await $self->_dispatch_data( $f );
-        }
-        else {
-            await $f;
+        my ( $tag, $f );
+        while ( ($tag, $f, @pairs) = @pairs ) {
+            $tag //= '';
+
+            if ( $tag eq 'data' ) {
+                await $self->_dispatch_data( $f );
+            }
+            else {
+                await $f;
+            }
         }
     }
 }
