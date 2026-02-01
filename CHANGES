@@ -1,5 +1,14 @@
 -----
 
+0.6.0    2026-02-01
+   [Changed]
+       * TCP class no longer hard-codes default port (for TLS support)
+       * Connection class read/write methods now have overridable
+         implementations
+       * Restructured code around Future::Selector as part of TLS testing
+   [Fixed]
+       * TCP connection failure not reported
+
 0.5.2    2026-01-31
    [Fixed]
        * Errors thrown when Future::IO::Resolver isn't installed
