@@ -613,7 +613,6 @@ async method run_once() {
 
     # closing the connection will kill the 'read' action
     ($data, $eof) = await $_connection->read( $type, $len );
-    $_keepalive->mark_active if $_keepalive and $data;
     $log->trace( 'Reading data from connection: completed' );
 
     return ($data, $eof);
@@ -689,74 +688,49 @@ async method initialize() {
             );
     }
     $log->trace( "Connected" );
-    $_selector->add( data => 'data',
-                     gen  => sub { $_completed_f->is_ready ? undef : $self->run_once } );
-
+    $_selector->add( data => undef, f => $self->_dispatch_loop );
     $_state = _STATE_INITIALIZED;
 }
 
-async method _dispatch_data( $f ) {
-    my ($data, $eof) = do {
-        try {
-            await $f;
+async method _dispatch_loop() {
+    while (not $_completed_f->is_ready) {
+        my ($data, $eof) = do {
+            try {
+                await $self->run_once;
+            }
+            catch ($e) {
+                # closing the server stream here doesn't make sense:
+                # throwing this exception will kill the loop, which
+                # means we can't process further server frames
+                die $e;
+            }
+        };
+
+
+        # submit $data to $_transport, allowing $transport to raise an error
+        # if the stream is terminated early.
+        #
+        # $_transport->receive() may return a list of futures to be awaited.
+        if (my @dispatch_values = $_transport->receive($data)) {
+            await Future->wait_all( @dispatch_values );
+            $log->trace( 'Processed input data from connection' );
         }
-        catch ($e) {
+        if ($eof) {
+            $_eof = 1;
+            $log->info( 'EOF' );
             $_selector->add(
                 data => 'closing',
-                f    => $self->_close( $self->CLOSE_REASON_ERROR )
+                f    => $self->_close( $self->CLOSE_REASON_EOF )
                 );
-            die $e;
         }
-    };
-
-
-    # submit $data to $_transport, allowing $transport to raise an error
-    # if the stream is terminated early.
-    #
-    # $_transport->receive() may return a list of futures to be awaited.
-    if (my @dispatch_values = $_transport->receive($data)) {
-        my $p = Future->wait_all( @dispatch_values )
-            ->on_done(sub {
-                $log->trace( 'Processed input data from connection' )
-                      });
-
-        # Enable async handling while we process further input from
-        # the connection.
-        $_selector->add( data => 'dispatch',
-                         f    => $p );
-    }
-    if ($eof) {
-        $_eof = 1;
-        $log->info( 'EOF' );
-        $_selector->add(
-            data => 'closing',
-            f    => $self->_close( $self->CLOSE_REASON_EOF )
-            );
     }
 }
 
 async method run() {
     return if $_completed_f;
 
-    my $running = 1;
-    $_completed_f = Future->new->on_ready(sub { $running = 0 });
-    $_selector->add( data => '',
-                     f    => $_completed_f );
-    while ($running) {
-        my @pairs = await $_selector->select;
-
-        my ( $tag, $f );
-        while ( ($tag, $f, @pairs) = @pairs ) {
-            $tag //= '';
-
-            if ( $tag eq 'data' ) {
-                await $self->_dispatch_data( $f );
-            }
-            else {
-                await $f;
-            }
-        }
-    }
+    $_completed_f = Future->new;
+    await $_selector->run_until_ready( $_completed_f );
 }
 
 method stop() {
@@ -1122,7 +1096,7 @@ async method _close($reason) {
 
     $_state = _STATE_CLOSED;
     $self->_dispatch_closed( $reason );
-    $_completed_f->done;
+    $_completed_f->done unless $_completed_f->is_ready;
     return;
 }
 
