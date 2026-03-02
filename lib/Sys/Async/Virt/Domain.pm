@@ -1,7 +1,7 @@
 ####################################################################
 #
 #     This file was generated using XDR::Parse version v1.0.1
-#                   and LibVirt version v12.0.0
+#                   and LibVirt version v12.1.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -18,14 +18,14 @@ use Future::AsyncAwait;
 use Object::Pad 0.821;
 use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
-class Sys::Async::Virt::Domain v0.6.0;
+class Sys::Async::Virt::Domain v0.6.1;
 
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::TypedParams v12.0.8;
-use Protocol::Sys::Virt::URI v12.0.8;
-use Protocol::Sys::Virt::Remote::XDR v12.0.8;
+use Protocol::Sys::Virt::TypedParams v12.1.0;
+use Protocol::Sys::Virt::URI v12.1.0;
+use Protocol::Sys::Virt::Remote::XDR v12.1.0;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use constant {
@@ -404,6 +404,14 @@ use constant {
     STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_RD_QUEUE_DEPTH_AVG          => ".rd_queue_depth_avg",
     STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_WR_QUEUE_DEPTH_AVG          => ".wr_queue_depth_avg",
     STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_ZONE_APPEND_QUEUE_DEPTH_AVG => ".zone_append_queue_depth_avg",
+    STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_READ_PREFIX                  => ".latency_histogram.read.",
+    STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_WRITE_PREFIX                 => ".latency_histogram.write.",
+    STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_ZONE_APPEND_PREFIX           => ".latency_histogram.zone_append.",
+    STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_FLUSH_PREFIX                 => ".latency_histogram.flush.",
+    STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_COUNT             => "bin.count",
+    STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_PREFIX            => "bin.",
+    STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_SUFFIX_START      => ".start",
+    STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_SUFFIX_VALUE      => ".value",
     STATS_PERF_CMT                                                    => "perf.cmt",
     STATS_PERF_MBMT                                                   => "perf.mbmt",
     STATS_PERF_MBML                                                   => "perf.mbml",
@@ -2350,7 +2358,7 @@ Sys::Async::Virt::Domain - Client side proxy to remote LibVirt domain
 
 =head1 VERSION
 
-v0.6.0
+v0.6.1
 
 =head1 SYNOPSIS
 
@@ -4430,6 +4438,22 @@ See documentation of L<virDomainUpdateDeviceFlags|https://libvirt.org/html/libvi
 =item STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_WR_QUEUE_DEPTH_AVG
 
 =item STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_ZONE_APPEND_QUEUE_DEPTH_AVG
+
+=item STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_READ_PREFIX
+
+=item STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_WRITE_PREFIX
+
+=item STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_ZONE_APPEND_PREFIX
+
+=item STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_FLUSH_PREFIX
+
+=item STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_COUNT
+
+=item STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_PREFIX
+
+=item STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_SUFFIX_START
+
+=item STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_SUFFIX_VALUE
 
 =item STATS_PERF_CMT
 
