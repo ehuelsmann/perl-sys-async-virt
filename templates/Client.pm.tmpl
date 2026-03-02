@@ -1678,9 +1678,10 @@ __PRIVATE_EPS__
 =over 8
 
 =item * Configuration of the C<externalssf> parameter on the C<sasl> field in
-  the Sys::Async::Virt instance
+  the Sys::Async::Virt instance (required for SASL over TLS)
 
-=item * C<@generate: none> entrypoints review (and implement relevant ones)
+=item * Implement file descriptor related entry points (= the remaining
+  C<@generate: none> entrypoints)
 
 =item * libvirt client configuration (C</etc/libvirt/libvirt.conf> (for C<root>)
  or C<$XDG_CONFIG_HOME/libvirt/libvirt.conf> (for other users))
