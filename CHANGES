@@ -1,5 +1,13 @@
 -----
 
+0.6.2    2026-04-01
+   [Changed]
+       * Updated libvirt to v12.2.0
+   [Added]
+       * New constants GET_DOMAIN_CAPABILITIES_EXPAND_CPU_FEATURES,
+         MIGRATE_PARAM_MIGRATE_DISKS_TARGET_ZERO,
+         BLOCK_COPY_TARGET_ZEROED
+
 0.6.1    2026-03-02
    [Changed]
        * Updated libvirt to v12.1.0

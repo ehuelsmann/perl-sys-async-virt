@@ -1,7 +1,7 @@
 ####################################################################
 #
 #     This file was generated using XDR::Parse version v1.0.1
-#                   and LibVirt version v12.1.0
+#                   and LibVirt version v12.2.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -18,14 +18,14 @@ use Future::AsyncAwait;
 use Object::Pad 0.821;
 use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
-class Sys::Async::Virt::Domain v0.6.1;
+class Sys::Async::Virt::Domain v0.6.2;
 
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::TypedParams v12.1.0;
-use Protocol::Sys::Virt::URI v12.1.0;
-use Protocol::Sys::Virt::Remote::XDR v12.1.0;
+use Protocol::Sys::Virt::TypedParams v12.2.0;
+use Protocol::Sys::Virt::URI v12.2.0;
+use Protocol::Sys::Virt::Remote::XDR v12.2.0;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use constant {
@@ -188,6 +188,7 @@ use constant {
     MIGRATE_PARAM_LISTEN_ADDRESS                                      => "listen_address",
     MIGRATE_PARAM_MIGRATE_DISKS                                       => "migrate_disks",
     MIGRATE_PARAM_MIGRATE_DISKS_DETECT_ZEROES                         => "migrate_disks_detect_zeroes",
+    MIGRATE_PARAM_MIGRATE_DISKS_TARGET_ZERO                           => "migrate_disks_target_zero",
     MIGRATE_PARAM_DISKS_PORT                                          => "disks_port",
     MIGRATE_PARAM_DISKS_URI                                           => "disks_uri",
     MIGRATE_PARAM_COMPRESSION                                         => "compression",
@@ -511,6 +512,7 @@ use constant {
     BLOCK_COPY_REUSE_EXT                                              => 1 << 1,
     BLOCK_COPY_TRANSIENT_JOB                                          => 1 << 2,
     BLOCK_COPY_SYNCHRONOUS_WRITES                                     => 1 << 3,
+    BLOCK_COPY_TARGET_ZEROED                                          => 1 << 4,
     BLOCK_COPY_BANDWIDTH                                              => "bandwidth",
     BLOCK_COPY_GRANULARITY                                            => "granularity",
     BLOCK_COPY_BUF_SIZE                                               => "buf-size",
@@ -2358,7 +2360,7 @@ Sys::Async::Virt::Domain - Client side proxy to remote LibVirt domain
 
 =head1 VERSION
 
-v0.6.1
+v0.6.2
 
 =head1 SYNOPSIS
 
@@ -4007,6 +4009,8 @@ See documentation of L<virDomainUpdateDeviceFlags|https://libvirt.org/html/libvi
 
 =item MIGRATE_PARAM_MIGRATE_DISKS_DETECT_ZEROES
 
+=item MIGRATE_PARAM_MIGRATE_DISKS_TARGET_ZERO
+
 =item MIGRATE_PARAM_DISKS_PORT
 
 =item MIGRATE_PARAM_DISKS_URI
@@ -4652,6 +4656,8 @@ See documentation of L<virDomainUpdateDeviceFlags|https://libvirt.org/html/libvi
 =item BLOCK_COPY_TRANSIENT_JOB
 
 =item BLOCK_COPY_SYNCHRONOUS_WRITES
+
+=item BLOCK_COPY_TARGET_ZEROED
 
 =item BLOCK_COPY_BANDWIDTH
 
