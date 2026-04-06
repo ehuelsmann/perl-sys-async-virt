@@ -20,6 +20,10 @@ requires 'Sublike::Extended' => '0.29';  # treat 'method' and 'sub' as extended 
 
 recommends 'Future::IO::Resolver';
 
+on configure => sub {
+    requires 'ExtUtil::MakeMaker' => '7.78';
+};
+
 on test => sub {
     requires 'Test2::V0';
 };
