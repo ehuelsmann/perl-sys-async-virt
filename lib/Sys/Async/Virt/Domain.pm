@@ -1,7 +1,7 @@
 ####################################################################
 #
 #     This file was generated using XDR::Parse version v1.0.1
-#                   and LibVirt version v12.2.0
+#                   and LibVirt version v12.3.0
 #
 #      Don't edit this file, use the source template instead
 #
@@ -18,14 +18,14 @@ use Future::AsyncAwait;
 use Object::Pad 0.821;
 use Sublike::Extended 0.29 'method', 'sub'; # From XS-Parse-Sublike, used by Future::AsyncAwait
 
-class Sys::Async::Virt::Domain v0.6.2;
+class Sys::Async::Virt::Domain v0.6.3;
 
 use Carp qw(croak);
 use Log::Any qw($log);
 
-use Protocol::Sys::Virt::TypedParams v12.2.0;
-use Protocol::Sys::Virt::URI v12.2.0;
-use Protocol::Sys::Virt::Remote::XDR v12.2.0;
+use Protocol::Sys::Virt::TypedParams v12.3.0;
+use Protocol::Sys::Virt::URI v12.3.0;
+use Protocol::Sys::Virt::Remote::XDR v12.3.0;
 my $remote = 'Protocol::Sys::Virt::Remote::XDR';
 
 use constant {
@@ -277,6 +277,7 @@ use constant {
     BANDWIDTH_OUT_BURST                                               => "outbound.burst",
     BLOCK_RESIZE_BYTES                                                => 1 << 0,
     BLOCK_RESIZE_CAPACITY                                             => 1 << 1,
+    BLOCK_RESIZE_EXTEND                                               => 1 << 2,
     MEMORY_VIRTUAL                                                    => 1 << 0,
     MEMORY_PHYSICAL                                                   => 1 << 1,
     UNDEFINE_MANAGED_SAVE                                             => (1 << 0),
@@ -2360,7 +2361,7 @@ Sys::Async::Virt::Domain - Client side proxy to remote LibVirt domain
 
 =head1 VERSION
 
-v0.6.2
+v0.6.3
 
 =head1 SYNOPSIS
 
@@ -4186,6 +4187,8 @@ See documentation of L<virDomainUpdateDeviceFlags|https://libvirt.org/html/libvi
 =item BLOCK_RESIZE_BYTES
 
 =item BLOCK_RESIZE_CAPACITY
+
+=item BLOCK_RESIZE_EXTEND
 
 =item MEMORY_VIRTUAL
 

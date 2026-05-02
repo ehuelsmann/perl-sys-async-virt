@@ -1,5 +1,13 @@
 -----
 
+0.6.3    2026-05-02
+   [Fixed]
+       * cpanfile ExtUtil::MakeMaker -> ExtUtils::MakeMaker
+   [Changed]
+       * Updated libvirt to v12.3.0
+   [Added]
+       * New constants BLOCK_RESIZE_EXTEND, MEMORY_STATS_AVAILABLE
+
 0.6.2    2026-04-01
    [Changed]
        * Updated libvirt to v12.2.0
