@@ -42,7 +42,12 @@ async method close() {
 
 method _command( $url ) {
     my %c = parse_url( $url );
-    return $c{query}->{command};
+    if (exists $c{query}->{argv}) {
+        return ( $c{query}->{command}, $c{query}->{argv}->@* );
+    }
+    else {
+        return ( $c{query}->{command} );
+    }
 }
 
 async method connect() {
